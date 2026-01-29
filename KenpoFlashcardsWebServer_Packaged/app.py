@@ -5182,9 +5182,41 @@ def _load_api_keys_on_startup():
         print(f"[STARTUP] Loaded encrypted API keys from {API_KEYS_PATH}")
 
 
+
+
+# --- Single instance lock (prevents running multiple servers) ---
+_SINGLE_INSTANCE_MUTEX = None
+def _ensure_single_instance() -> bool:
+    """Return True if this is the first instance; False if another instance is already running."""
+    global _SINGLE_INSTANCE_MUTEX
+    try:
+        if sys.platform == "win32":
+            import ctypes
+            name = "Global\\AdvancedFlashcardsWebAppServer"
+            _SINGLE_INSTANCE_MUTEX = ctypes.windll.kernel32.CreateMutexW(None, False, name)
+            # ERROR_ALREADY_EXISTS = 183
+            if ctypes.windll.kernel32.GetLastError() == 183:
+                return False
+        else:
+            import tempfile
+            lock = os.path.join(tempfile.gettempdir(), "AdvancedFlashcardsWebAppServer.lock")
+            try:
+                fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_RDWR)
+                os.write(fd, str(os.getpid()).encode("utf-8"))
+            except FileExistsError:
+                return False
+        return True
+    except Exception:
+        return True
+
 if __name__ == "__main__":
     # Load encrypted API keys from file (overrides environment variables)
     _load_api_keys_on_startup()
+    # Enforce single-instance server (prevents running twice)
+    if not _ensure_single_instance():
+        print("[INFO] Another instance is already running. Exiting.")
+        raise SystemExit(0)
+
     
     # Startup diagnostics (helps confirm your keys were picked up)
     try:

@@ -17,6 +17,35 @@ import logging
 import json
 import subprocess
 
+# --- Single instance lock (prevents double-running tray/service) ---
+_SINGLE_INSTANCE_MUTEX = None
+def _ensure_single_instance() -> bool:
+    """Return True if this is the first instance; False if another instance is already running."""
+    global _SINGLE_INSTANCE_MUTEX
+    try:
+        if sys.platform == "win32":
+            import ctypes
+            name = "Global\\AdvancedFlashcardsWebAppServer"
+            _SINGLE_INSTANCE_MUTEX = ctypes.windll.kernel32.CreateMutexW(None, False, name)
+            # ERROR_ALREADY_EXISTS = 183
+            if ctypes.windll.kernel32.GetLastError() == 183:
+                return False
+        else:
+            # Best-effort for non-Windows: lockfile in temp
+            import tempfile
+            from pathlib import Path
+            lock = Path(tempfile.gettempdir()) / "AdvancedFlashcardsWebAppServer.lock"
+            try:
+                fd = os.open(str(lock), os.O_CREAT | os.O_EXCL | os.O_RDWR)
+                os.write(fd, str(os.getpid()).encode("utf-8"))
+            except FileExistsError:
+                return False
+        return True
+    except Exception:
+        # If lock fails for any reason, don't block startup.
+        return True
+
+
 # Prevent console window flashes when launching console tools (sc.exe) from a tray (GUI) app.
 CREATE_NO_WINDOW = 0x08000000 if sys.platform == "win32" else 0
 
@@ -370,6 +399,17 @@ def _open_config_folder():
         _log(f"Error opening config folder: {e}")
 
 def main():
+    # Enforce single instance (tray/service/server)
+    if not _ensure_single_instance():
+        try:
+            _log("Another instance is already running. Exiting.")
+        except Exception:
+            pass
+        # In service/headless mode, do not show popups
+        if "--headless" not in sys.argv:
+            _popup("Advanced Flashcards WebApp Server", "Another instance is already running.")
+        return
+
     # Default: enable autostart on first run
     _ensure_default_autostart(SERVICE_NAME_DEFAULT)
 

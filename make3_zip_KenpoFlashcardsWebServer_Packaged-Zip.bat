@@ -67,24 +67,46 @@ set "BUILD=%BUILD:,=%"
 set "BUILD=%BUILD:"=%"
 set "BUILD=%BUILD: =%"
 
-REM Optional: parse webserver_version/webserver_build for zip suffix
+REM Optional: find matching Sync log to decide whether to append _ws<ver>_b<build> to ZIP name
+set "WSSUFFIX="
 set "WSVER="
 set "WSBUILD="
-for /f "tokens=1,* delims=:" %%A in ('findstr /i "\"webserver_version\"" "%VERJSON%"') do set "WSVER=%%B"
-for /f "tokens=1,* delims=:" %%A in ('findstr /i "\"webserver_build\"" "%VERJSON%"') do set "WSBUILD=%%B"
+set "SYNCLOG="
+set "SYNCLOGDIR=%BASE%\..\logs\Sync"
+set "SYNCLOGPAT=v%VER%_b%BUILD%*.log"
 
-REM Clean extracted values
-set "WSVER=%WSVER:,=%"
-set "WSVER=%WSVER:"=%"
-set "WSVER=%WSVER: =%"
-set "WSBUILD=%WSBUILD:,=%"
-set "WSBUILD=%WSBUILD:"=%"
-set "WSBUILD=%WSBUILD: =%"
+>>"%LOG%" echo SYNCLOGDIR=%SYNCLOGDIR%
+>>"%LOG%" echo SYNCLOGPAT=%SYNCLOGPAT%
 
-set "WSSUFFIX="
-if not "%WSVER%"=="" if not "%WSBUILD%"=="" set "WSSUFFIX=_ws%WSVER%-%WSBUILD%"
->>"%LOG%" echo RAW_WSVER=%WSVER%
->>"%LOG%" echo RAW_WSBUILD=%WSBUILD%
+if exist "%SYNCLOGDIR%\" (
+  for /f "delims=" %%F in ('dir /b /o:-d "%SYNCLOGDIR%\%SYNCLOGPAT%" 2^>nul') do (
+    set "SYNCLOG=%SYNCLOGDIR%\%%F"
+    goto :found_sync_log
+  )
+)
+
+:found_sync_log
+if not "%SYNCLOG%"=="" (
+  >>"%LOG%" echo Using Sync log: %SYNCLOG%
+
+  for /f "tokens=1,* delims=:" %%A in ('findstr /i "\"webserver_version\"" "%SYNCLOG%"') do set "WSVER=%%B"
+  for /f "tokens=1,* delims=:" %%A in ('findstr /i "\"webserver_build\"" "%SYNCLOG%"') do set "WSBUILD=%%B"
+
+  REM Clean extracted values
+  set "WSVER=%WSVER:,=%"
+  set "WSVER=%WSVER:"=%"
+  set "WSVER=%WSVER: =%"
+  set "WSBUILD=%WSBUILD:,=%"
+  set "WSBUILD=%WSBUILD:"=%"
+  set "WSBUILD=%WSBUILD: =%"
+
+  if not "%WSVER%"=="" if not "%WSBUILD%"=="" set "WSSUFFIX=_ws%WSVER%_b%WSBUILD%"
+) else (
+  >>"%LOG%" echo No matching Sync log found (will not append ws suffix)
+)
+
+>>"%LOG%" echo WSVER_FROM_LOG=%WSVER%
+>>"%LOG%" echo WSBUILD_FROM_LOG=%WSBUILD%
 >>"%LOG%" echo WSSUFFIX=%WSSUFFIX%
 
 >>"%LOG%" echo RAW_VER=%VER%

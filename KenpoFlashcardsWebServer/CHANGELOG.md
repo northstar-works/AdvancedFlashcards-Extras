@@ -11,9 +11,22 @@ The format is simple and practical:
 ---
 
 ## Unreleased
+
+## 8.1.1 (build 49) - 2026-01-29
+- Fix: Admin deck dropdowns now populate correctly (stats includes full deck list + user ids).
+- Fix: Deck ownership/access logic (owned vs shared) and Edit/Delete button visibility.
+- Fix: Forced password reset now blocks access until changed; Web UI prompts immediately after login.
+- Add: Create Deck flow can jump directly into adding cards (Keywords auto-generate up to 25, Photo/Document opens upload).
+- Fix: AI generator resets keywords + max cards (25) after adding cards.
+- Improve: Admin Overview tiles are clickable with detail modals; System page server-info fields are more robust.
+- Improve: Server/App/User logging feeds Admin > Logs more reliably.
+
 - (Add changes here as you work. Move them into a release when you publish.)
 
 ---
+
+### Docs
+- Kenpo vocab now loads from `data/kenpo_words.json` by default (docs + config updated)
 
 ## 8.1.0 (build 48) — 2026-01-28
 

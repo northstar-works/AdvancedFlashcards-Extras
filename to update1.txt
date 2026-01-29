@@ -1,56 +1,78 @@
-I want to add in make3_zip_KenpoFlashcardsWebServer_Packaged-Zip.bat if version.json contains "webserver_version": "8.0.2",
-  "webserver_build": 47, add "_ws%webserver_version%-%webserver_build%" to the zip name
+
+ip$$
+1.) Need to also add in webserver project to only be seen in packaged installed versions "User: ***" menu, about, and system information, and anywhere else it should be seen its Web Server Version: v8.1.0. 
+
+2.) in Custom Set Settings the random number field is still ontop of Add random button, field needs to be way shorter.  Rename "Add Random" to "Add Random Cards". 
+
+3.) In "User Deck Access" section, when a user is selected and a deck is selected there needs to be a status of that decks access for that selected user, and the "Unlock"/"Lock" and disable and enable built-in buttons should only be available for the only action that can be made. 
+
+4.) In "Built-In Deck Management", there isn't a way to add built-in decks by default, there is a "Remove Built-In" button on kenpo (which is great), but how to re-add kenpo if "Remove Built-In" button is pressed on kenpo. make minor version upgrade.
+
+5.) admin force of password refresh for john smith, he logged in using 123456789, but it did not ask for a force a password change, before logging in. After admin reset of password, if a user tries a password that is not 123456789 a message should appear on that login window that password change is required, then add fields to reset password and to submit.  I want version and build text on corner of login window. How is remembering device user logged into handled, to reduce the amount of times user has to login?
+
+6.) In "Create New Deck" section I want a method of adding cards to be added right below Description.  After creating a new deck and with that option selected it will go to that methods page ie. Keyword, Photo, Document.  If keyword is chosen it will auto search for max of 25 cards using deck name and description., the other methods will open thier photo or document upload window. Once added, I want the search keyword cleared and max cards to default to 25. I noticed after sucessfully adding 51 state capitals, the Search keywords and max cards persisted.
+
+7.) verify that logs can be made to show in Admin>logs page>"server logs"> App Logs, Error Logs, User Activity (only logs)
+
+8.) In admin>overview>"Total Users" to show general info about the users, >"Study Deck" to show all decks and their info.  For those and the other >"Total Cards", >"Breakdowns" lets make it a fun experience to look at when clicked on.
+$$
 
 
-As suggested, please create a migration checklist.  Now that both ends apps are working well together I need a tool to push updates to android app in the future.
 
+
+###Exe build###
+
+Might need to relocate read and write files that might be in program files to programdata or localuserapp.
+
+###Universal###
+
+Need to do a package/android app anaylisis to check android app live pull from/push to location. 
+
+I need to make sure kenpo.json is being mapped from the correct place.  what is the connection with kenpo_words.json for android app, WebServer, packaging.  I need to figure out if its a single source of truth or co-synced source of truth for that file.  What happens to the files data down the process.
+
+###Android App#
+
+Make sure any synced data that android app users uses for live syncing is now mapped to C:\Users\Sidscri\AppData\Local\Advanced Flashcards WebApp Server\data\ That is the true live location since going "live" on .exe build project. Make sure all api are directed towards localuser or program files or programdata, might need to relocate read and write files that might be in program files to programdata or localuserapp. Would like a server status in android app admin like the server has to check server running on local machine.
+
+
+$$
+ip
 I want kenpo and spanish to be owned by sidscri, only kenpo to have built-in flagged, spanish will just be as it is a user created deck that no other user can access, unless I give it to them as an admin. Where did the the edit decks button go on spanish, guess it didnt show since I couldnt make me the owner.  Same goes for built-in settings and user deck access, no decks are showing up in drop downs.  &&Fix1.png, fix2.png&&
-
-admin force of password refresh for john smith, he logged in using 123456789, but it did not ask for a force a password change, before logging in.
-
-In "Create New Deck" section I want a method of adding cards to be added right below Description.  After creating a new deck and with that option selected it will go to that methods page ie. Keyword, Photo, Document.  If keyword is chosen it will auto search for max of 25 cards using deck name and description., the other methods will open thier photo or document upload window. Once added, I want the search keyword cleared and max cards to default to 25. I noticed after sucessfully adding 51 state capitals, the Search keywords and max cards persisted.
-
-In Admin>System page>"server information"> application says undifined, "version" is 4.0.0 (build 12), Release is -
-
-verifi tht logs can be made to show in Admin>logs page>"server logs"> App Logs, Error Logs, User Activity (only logs)
-
-In admin>overview>"Total Users" to show general info about the users, >"Study Deck" to show all decks and their info.  For those and the other >"Total Cards", >"Breakdowns" lets make it a fun experience to look at when clicked on.
-
-
-##tool##
-Wish the new updated KenpoFlashcardsWebServer_Packaged changelog and readme more closely resembled the add, fix, changes, simular to whats in the KenpoFlashcardsWebServer changelogs add, fix, changes.
 
 ##Package##
 Old icons are still showing up in desktop shortcut(in properties the new are in change icon) and showing in task manager processes &&fix.3.png&&
 
 Why are there always two processes running of the same name.
+$$
 
+##tool##
+Wish the new updated KenpoFlashcardsWebServer_Packaged changelog and readme more closely resembled the add, fix, changes, simular to whats in the KenpoFlashcardsWebServer changelogs add, fix, changes.
 
-
-
-I unistalled the program but nothing got uninstalled, the service is still running. tray still present, desktop shortcut still there, still shows up in recently added in start, still shows in program files, but 
+##To Change/Add##
 
 Add an auto backup of data folder to %local_user%\...\DataBackups\"Data_Auto_%Date%_%Appversion%\data".zip\ Changes on demand, keeping last 10 per user to be restored, another setting for auto backup: off>every 30min>1 hour>2 hours>6 hours(default)>1 Day>2 days.
 
-Windows icon changes: Create a dedicated location for Icons and logos in KenpoFlashcardsWebServer_Packaged\static\res\webappservericons\. Create new app icon files using the "Advanced Flashcards WebApp Server Icon.png" photo to remap all current kenpo icons that show on a windows system, tray, desktop, add remove programs list, etc. Dont touch any that are being used by the web app in browser or the original windows server project. I will sync those updates later after editing on webserver project. 
 
 
 ----Webserver----
-I want kenpo_words.json to live and get mapped from KenpoFlashcardsProject-v2\app\src\main\assets\ to KenpoFlashcardsWebServer\data\ instead  That means KenpoFlashcardsProject needs to also change its grab to KenpoFlashcardsWebServer\data\ if appicable
+ip##
+1.) Need to also add in webserver project to only be seen in packaged installed versions "User: ***" menu, about, and system information, and anywhere else it should be seen its Web Server Version: v8.1.0. 
 
-Change "Kenpo Flashcards" to "Advanced Flashcards"; "Study Flashcards" to "Advanced Flashcards", except for ("Study Flashcards" {Name of current Deck} "Cards loaded: 89") on main pages. Keep as it is.
+2.) in Custom Set Settings the random number field is still ontop of Add random button, field needs to be way shorter.  Rename "Add Random" to "Add Random Cards". 
 
-Other users non built-in decks should not be available by default on new or other profiles.  Sidscri created Basic Spanish Words..., only sidscri should have it in his deck, unless admined to any specific user.
+3.) In "User Deck Access" section, when a user is selected and a deck is selected there needs to be a status of that decks access for that selected user, and the "Unlock"/"Lock" and disable and enable built-in buttons should only be available for the only action that can be made. 
 
-Add a save current Custom Deck to Custom deck saves page, make sure there is a way to chose a saved deck to study when desired, in Custom Set Settings the random number field is still ontop of Add random button, field needs to be way shorter.  Rename "Add Random" to "Add Random Cards"
+4.) In "Built-In Deck Management", there isnt a way to add built-in decks by default, there is a "Remove Built-In" button on kenpo (which is great), but how to re-add kenpo if "Remove Built-In" button is pressed on kenpo.##
 
-Change WebApp icon, Now that the apps name has changed to "Advanced Flashcards WebApp Server"
+###Android App#
 
-"Invite codes" section No Decks appear in "Select deck..." list. same goes for "User Deck Access"
+I need to make sure kenpo.json is being mapped from the correct place.  what is the connection with kenpo_words.json for android app, WebServer, packaging.  I need to figure out if its a single source of truth or co-synced source of truth for that file.  What happens to the files data down the process.
 
-In "User Deck Access" section, when a user is selected, i.e Sidscri (admin), Built-in is enabled, so only disable option should be avaialble, not sure which one is currently active or not. In this current case no deck is selected, both options should be unavailable.
+Make sure any synced data that android app users uses for live syncing is now mapped to C:\Users\Sidscri\AppData\Local\Advanced Flashcards WebApp Server\data\ That is the true live location since going "live" on .exe build project. Make sure all api are directed towards localuser. Would like a status in admin
 
-In "Built-In Deck Management", there isnt a way to add built-in decks by default, there is a "Remove Built-In" button on kenpo (which is great), but how to re-add kenpo if "Remove Built-In" button is pressed on kenpo.
+
+
+
 
 
 
@@ -71,4 +93,25 @@ During update of app to PC, existing data files win over unpackaged data files. 
 
 deck image feature: I will want an option to add images to study decks as an option when creating or editing decks. For Kenpo, I want "Kenpo Vovabulary Study Flashcards.png" used as its logo on main page as pictured and by default without adding optional image, use "Advanced Flashcards logo.png".
 
+Windows icon changes: Create a dedicated location for Icons and logos in KenpoFlashcardsWebServer_Packaged\static\res\webappservericons\. Create new app icon files using the "Advanced Flashcards WebApp Server Icon.png" photo to remap all current kenpo icons that show on a windows system, tray, desktop, add remove programs list, etc. Dont touch any that are being used by the web app in browser or the original windows server project. I will sync those updates later after editing on webserver project. 
+
+
 When i refresh page it always changes back to kenpo with kenpo image.  I dont think default deck actually makes defaulted deck stay default after refresh.
+
+I want to add in make3_zip_KenpoFlashcardsWebServer_Packaged-Zip.bat if version.json contains "webserver_version": "8.0.2",
+  "webserver_build": 47, add "_ws%webserver_version%-%webserver_build%" to the zip name
+
+Forgot to add but might have been addressed in recent 8.1.1 upgrade already. keep same version, update docs:  kenpo_words.json is now located at C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer\data\kenpo_words.json &fix5.png and fix7.png& Then I need the sync tool to make sure mapping for synced (replaced files from webserver) that are now synced on packaged project for exe build has no reference to \KenpoFlashcardsWebServer\, but is mapped to \KenpoFlashcardsWebServer_Packaged\ instead, since those file now reside within KenpoFlashcardsWebServer_Packaged project now. 
+
+I want kenpo_words.json to live and get mapped from KenpoFlashcardsProject-v2\app\src\main\assets\ to KenpoFlashcardsWebServer\data\ instead.  That means KenpoFlashcardsProject needs to also change its grab to KenpoFlashcardsWebServer\data\ if appicable
+
+Change "Kenpo Flashcards" to "Advanced Flashcards"; "Study Flashcards" to "Advanced Flashcards", except for ("Study Flashcards" {Name of current Deck} "Cards loaded: 89") on main pages. Keep as it is.
+
+Other users non built-in decks should not be available by default on new or other profiles.  Sidscri created Basic Spanish Words..., only sidscri should have it in his deck, unless admined to any specific user.
+
+Add a save current Custom Deck to Custom deck saves page, make sure there is a way to chose a saved deck to study when desired, 
+
+Change WebApp icon, Now that the apps name has changed to "Advanced Flashcards WebApp Server"
+
+
+

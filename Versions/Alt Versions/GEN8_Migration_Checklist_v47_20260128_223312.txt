@@ -1,0 +1,27 @@
+GEN8 Migration Checklist (WebServer v8.0.2 v47 -> Android v5.3.1 v36)
+
+Server (WebServer)
+- Confirm token login works: POST /api/sync/login -> token
+- Confirm token admin status: GET /api/admin/status (Bearer token)
+
+Option1 endpoints
+- GET/POST /api/sync/admin/deck-config
+- POST /api/sync/admin/deck-invite-code
+- DELETE /api/sync/admin/deck-invite-code/<code>
+- POST /api/sync/redeem-invite-code
+
+Option2 endpoints
+- GET /api/sync/admin/users
+- GET /api/sync/admin/stats
+- GET /api/sync/admin/logs
+- POST /api/sync/admin/logs/clear
+- GET/POST /api/sync/admin/user/<id>/deck-access
+- POST /api/sync/admin/user/update
+- POST /api/sync/admin/user/reset_password
+
+Android (Client)
+- Models: StudyDeck.logoPath present
+- AdminSettings: isAdmin present + stored
+- Store: replaceDecksFromServer() exists
+- UI: ManageDecks -> Redeem tab
+- Admin: uses server-sourced isAdmin and shows Deck Admin panel

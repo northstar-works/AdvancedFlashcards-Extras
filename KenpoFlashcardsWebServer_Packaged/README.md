@@ -2,9 +2,11 @@
 
 A Windows **installer** build of the Advanced Flashcards WebApp Server + Tray Launcher.
 
-- **Packaged Version:** **v4.1.0 (build 13)**
+- **Packaged Version:** **v4.1.0.1 (build 14)**
 - **Bundled Web Server:** **v8.1.0 (build 48)**
 
+
+> **New in v4.1.0.1 (build 14)**: Enforces a **single running instance** of the tray/server to prevent duplicate processes (double-starts, service + tray, etc.).
 ## What you get
 
 - **Windows installer (Inno Setup)** that installs to **Program Files** and adds Start Menu shortcuts.

@@ -56,6 +56,37 @@ from pathlib import Path
 from typing import Optional, Tuple, List, Dict
 
 
+
+def _find_sidscri_apps_root(start: Path) -> Path:
+    """Walk up from start to find a folder named 'sidscri-apps'. If not found, fallback to start.parent."""
+    for p in [start] + list(start.parents):
+        if p.name.lower() == 'sidscri-apps':
+            return p
+    # Common layout: <repo_root>/tools/<this_script>
+    return start.parent
+
+def _ensure_dir(p: Path) -> None:
+    p.mkdir(parents=True, exist_ok=True)
+
+def _files_equal(a: Path, b: Path) -> bool:
+    """Fast-ish binary compare."""
+    try:
+        if not a.exists() or not b.exists():
+            return False
+        if a.stat().st_size != b.stat().st_size:
+            return False
+        with a.open('rb') as fa, b.open('rb') as fb:
+            while True:
+                ca = fa.read(1024 * 1024)
+                cb = fb.read(1024 * 1024)
+                if ca != cb:
+                    return False
+                if not ca:
+                    return True
+    except Exception:
+        return False
+
+
 class VersionBumper:
     """Handles semantic versioning bumps."""
     
@@ -410,7 +441,7 @@ class WebServerSyncer:
         Path('res') / 'decklogos' / 'user',
     ]
     
-    def __init__(self, ws_source: Path, pkg_dest: Path, tools_dir: Path, dry_run: bool = False, upgrade_level: Optional[int] = None):
+    def __init__(self, ws_source: Path, pkg_dest: Path, tools_dir: Path, dry_run: bool = False, upgrade_level: Optional[int] = None, output_mode: str = 'inplace'):
         self.ws_source = Path(ws_source)
         self.pkg_dest = Path(pkg_dest)
         self.tools_dir = Path(tools_dir)
@@ -418,6 +449,10 @@ class WebServerSyncer:
         self.upgrade_level = upgrade_level
         self.backup_dir = None
         self.changes = []
+        self.file_actions: List[Dict] = []
+        self.output_mode = output_mode
+        self.repo_root = _find_sidscri_apps_root(self.tools_dir)
+        self.sync_log_dir = self.repo_root / 'logs' / 'Sync'
         
     def log(self, msg: str, level: str = "INFO"):
         """Log with timestamp and emoji prefix."""
@@ -425,6 +460,59 @@ class WebServerSyncer:
         prefix = {"INFO": "ℹ️", "WARN": "⚠️", "ERROR": "❌", "SUCCESS": "✅", "SKIP": "⏭️"}
         print(f"[{ts}] {prefix.get(level, '')} {msg}")
     
+    
+    def record_action(self, path: str, action: str, **details):
+        """Record a per-file action for the sync log."""
+        rec = {"path": path, "action": action}
+        if details:
+            rec.update(details)
+        self.file_actions.append(rec)
+
+    def write_sync_log(self,
+                       new_version: str,
+                       new_build: int,
+                       ws_version: str,
+                       ws_build: int,
+                       last_sync_iso: str,
+                       backup_dir: Optional[Path] = None):
+        """Write a JSON log under <sidscri-apps>\logs\Sync\ as vX_bY_YYYYMMDD_HHMMSS.log"""
+        try:
+            _ensure_dir(self.sync_log_dir)
+            ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+            log_name = f"v{new_version}_b{new_build}_{ts}.log"
+            log_path = self.sync_log_dir / log_name
+
+            # Summary counts
+            counts = {}
+            for r in self.file_actions:
+                a = r.get("action", "unknown")
+                counts[a] = counts.get(a, 0) + 1
+
+            payload = {
+                "version": new_version,
+                "build": new_build,
+                "last_sync": last_sync_iso,
+                "webserver_version": ws_version,
+                "webserver_build": int(ws_build) if str(ws_build).isdigit() else ws_build,
+                "output_mode": self.output_mode,
+                "dry_run": bool(self.dry_run),
+                "backup_dir": str(backup_dir) if backup_dir else None,
+                "summary": {
+                    "total_records": len(self.file_actions),
+                    "by_action": counts,
+                    "protected_items": self.PROTECTED_ITEMS,
+                    "static_excludes_preserved": [f"static/{p.as_posix()}/**" for p in self.STATIC_EXCLUDE_SUBDIRS],
+                },
+                "files": self.file_actions,
+            }
+
+            if not self.dry_run:
+                with open(log_path, "w", encoding="utf-8") as f:
+                    json.dump(payload, f, indent=2)
+            self.log(f"Sync log written: {log_path}", "SUCCESS")
+        except Exception as e:
+            self.log(f"Failed to write sync log: {e}", "WARN")
+
     def prompt_upgrade_level(self) -> int:
         """Prompt user for upgrade level."""
         print("\n" + "="*60)
@@ -478,24 +566,39 @@ class WebServerSyncer:
         self.log(f"Created backup at: {self.backup_dir}")
     
     def sync_file(self, filename: str) -> bool:
-        """Copy a file from web server to packaged."""
+        """Copy a file from web server to packaged (with per-file action logging)."""
         src = self.ws_source / filename
         dst = self.pkg_dest / filename
-        
+
         if not src.exists():
             self.log(f"Source not found: {filename}", "WARN")
+            self.record_action(filename, "missing_source")
             return False
-            
+
+        exists = dst.exists()
+        same = _files_equal(src, dst) if exists else False
+
         if self.dry_run:
-            self.log(f"Would sync: {filename}")
+            action = "would_add" if not exists else ("would_skip_unchanged" if same else "would_replace")
+            self.log(f"Would sync: {filename} ({action})")
+            self.record_action(filename, action)
             return True
-            
+
+        if exists and same:
+            self.log(f"Unchanged (skipped): {filename}", "SKIP")
+            self.record_action(filename, "skipped_unchanged")
+            return True
+
         dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, dst)
-        self.changes.append(f"Synced: {filename}")
-        self.log(f"Synced: {filename}", "SUCCESS")
+
+        action = "added" if not exists else "replaced"
+        self.changes.append(f"{action.title()}: {filename}")
+        self.record_action(filename, action)
+        self.log(f"{action.title()}: {filename}", "SUCCESS")
         return True
-    
+
+
     def sync_folder(self, foldername: str) -> bool:
         """Sync an entire folder from web server."""
         if foldername == 'static':
@@ -520,49 +623,70 @@ class WebServerSyncer:
         return True
 
     def sync_static_folder(self) -> bool:
-        """Mirror static/ from web server into packaged, preserving certain Packaged-only subfolders."""
+        """Mirror static/ from web server into packaged, preserving certain Packaged-only subfolders.
+
+        Logs per-file actions (added/replaced/removed/skipped/excluded).
+        """
         src_static = self.ws_source / 'static'
         dst_static = self.pkg_dest / 'static'
 
         if not src_static.exists():
             self.log('Source folder not found: static', 'WARN')
+            self.record_action('static/', 'missing_source')
             return False
 
         if self.dry_run:
             self.log('Would mirror folder: static/ (with safe excludes)')
-            self.log('Static excludes (preserved in destination):', 'INFO')
             for ex in self.STATIC_EXCLUDE_SUBDIRS:
-                self.log(f"  - static/{ex.as_posix()}/**", 'INFO')
+                self.record_action(f"static/{ex.as_posix()}/", 'excluded_preserved', reason='static exclude (dry-run)')
             return True
 
         dst_static.mkdir(parents=True, exist_ok=True)
 
-        # 1) Copy/update everything from source → destination
+        # Track source set for mirroring (for removal)
+        src_set = {p.relative_to(src_static) for p in src_static.rglob('*')}
+
+        # 1) Copy/update everything from source → destination (except excluded subtrees)
         for src_file in src_static.rglob('*'):
             if src_file.is_dir():
                 continue
             rel = src_file.relative_to(src_static)
+
+            rel_posix = rel.as_posix()
             if self._is_static_excluded(rel):
+                # explicitly preserve destination subtree
+                self.record_action(f"static/{rel_posix}", 'excluded_preserved', reason='static exclude preserved in destination')
                 continue
+
             dst_file = dst_static / rel
+            existed = dst_file.exists()
+            same = _files_equal(src_file, dst_file) if existed else False
+
+            if existed and same:
+                self.record_action(f"static/{rel_posix}", 'skipped_unchanged')
+                continue
+
             dst_file.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(src_file, dst_file)
 
-        # 2) Remove destination files/dirs not present in source (mirror), BUT preserve excluded subtrees
-        src_set = {p.relative_to(src_static) for p in src_static.rglob('*')}
+            action = 'added' if not existed else 'replaced'
+            self.record_action(f"static/{rel_posix}", action)
 
-        # Remove files first
+        # 2) Remove destination files not present in source (mirror), BUT preserve excluded subtrees
         for dst_file in sorted([p for p in dst_static.rglob('*') if p.is_file()], reverse=True):
             rel = dst_file.relative_to(dst_static)
+            rel_posix = rel.as_posix()
             if self._is_static_excluded(rel):
                 continue
             if rel not in src_set:
                 try:
                     dst_file.unlink()
+                    self.record_action(f"static/{rel_posix}", 'removed_extra')
                 except Exception as e:
-                    self.log(f"Failed to remove extra file static/{rel}: {e}", 'WARN')
+                    self.log(f"Failed to remove extra file static/{rel_posix}: {e}", 'WARN')
+                    self.record_action(f"static/{rel_posix}", 'remove_failed', error=str(e))
 
-        # Then remove empty dirs (excluding preserved dirs)
+        # Remove empty dirs (excluding preserved dirs)
         for dst_dir in sorted([p for p in dst_static.rglob('*') if p.is_dir()], reverse=True):
             rel = dst_dir.relative_to(dst_static)
             if self._is_static_excluded(rel):
@@ -574,8 +698,10 @@ class WebServerSyncer:
                 pass
 
         self.changes.append('Mirrored folder: static/ (safe excludes preserved)')
+        self.record_action('static/', 'mirrored', excludes_preserved=[f"static/{p.as_posix()}/**" for p in self.STATIC_EXCLUDE_SUBDIRS])
         self.log('Mirrored folder: static/ (safe excludes preserved)', 'SUCCESS')
         return True
+
 
     def _is_static_excluded(self, rel_path: Path) -> bool:
         """Return True if rel_path (relative to static/) should be preserved in destination.
@@ -592,30 +718,47 @@ class WebServerSyncer:
 
     
     def sync_data_folder(self) -> bool:
-        """Merge data folder (preserve user data)."""
+        """Merge data folder (preserve user data) and log per-file actions."""
         src_data = self.ws_source / 'data'
         dst_data = self.pkg_dest / 'data'
-        
+
         if not src_data.exists():
             self.log("Source data folder not found", "WARN")
+            self.record_action("data/", "missing_source")
             return False
-            
+
         if self.dry_run:
             self.log("Would merge data folder")
+            self.record_action("data/", "would_merge")
             return True
-            
+
         dst_data.mkdir(parents=True, exist_ok=True)
-        
-        # Direct copy files
+
+        copied_any = False
+        # Direct copy files (server-side config / keys)
         for filename in ['helper.json', 'admin_users.json', 'api_keys.enc', 'secret_key.txt']:
             src = src_data / filename
-            if src.exists():
-                shutil.copy2(src, dst_data / filename)
-                
+            dst = dst_data / filename
+            if not src.exists():
+                continue
+
+            existed = dst.exists()
+            same = _files_equal(src, dst) if existed else False
+            if existed and same:
+                self.record_action(f"data/{filename}", "skipped_unchanged")
+                continue
+
+            shutil.copy2(src, dst)
+            copied_any = True
+            action = "added" if not existed else "replaced"
+            self.record_action(f"data/{filename}", action)
+
         self.changes.append("Merged data/ folder")
+        self.record_action("data/", "merged", copied=copied_any)
         self.log("Merged data/ folder", "SUCCESS")
         return True
-    
+
+
     def run(self):
         """Execute the full sync process."""
         print("\n" + "="*60)
@@ -709,11 +852,19 @@ class WebServerSyncer:
         self.log("Merging data folder...")
         self.sync_data_folder()
         print()
-        
         # Update documentation
         self.log("Updating documentation (AI-assisted)...")
         doc_updater = DocumentationUpdater(self.pkg_dest, self.dry_run)
-        
+
+        changelog_path = self.pkg_dest / "CHANGELOG.md"
+        readme_path = self.pkg_dest / "README.md"
+        verjson_path = self.pkg_dest / "version.json"
+
+        pre_changelog = changelog_path.read_text(encoding="utf-8") if changelog_path.exists() else None
+        pre_readme = readme_path.read_text(encoding="utf-8") if readme_path.exists() else None
+        pre_verjson = verjson_path.read_text(encoding="utf-8") if verjson_path.exists() else None
+        pre_vtxt = sorted([p.name for p in self.pkg_dest.glob("Version-WebServerPackaged-*.txt")])
+
         # Generate and apply changelog entry
         changelog_entry = doc_updater.generate_changelog_entry(
             new_version, new_build,
@@ -722,7 +873,7 @@ class WebServerSyncer:
             ws_changes, upgrade_level
         )
         doc_updater.update_changelog(changelog_entry)
-        
+
         # Generate and apply README update
         readme_whats_new = doc_updater.generate_readme_whats_new(
             new_version, new_build,
@@ -731,13 +882,41 @@ class WebServerSyncer:
             ws_changes
         )
         doc_updater.update_readme(readme_whats_new, new_version, new_build, ws_version, ws_build)
-        
+
         # Update version.json
         doc_updater.update_version_json(new_version, new_build, ws_version, ws_build)
-        
-        # Update version txt file
+
+        # Update version txt file (rename only, keep contents)
         doc_updater.update_version_txt(new_version, new_build, old_pkg_version, old_pkg_build)
-        
+
+        # Record documentation actions
+        post_changelog = changelog_path.read_text(encoding="utf-8") if changelog_path.exists() else None
+        post_readme = readme_path.read_text(encoding="utf-8") if readme_path.exists() else None
+        post_verjson = verjson_path.read_text(encoding="utf-8") if verjson_path.exists() else None
+        post_vtxt = sorted([p.name for p in self.pkg_dest.glob("Version-WebServerPackaged-*.txt")])
+
+        def _doc_action(path: str, pre: Optional[str], post: Optional[str]):
+            if self.dry_run:
+                self.record_action(path, "would_edit")
+                return
+            if pre is None and post is not None:
+                self.record_action(path, "added")
+            elif pre is not None and post is not None and pre != post:
+                self.record_action(path, "edited")
+            else:
+                self.record_action(path, "skipped_unchanged")
+
+        _doc_action("CHANGELOG.md", pre_changelog, post_changelog)
+        _doc_action("README.md", pre_readme, post_readme)
+        _doc_action("version.json", pre_verjson, post_verjson)
+
+        if self.dry_run:
+            self.record_action("Version-WebServerPackaged-*.txt", "would_rename")
+        else:
+            if pre_vtxt != post_vtxt:
+                self.record_action("Version-WebServerPackaged-*.txt", "renamed", before=pre_vtxt, after=post_vtxt)
+            else:
+                self.record_action("Version-WebServerPackaged-*.txt", "skipped_unchanged")
         print()
         
         # Summary
@@ -767,7 +946,12 @@ class WebServerSyncer:
         print("    4. Run packaging/build_installer_inno.bat")
         
         print("\n" + "="*60 + "\n")
-        
+
+        # Write Sync log (for packaging zip suffix detection)
+        last_sync_iso = datetime.now().isoformat()
+        if not self.dry_run:
+            self.write_sync_log(new_version, new_build, ws_version, ws_build, last_sync_iso, backup_dir=self.backup_dir)
+
         return True
 
 
@@ -796,6 +980,16 @@ Examples:
     
     source = Path(args.source).resolve()
     destination = Path(args.destination).resolve()
+
+    # Guard: if user passes the monorepo root (contains both projects), auto-target the Packaged folder.
+    try:
+        if (destination / 'KenpoFlashcardsWebServer_Packaged').exists() and (destination / 'KenpoFlashcardsWebServer').exists():
+            # Looks like repo root was passed as destination
+            destination = (destination / 'KenpoFlashcardsWebServer_Packaged').resolve()
+            print(f"[INFO] Destination looks like repo root; using Packaged folder: {destination}")
+    except Exception:
+        pass
+
     
     # Tools dir is where this script is located
     tools_dir = Path(__file__).parent.resolve()
@@ -827,7 +1021,7 @@ Examples:
             )
 
     # Run sync
-    syncer = WebServerSyncer(source, destination, tools_dir, dry_run=args.dry_run, upgrade_level=args.level)
+    syncer = WebServerSyncer(source, destination, tools_dir, dry_run=args.dry_run, upgrade_level=args.level, output_mode=args.output)
     success = syncer.run()
     
     sys.exit(0 if success else 1)

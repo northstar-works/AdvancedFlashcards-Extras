@@ -3649,6 +3649,15 @@ async function addSelectedAiCards(){
     aiGeneratedCards = [];
     aiSelectedIndices.clear();
     $("aiGenResults")?.classList.add("hidden");
+    // Reset generator inputs (so they don't persist)
+    if($("aiGenKeywords")) $("aiGenKeywords").value = "";
+    if($("aiGenMaxCards")) $("aiGenMaxCards").value = "25";
+    // Reset uploads
+    aiPhotoData = null;
+    aiDocData = null;
+    try { $("photoFileInput").value = ""; } catch(e){}
+    try { $("docFileInput").value = ""; } catch(e){}
+
     // Refresh user cards list and main app
     loadUserCards();
     loadDecks();

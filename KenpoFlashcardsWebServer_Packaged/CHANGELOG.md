@@ -2,7 +2,10 @@
 
 All notable changes to the Windows packaged/installer distribution are documented here.
 
-## v4.1.0 (build 13) — 2026-01-28
+## v4.1.0.1 (build 14) — 2026-01-29
+
+### Fixes
+- Enforced **single-instance** startup for the tray/server to prevent multiple `AdvancedFlashcardsWebAppServer.exe` processes (double-click, autostart/service + tray, etc.).
 
 ### Changed
 - **Updated bundled Web Server to v8.1.0 (build 48)** (from v8.0.2 build 47), including:

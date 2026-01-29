@@ -443,3 +443,5 @@ KenpoFlashcardsWebServer/
 ## 📄 License
 
 Personal/educational use for learning American Kenpo Karate vocabulary.
+
+**Kenpo vocab source:** `data/kenpo_words.json` (server-side). Set `KENPO_JSON_PATH` env var only if you need a custom location.
