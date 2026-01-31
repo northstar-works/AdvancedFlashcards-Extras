@@ -1,0 +1,16 @@
+============================================================
+ONE CLICK BUILD started: Fri 01/30/2026 13:13:06.10
+Packaging folder: C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\
+One-click folder: C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\one_click\
+Master log     : C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\logs\build_all_20260130_131306.log
+============================================================
+[PROGRESS] 0% - Starting...
+[PROGRESS] 10% - STEP 1/3: Pre Build of Build_Data
+
+[STEP 1] Pre Build started: Fri 01/30/2026 13:13:06.16
+[STEP 1] ExitCode=0
+[STEP 1] Pre Build complete: Fri 01/30/2026 13:13:06.70
+[PROGRESS] 33% - Pre Build complete
+[PROGRESS] 40% - STEP 2/3: Build EXE
+
+[STEP 2] Build EXE started: Fri 01/30/2026 13:13:06.73

@@ -12,7 +12,34 @@ The format is simple and practical:
 
 ## Unreleased
 
-- (Add changes here as you work. Move them into a release when you publish.)
+- (Add changes here as you work. Move them into a release when you publish---
+
+---
+
+## 8.3.0 (build 51) — 2026-01-30
+
+### Added
+- **Runtime paths module** (`runtime/app_paths.py`) to centrally control writable locations for **data** and **logs** in both dev and packaged (frozen) runs.
+- **Environment overrides** for advanced/portable setups:
+  - `KENPO_APPDATA_BASE_DIR` (override base AppData folder)
+  - `KENPO_DATA_DIR` / `KENPO_LOG_DIR` (explicit overrides)
+- **First-run data seeding** for packaged installs: if the user’s AppData `data\` is missing required defaults, they are copied from the bundled read-only defaults (non-destructive; does not overwrite existing user data).
+- **Runtime import-path resiliency for frozen builds (tray/service) to reduce install-specific startup failures.
+
+### Changed
+- **DATA_DIR / LOG_DIR resolution now uses the runtime module**:
+  - Dev/source run: project-local `./data` and `./logs`
+  - Packaged/frozen run: `%LOCALAPPDATA%\Advanced Flashcards WebApp Server\{data,logs}` (or env overrides)
+- **Removed/neutralized legacy duplicated `LOG_DIR`/`DATA_DIR` definitions in `app.py` to prevent conflicting path behavior.
+
+### Fixed
+- **Permission errors when installed under `C:\Program Files\...`** by ensuring all write operations (logs, data, generated files) use AppData in packaged mode.
+- **Server logging reliability**: `server.log` consistently initializes in the writable AppData logs folder for tray/service launches.
+- **Corrected indentation issue in internal\app.py that could prevent startup in packaged installs.
+- **Resolved missing module error (runtime) by ensuring runtime\ is included in the built _internal output.
+
+### Update
+- **Updated kenpo_tray.spec and kenpo_server.spec to bundle the runtime package into the EXE distribution.
 
 ---
 
@@ -41,6 +68,7 @@ The format is simple and practical:
 - Documentation and version metadata updated for 8.2.0 (build 50).
 
 ---
+
 ## 8.1.1 (build 49) - 2026-01-29
 - Fix: Admin deck dropdowns now populate correctly (stats includes full deck list + user ids).
 - Fix: Deck ownership/access logic (owned vs shared) and Edit/Delete button visibility.
@@ -52,10 +80,10 @@ The format is simple and practical:
 
 - (Add changes here as you work. Move them into a release when you publish.)
 
----
-
 ### Docs
 - Kenpo vocab now loads from `data/kenpo_words.json` by default (docs + config updated)
+
+---
 
 ## 8.1.0 (build 48) — 2026-01-28
 
@@ -78,7 +106,6 @@ This restores loading and saving deck grant/revoke access lists.
 - **Optional: adjusted deck logo vertical alignment to better line up with the “User:” badge.
 
 ---
-
 
 ## 8.0.2 (build 47) — 2026-01-28
 

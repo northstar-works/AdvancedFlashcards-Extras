@@ -5,7 +5,7 @@
 
 Flask-based web application providing sync API and web UI for Advanced Flashcards WebApp.
 
-**Current Version:** v8.2.0 (build 50)  
+**Current Version:** v8.3.0 (build 51)  
 **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
 ---
@@ -331,7 +331,14 @@ Run in background like Sonarr/Radarr:
 Portable EXE, installer, or MSI:
 - See: `../KenpoFlashcardsWebServer_Packaged_in_exe_msi/README.md`
 
----
+
+**Writable folders (important for installers / Program Files):**
+- Packaged installs should write *all* logs/data/config to **AppData**, not the install folder.
+- Default locations:
+  - Data: `%LOCALAPPDATA%\Advanced Flashcards WebApp Server\data\`
+  - Logs: `%LOCALAPPDATA%\Advanced Flashcards WebApp Server\logs\`
+  - Config: `%LOCALAPPDATA%\Advanced Flashcards WebApp Server\` (e.g., `server_config.json`, `launcher_settings.json`)
+- Optional overrides (advanced): `KENPO_APPDATA_BASE_DIR`, `KENPO_DATA_DIR`, `KENPO_LOG_DIR`.
 
 ## ✅ Verify It Works
 
@@ -345,7 +352,7 @@ Should return JSON with `version`, `term_to_id`, `cards`
 ```
 http://localhost:8009/api/version
 ```
-Should return `{"version": "8.2.0", "build": 50, ...}`
+Should return `{"version": "8.3.0", "build": 51, ...}`
 
 ### 3. Test Admin Users Endpoint
 ```
@@ -405,7 +412,14 @@ Interactive page with tabbed sections:
 
 ---
 
-## 🆕 Recent Updates (8.1.1 → 8.2.0)
+## 🆕 Recent Updates (8.2.0 → 8.3.0)
+
+### v8.3.0 (build 51)
+- **AppData-safe runtime paths (Packaged/EXE):** centralized writable `DATA_DIR` and `LOG_DIR` via a shared runtime paths module so installed builds never attempt to write under `C:\Program Files\...\_internal\...`.
+- **Environment overrides:** support optional overrides for advanced/portable setups (`KENPO_APPDATA_BASE_DIR`, `KENPO_DATA_DIR`, `KENPO_LOG_DIR`).
+- **First-run data seeding:** in packaged/frozen mode, missing default data files are copied from the bundled read-only `data/` into the user’s AppData `data/` folder (non-destructive; does not overwrite existing user data).
+- **Logging reliability:** `server.log` consistently initializes in the writable AppData logs folder when launched via tray/service/installer builds.
+
 
 ### v8.2.0 (build 50)
 - **Forced password reset UX (web):** users reset by **logging in with the temporary password** first; the app then keeps them on the login screen and shows **New + Confirm** fields to finish the reset before entering the app.
@@ -421,6 +435,7 @@ Interactive page with tabbed sections:
 
 | Version | Build | Key Changes |
 |---------|-------|-------------|
+| **8.3.0** | 51 | AppData-safe runtime paths for packaged installs (no writes to Program Files), env overrides for data/log dirs, first-run seeding of bundled defaults into AppData, server logging reliability in tray/service launches, fixed startup indention issue and ensured runtime is included/available in _internal for tray/service |
 | **8.2.0** | 50 | Forced password reset flow (temp login → reset on login screen), Create Deck add-cards method selector + auto-jump, Admin dashboard no longer hangs on load, Packaged install marker (`data/install_type.txt`) for showing Web Server Version |
 | **8.1.1** | 49 | Fix: `/api/health` crash caused by undefined Kenpo JSON path; Standardized Kenpo vocabulary JSON canonical path at `data/kenpo_words.json`; Health check now reports Kenpo JSON status cleanly |
 | **8.1.0** | 48 | Fix: Sync Pull no longer crashes on bad `updated_at`; Fix: Admin Edit User deck access loads/saves via `/api/admin/user/deck_access`; UI: header/logo alignment stability |

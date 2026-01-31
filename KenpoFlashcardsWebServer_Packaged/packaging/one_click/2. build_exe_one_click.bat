@@ -101,7 +101,13 @@ if not exist "%PY_EXE%" (
 REM --- Install packaging requirements
 echo [2/5] Installing packaging requirements...
 echo [2/5] Installing packaging requirements>>"%REPO_LOG%"
-"%PY_EXE%" -m pip install -r "%REQFILE%" >> "%REPO_LOG%" 2>&1 || goto :FAIL
+
+REM Pin build tooling for Python 3.8 compatibility (pip 25+ requires Python >= 3.9)
+"%PY_EXE%" -m pip install "pip==24.0" "setuptools==70.3.0" "wheel==0.44.0" >> "%REPO_LOG%" 2>&1 || goto :FAIL
+
+REM Now install packaging requirements
+"%PY_EXE%" -m pip install -r "%REQFILE%" --progress-bar on --default-timeout 120 --retries 10 >> "%REPO_LOG%" 2>&1 || goto :FAIL
+
 
 REM --- Ensure data directory exists (already staged by Step 1)
 echo [3/5] Verifying data folder...

@@ -1,17 +1,17 @@
-START Fri 01/30/2026  1:51:55.93
+START Fri 01/30/2026 23:09:32.78
 BASE=C:\Users\Sidscri\Documents\GitHub\sidscri-apps
 SRC=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged
 VERJSON=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged\version.json
 SEVENZIP=C:\Program Files\7-Zip\7z.exe
+RAW_VER=5.0.1
+RAW_BUILD=17
 SYNCLOGDIR=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\logs\Sync
-SYNCLOGPAT=v5.0.0_b15*.log
-Using Sync log: C:\Users\Sidscri\Documents\GitHub\sidscri-apps\logs\Sync\v5.0.0_b15_20260130_012258.log
-WSVER_FROM_LOG= =
-WSBUILD_FROM_LOG= =
+SYNCLOGPAT=v5.0.1*.log
+No matching Sync log found (will not append ws suffix
+WSVER_FROM_LOG=
+WSBUILD_FROM_LOG=
 WSSUFFIX=
-RAW_VER=5.0.0
-RAW_BUILD=15
-ZIPPATH=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged-v5.0.0_v15.zip
+ZIPPATH=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged-v5.0.1 v17.zip
 STAGE=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\_zip_stage
 
 ROBOCOPY_EXIT_CODE=1
@@ -21,20 +21,15 @@ Running 7z (from stage)...
 7-Zip 25.01 (x64) : Copyright (c) 1999-2025 Igor Pavlov : 2025-08-03
 
 Scanning the drive:
-37 folders, 111 files, 3582893 bytes (3499 KiB)
+26 folders, 133 files, 3942375 bytes (3850 KiB)
 
-Creating archive: C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged-v5.0.0_v15.zip
+Creating archive: C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged-v5.0.1 v17.zip
 
-Add new data to archive: 37 folders, 111 files, 3582893 bytes (3499 KiB)
+Add new data to archive: 26 folders, 133 files, 3942375 bytes (3850 KiB)
 
 
-Files read from disk: 111
-Archive size: 2455637 bytes (2399 KiB)
+Files read from disk: 133
+Archive size: 2508213 bytes (2450 KiB)
 Everything is Ok
 7Z_EXIT_CODE=0
-Verified: no .venv paths detected
-Verified: no build/ paths detected
-Verified: no dist/ paths detected
-Verified: no packaging/output/ paths detected
-Verified: no packaging/build_data/ paths detected
 SUCCESS

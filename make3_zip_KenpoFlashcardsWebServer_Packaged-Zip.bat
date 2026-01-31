@@ -1,19 +1,19 @@
 @echo off
-setlocal EnableExtensions
+setlocal EnableExtensions EnableDelayedExpansion
 
 REM ============================================================
-REM make_zip.bat (STAGING COPY METHOD - BULLETPROOF)
+REM make3_zip_KenpoFlashcardsWebServer_Packaged-Zip.bat
 REM Put this BAT in: ...\sidscri-apps\
 REM Creates ZIP in the SAME folder as this BAT:
-REM   KenpoFlashcardsWebServer_Packagedv<major.minor> v<build>.zip
+REM   KenpoFlashcardsWebServer_Packaged-v<version> v<build>[_ws<wsver>-b<wsbuild>].zip
 REM ZIP contents root:
 REM   KenpoFlashcardsWebServer_Packaged\...
 REM Reads:
 REM   .\KenpoFlashcardsWebServer_Packaged\version.json
 REM Excludes (recursively, guaranteed):
-REM   .venv, __pycache__, build, dist, *.pyc
+REM   .venv, __pycache__, build, dist, packaging\output, build_data, packaging\build_data, *.pyc
 REM Writes log:
-REM   logs\KenpoFlashcardsWebServer_Packaged.log
+REM   logs\KenpoFlashcardsWebServerPackaged.log
 REM ============================================================
 
 REM Always run from the BAT's folder
@@ -22,6 +22,7 @@ if "%BASE:~-1%"=="\" set "BASE=%BASE:~0,-1%"
 pushd "%BASE%" >nul
 
 set "LOG=%BASE%\logs\KenpoFlashcardsWebServerPackaged.log"
+if not exist "%BASE%\logs" mkdir "%BASE%\logs" >nul 2>&1
 > "%LOG%" echo START %DATE% %TIME%
 >>"%LOG%" echo BASE=%BASE%
 
@@ -52,7 +53,7 @@ if not exist "%SEVENZIP%" (
   goto :fail
 )
 
-REM Parse version/build from JSON using findstr (no PowerShell)
+REM Parse version/build from JSON using findstr (no PowerShell required)
 set "VER="
 set "BUILD="
 
@@ -67,13 +68,35 @@ set "BUILD=%BUILD:,=%"
 set "BUILD=%BUILD:"=%"
 set "BUILD=%BUILD: =%"
 
-REM Optional: find matching Sync log to decide whether to append _ws<ver>_b<build> to ZIP name
+>>"%LOG%" echo RAW_VER=%VER%
+>>"%LOG%" echo RAW_BUILD=%BUILD%
+
+if "%VER%"=="" (
+  >>"%LOG%" echo ERROR: Could not parse version from version.json
+  goto :fail
+)
+
+if "%BUILD%"=="" (
+  >>"%LOG%" echo ERROR: Could not parse build from version.json
+  goto :fail
+)
+
+REM ------------------------------------------------------------
+REM OPTIONAL: append _ws<wsver>-b<wsbuild> to the zip name
+REM Rule: if any log exists under \logs\Sync starting with v<VER>
+REM   Example: logs\Sync\v5.0.0_b15_YYYYMMDD_HHMMSS.log
+REM Then read that log's:
+REM   "webserver_version": "8.2.0"
+REM   "webserver_build": 50
+REM and append: _ws8.2.0-b50
+REM If no matching log, keep name unchanged.
+REM ------------------------------------------------------------
 set "WSSUFFIX="
 set "WSVER="
 set "WSBUILD="
 set "SYNCLOG="
 set "SYNCLOGDIR=%BASE%\logs\Sync"
-set "SYNCLOGPAT=v%VER%_b%BUILD%*.log"
+set "SYNCLOGPAT=v%VER%*.log"
 
 >>"%LOG%" echo SYNCLOGDIR=%SYNCLOGDIR%
 >>"%LOG%" echo SYNCLOGPAT=%SYNCLOGPAT%
@@ -100,7 +123,11 @@ if not "%SYNCLOG%"=="" (
   set "WSBUILD=%WSBUILD:"=%"
   set "WSBUILD=%WSBUILD: =%"
 
-  if not "%WSVER%"=="" if not "%WSBUILD%"=="" set "WSSUFFIX=-ws%WSVER%_v%WSBUILD%"
+  if not "%WSVER%"=="" if not "%WSBUILD%"=="" (
+    set "WSSUFFIX=_ws%WSVER%-b%WSBUILD%"
+  ) else (
+    >>"%LOG%" echo WARNING: Sync log matched but ws fields missing; no ws suffix will be applied
+  )
 ) else (
   >>"%LOG%" echo No matching Sync log found (will not append ws suffix)
 )
@@ -109,21 +136,7 @@ if not "%SYNCLOG%"=="" (
 >>"%LOG%" echo WSBUILD_FROM_LOG=%WSBUILD%
 >>"%LOG%" echo WSSUFFIX=%WSSUFFIX%
 
->>"%LOG%" echo RAW_VER=%VER%
->>"%LOG%" echo RAW_BUILD=%BUILD%
-
-if "%VER%"=="" (
-  >>"%LOG%" echo ERROR: Could not parse version from version.json
-  goto :fail
-)
-
-if "%BUILD%"=="" (
-  >>"%LOG%" echo ERROR: Could not parse build from version.json
-  goto :fail
-)
-
-
-set "ZIPNAME=%PROJ%-v%VER%_v%BUILD%%WSSUFFIX%.zip"
+set "ZIPNAME=%PROJ%-v%VER% v%BUILD%%WSSUFFIX%.zip"
 set "ZIPPATH=%BASE%\%ZIPNAME%"
 >>"%LOG%" echo ZIPPATH=%ZIPPATH%
 
@@ -138,7 +151,9 @@ mkdir "%STAGE%\%PROJ%" >>"%LOG%" 2>&1
 
 REM Copy project to stage while excluding directories by NAME (recursive)
 REM robocopy exit codes 0-7 = OK, >=8 = failure
-robocopy "%SRC%" "%STAGE%\%PROJ%" /E /R:1 /W:1 /NFL /NDL /NP /NJH /NJS /XD ".venv" "__pycache__" "%SRC%\build" "%SRC%\dist" "%SRC%\packaging\output" >>"%LOG%" 2>&1 "build_data" "%SRC%\packaging\build_data"
+robocopy "%SRC%" "%STAGE%\%PROJ%" /E /R:1 /W:1 /NFL /NDL /NP /NJH /NJS ^
+  /XD ".venv" "__pycache__" "build" "dist" "build_data" "packaging\output" "packaging\build_data" >>"%LOG%" 2>&1
+
 set "RC=%ERRORLEVEL%"
 >>"%LOG%" echo ROBOCOPY_EXIT_CODE=%RC%
 if %RC% GEQ 8 (
@@ -162,43 +177,6 @@ popd >nul
 if not "%ZERR%"=="0" (
   >>"%LOG%" echo ERROR: 7-Zip failed
   goto :fail_cleanup
-)
-
-REM Verify excluded folders did not slip in (log only)
-"%SEVENZIP%" l "%ZIPPATH%" | findstr /i "\.venv" >nul 2>&1
-if "%ERRORLEVEL%"=="0" (
-  >>"%LOG%" echo WARNING: .venv paths detected in zip listing
-) else (
-  >>"%LOG%" echo Verified: no .venv paths detected
-)
-
-"%SEVENZIP%" l "%ZIPPATH%" | findstr /i "build/" >nul 2>&1
-if "%ERRORLEVEL%"=="0" (
-  >>"%LOG%" echo WARNING: build/ paths detected in zip listing
-) else (
-  >>"%LOG%" echo Verified: no build/ paths detected
-)
-
-"%SEVENZIP%" l "%ZIPPATH%" | findstr /i "dist/" >nul 2>&1
-if "%ERRORLEVEL%"=="0" (
-  >>"%LOG%" echo WARNING: dist/ paths detected in zip listing
-) else (
-  >>"%LOG%" echo Verified: no dist/ paths detected
-)
-
-"%SEVENZIP%" l "%ZIPPATH%" | findstr /i "packaging/output/" >nul 2>&1
-if "%ERRORLEVEL%"=="0" (
-  >>"%LOG%" echo WARNING: packaging/output/ paths detected in zip listing
-) else (
-  >>"%LOG%" echo Verified: no packaging/output/ paths detected
-
-REM Verify build_data is excluded (log only)
-"%SEVENZIP%" l "%ZIPPATH%" | findstr /i "packaging/build_data/" >nul 2>&1
-if "%ERRORLEVEL%"=="0" (
-  >>"%LOG%" echo WARNING: packaging/build_data/ paths detected in zip listing
-) else (
-  >>"%LOG%" echo Verified: no packaging/build_data/ paths detected
-)
 )
 
 REM Cleanup stage

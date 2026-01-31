@@ -1,3 +1,4 @@
+import sys
 import os
 import json
 import time
@@ -69,14 +70,29 @@ def _resolve_kenpo_json_path() -> str:
         return explicit
 
     # Preferred location (packaged + deployed server): ./data/kenpo_words.json
+    # Preferred location (packaged + deployed server): <writable data>/kenpo_words.json
     try:
+        # 1) Explicit data dir env (launcher/tool may set this)
+        kd = (os.getenv("KENPO_DATA_DIR") or "").strip()
+        if kd:
+            p = Path(kd) / "kenpo_words.json"
+            if p.exists():
+                return str(p)
+
+        # 2) Default AppData location for installed EXE
+        la = (os.environ.get("LOCALAPPDATA") or os.environ.get("APPDATA") or "").strip()
+        if la:
+            p = Path(la) / "Advanced Flashcards WebApp Server" / "data" / "kenpo_words.json"
+            if p.exists():
+                return str(p)
+
+        # 3) Dev fallback: ./data/kenpo_words.json next to app.py
         app_dir = Path(__file__).resolve().parent
         local_data = app_dir / "data" / "kenpo_words.json"
         if local_data.exists():
             return str(local_data)
     except Exception:
         pass
-
     root = (os.getenv("KENPO_ROOT") or DEFAULT_KENPO_ROOT).strip() or DEFAULT_KENPO_ROOT
     try:
         root_path = Path(root)
@@ -105,14 +121,36 @@ def _get_kenpo_json_path() -> str:
     _KENPO_JSON_PATH_CACHE = p
     return p
 
-APP_DIR = os.path.dirname(os.path.abspath(__file__))
+# === RUNTIME_APP_PATHS_MODULE_V1 ===
+def _ensure_runtime_on_path():
+    """Make sure the bundled 'runtime' package can be imported in both dev and EXE installs."""
+    try:
+        import runtime  # noqa: F401
+        return
+    except Exception:
+        pass
+    try:
+        here = Path(__file__).resolve().parent
+        for p in (here, here.parent):
+            sp = str(p)
+            if sp not in sys.path:
+                sys.path.insert(0, sp)
+    except Exception:
+        pass
 
-DATA_DIR = os.path.join(APP_DIR, "data")
+_ensure_runtime_on_path()
+from runtime.app_paths import get_app_paths, ensure_seeded_data, configure_logging
 
-from pathlib import Path
+PATHS = get_app_paths(app_name="Advanced Flashcards WebApp Server")
+DATA_DIR = PATHS.data_dir
+LOG_DIR = PATHS.logs_dir
 
-DATA_DIR = Path(DATA_DIR)
+# Seed bundled defaults into AppData/data (never overwrites)
+ensure_seeded_data(PATHS)
 
+# Configure file logging into AppData/logs
+logger = configure_logging(PATHS, logger_name="advanced_flashcards")
+# === /RUNTIME_APP_PATHS_MODULE_V1 ===
 BREAKDOWNS_PATH = os.path.join(DATA_DIR, "breakdowns.json")
 
 # Canonical term->id helper (source of truth for IDs across devices)
@@ -600,38 +638,9 @@ app = Flask(__name__, static_folder="static")
 # ----------------------------
 # File logging to ./logs
 # ----------------------------
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-LOG_DIR = os.path.join(BASE_DIR, 'logs')
-os.makedirs(LOG_DIR, exist_ok=True)
-
-logger = logging.getLogger('advanced_flashcards')
-logger.setLevel(logging.INFO)
-
-_fmt = logging.Formatter('%(asctime)s | %(levelname)s | %(name)s | %(message)s')
-_fh = logging.FileHandler(os.path.join(LOG_DIR, 'server.log'), encoding='utf-8')
-_fh.setLevel(logging.INFO)
-_fh.setFormatter(_fmt)
-_eh = logging.FileHandler(os.path.join(LOG_DIR, 'error.log'), encoding='utf-8')
-_eh.setLevel(logging.ERROR)
-_eh.setFormatter(_fmt)
-_sh = logging.StreamHandler()
-_sh.setLevel(logging.INFO)
-_sh.setFormatter(_fmt)
-
-if not any(isinstance(h, logging.FileHandler) and getattr(h, 'baseFilename', '').endswith('server.log') for h in logger.handlers):
-    logger.addHandler(_fh)
-if not any(isinstance(h, logging.FileHandler) and getattr(h, 'baseFilename', '').endswith('error.log') for h in logger.handlers):
-    logger.addHandler(_eh)
-if not any(isinstance(h, logging.StreamHandler) for h in logger.handlers):
-    logger.addHandler(_sh)
-
-# also pipe Werkzeug logs into our files
-werk_logger = logging.getLogger('werkzeug')
-werk_logger.setLevel(logging.INFO)
-for h in list(logger.handlers):
-    if h not in werk_logger.handlers:
-        werk_logger.addHandler(h)
-
+# ----------------------------
+# Logging is configured near the top via runtime.app_paths.configure_logging(PATHS)
+# ----------------------------
 
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(USERS_DIR, exist_ok=True)

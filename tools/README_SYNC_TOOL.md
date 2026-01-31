@@ -9,7 +9,8 @@ Place this tool in a `tools` folder alongside your project folders:
 ```
 📁 Your Projects Folder
 ├── 📁 KenpoFlashcardsWebServer          ← Source
-├── 📁 KenpoFlashcardsWebServer_Packaged ← Destination  
+├── 📁 KenpoFlashcardsWebServer_Packaged ← Base destination (Packaging truth)
+├── 📁 KenpoFlashcardsWebServer_Packaged_Synced ← Output (DEFAULT)
 ├── 📁 tools                              ← This tool goes here
 │   ├── sync_webserver.bat
 │   ├── sync_webserver_to_packaged.py
@@ -24,6 +25,9 @@ Place this tool in a `tools` folder alongside your project folders:
 - **Docs Update**: Automatically updates `README.md` and `CHANGELOG.md`
 - **Safe Backups**: Creates timestamped backups in `tools/sync_backups/`
 - **Dry-Run Mode**: Preview all changes without applying them
+- **Post-Sync Auto-Patch**: Forces AppData-safe DATA_DIR/LOG_DIR for installed EXE
+- **Hard-Fail Regression Scanner**: Stops if any known-bad pathing is detected
+- **Synced Output Folder**: Writes to `KenpoFlashcardsWebServer_Packaged_Synced` by default
 
 ## Usage
 
@@ -33,7 +37,7 @@ Place this tool in a `tools` folder alongside your project folders:
 sync_webserver.bat
 ```
 
-This automatically syncs from `..\KenpoFlashcardsWebServer` to `..\KenpoFlashcardsWebServer_Packaged`
+This automatically syncs from `..\KenpoFlashcardsWebServer` into `..\KenpoFlashcardsWebServer_Packaged_Synced` (leaving `KenpoFlashcardsWebServer_Packaged` untouched)
 
 ### Preview Changes First
 
@@ -51,6 +55,18 @@ sync_webserver.bat C:\Projects\WebServer C:\Projects\Packaged
 
 ```bash
 python sync_webserver_to_packaged.py ..\KenpoFlashcardsWebServer ..\KenpoFlashcardsWebServer_Packaged
+```
+
+## Output Modes
+
+- **Default (recommended):** `--output synced` → writes to `KenpoFlashcardsWebServer_Packaged_Synced`
+- **In-place:** `--output inplace` → modifies the destination Packaged folder directly
+
+Examples:
+
+```batch
+sync_webserver.bat --synced
+sync_webserver.bat --inplace
 ```
 
 ## Upgrade Levels

@@ -2,10 +2,34 @@
 
 All notable changes to the Windows packaged/installer distribution are documented here.
 
-## v5.0.0 (build 15) — 2026-01-30
+## v5.0.1 (build 17) — 2026-01-30
+
+### Fixed
+- Packaging build dependency resolution on Python 3.8 by pinning build-tool versions to Python 3.8-compatible releases (prevents “requires Python >= 3.9” failures).
+- Ensured packaged runtime remains **AppData-write-safe** (no writes under `Program Files`).
+- **Packaging build reliability on Python 3.8** by pinning build tooling to compatible versions:
+  - `pip==24.0`
+  - `setuptools==70.3.0`
+  - `wheel==0.44.0`
+- Documentation corrected to reflect **v5.0.1** (previous internal references to “v5.1.0” were the same release and should be treated as **v5.0.1**).
+- Fixed IndentationError: unexpected indent in internal\app.py that prevented the server from starting.
+- Fixed tray/service startup crash: ModuleNotFoundError: No module named 'runtime'
 
 ### Changed
-- **Updated bundled Web Server to v8.2.0 (build 50)** (from v0.0.0 build 0), including:
+- One-click EXE build: `pip install` now uses:
+  - `--progress-bar on`
+  - `--default-timeout 120`
+  - `--retries 10`
+  to avoid “looks stuck” installs and improve resilience on slow/finicky networks.
+- Version labeling: corrected docs to **v5.0.1** (no changes to v5.0.0 release notes).
+- Improved frozen/installed execution reliability by ensuring runtime imports resolve correctly when running from ...\_internal.
+- Updated PyInstaller configuration to include the runtime\ package inside the installed _internal directory so imports work after installation
+
+## v5.0.0 (build 16) — 2026-01-30 - Synced from v8.2.0 (build 50)
+
+### Changed
+- Synced **Packaged** with the latest WebServer feature set to produce the first “hybrid truth” release for EXE distribution.
+- Updated bundled Web Server to **v8.2.0 (build 50)**.v8.2.0 build 50), including:
   - Create Deck (Keyword method): auto-search uses deck name + description; default max = 25.
   - Packaged-only display: Web Server Version appears in User menu, About, and Admin > System only when install_type is packaged.
   - **Added GEN8 Token Admin Namespace for Android
@@ -113,10 +137,39 @@ All notable changes to the Windows packaged/installer distribution are documente
   - Renamed "Definition first" to "Reverse the cards (Definition first)"
   - Tighter spacing for small screens
 
+## v4.1.2 (build 15) — 2026-01-30
+
+This release hardens the packaging/sync pipeline so future WebServer syncs cannot reintroduce `Program Files` write paths.
+
+### Added
+- **Runtime path module** (`runtime/app_paths.py`) to centralize writable `DATA_DIR` / `LOG_DIR` behavior.
+- **Hard-fail regression scanner** after sync/build to prevent `_internal\logs` / `Program Files` write regressions.
+- **Post-sync auto-patch step** to enforce AppData-safe paths in the synced output even if upstream files change.
+- **Synced output folder**: `KenpoFlashcardsWebServer_Packaged_Synced` to keep Packaging truth clean.
+
+### Fixed
+- Prevented write-permission failures when installed under `C:\Program Files\...` by ensuring writable paths (data/logs/config) resolve to per-user AppData when running as a packaged install.
+- Permission errors when installed under `C:\Program Files\Advanced Flashcards WebApp Server` by routing all writes to:
+  - `%LOCALAPPDATA%\Advanced Flashcards WebApp Server\data`
+  - `%LOCALAPPDATA%\Advanced Flashcards WebApp Server\logs`
+
+### Changed
+- Packaging/runtime ownership clarified: packaging files and runtime path rules are preserved during sync; webserver feature code can still be synced safely into the *_Synced* output.
+
 ## v4.1.0.1 (build 14) — 2026-01-29
 
 ### Fixes
 - Enforced **single-instance** startup for the tray/server to prevent multiple `AdvancedFlashcardsWebAppServer.exe` processes (double-click, autostart/service + tray, etc.).
+
+### Changed
+- **Updated bundled Web Server to v8.1.0 (build 48)** (from v8.0.2 build 47), including:
+  - **Added GEN8 Token Admin Namespace for Android
+-**
+  - **Invite code redemption**
+  - **Docs updates**
+  - **Admin per-user sharing controls**
+
+## v4.1.0 (build 13) — 2026-01-28 Synced from v8.1.0 (build 48)
 
 ### Changed
 - **Updated bundled Web Server to v8.1.0 (build 48)** (from v8.0.2 build 47), including:

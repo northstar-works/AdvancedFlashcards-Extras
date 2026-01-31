@@ -419,7 +419,7 @@ class WebServerSyncer:
     """Main sync tool that coordinates all operations."""
     
     PROTECTED_ITEMS = [
-        'packaging', 'windows_service', 'windows_tray', 'build_data', 'tools',
+        'packaging', 'windows_service', 'windows_tray', 'build_data', 'tools', 'runtime',
         'KenpoFlashcardsTrayLauncher.py', 'Kenpo_Vocabulary_Study_Flashcards.ico',
         'server_config.json', 'INSTALL_WINDOWS.md', 'RUN_AS_WINDOWS_SERVICE.md',
         'PATCH_README.txt', '.sync_backups', 'README.md', 'CHANGELOG.md', 'version.json'
@@ -759,6 +759,347 @@ class WebServerSyncer:
         return True
 
 
+
+    # ---------------------------------------------------------
+    # Post-sync safety: Auto-patch + Regression Scanner
+    # ---------------------------------------------------------
+
+    APPDATA_PATCH_MARKER = "RUNTIME_APP_PATHS_MODULE_V1"
+
+    def _runtime_app_paths_template(self) -> str:
+        """Return runtime/app_paths.py contents (used by post-sync autopatch)."""
+        import textwrap
+        return textwrap.dedent('''
+        """Runtime path + seeding helpers (single source of truth).
+        
+        RUNTIME_APP_PATHS_MODULE_V1
+        
+        Goals:
+        - Installed EXE (Program Files / PyInstaller): ALL writes go to per-user AppData
+        - Dev mode (run from source): keep project-local ./data and ./logs
+        - Optional overrides via env:
+            KENPO_APPDATA_BASE_DIR  -> base folder containing data/, logs/, etc
+            KENPO_DATA_DIR          -> explicit data folder
+            KENPO_LOG_DIR           -> explicit logs folder
+        """
+        
+        from __future__ import annotations
+        
+        import os
+        import sys
+        import shutil
+        import logging
+        from dataclasses import dataclass
+        from pathlib import Path
+        from typing import Optional
+        
+        APP_NAME_DEFAULT = "Advanced Flashcards WebApp Server"
+        
+        @dataclass(frozen=True)
+        class AppPaths:
+            app_name: str
+            project_root: Path          # read-only-ish bundle root when frozen
+            appdata_root: Path          # per-user writable root
+            data_dir: Path
+            logs_dir: Path
+        
+        def _is_frozen() -> bool:
+            return bool(getattr(sys, "frozen", False)) or hasattr(sys, "_MEIPASS")
+        
+        def _project_root_from_here() -> Path:
+            # runtime/app_paths.py -> runtime -> project root
+            return Path(__file__).resolve().parent.parent
+        
+        def _get_appdata_root(app_name: str) -> Path:
+            override = (os.environ.get("KENPO_APPDATA_BASE_DIR") or "").strip()
+            if override:
+                return Path(override).expanduser()
+        
+            # If KENPO_DATA_DIR points to ...\data, normalize to parent base folder
+            kd = (os.environ.get("KENPO_DATA_DIR") or "").strip()
+            if kd:
+                p = Path(kd).expanduser()
+                if p.name.lower() == "data":
+                    return p.parent
+                return p
+        
+            la = (os.environ.get("LOCALAPPDATA") or os.environ.get("APPDATA") or str(Path.home())).strip()
+            return (Path(la) / app_name)
+        
+        def get_app_paths(app_name: str = APP_NAME_DEFAULT) -> AppPaths:
+            frozen = _is_frozen()
+        
+            # Bundle/project root (OK for reading static/ and bundled defaults)
+            if frozen:
+                if hasattr(sys, "_MEIPASS") and getattr(sys, "_MEIPASS"):
+                    project_root = Path(getattr(sys, "_MEIPASS"))
+                else:
+                    project_root = Path(sys.executable).resolve().parent
+            else:
+                project_root = _project_root_from_here()
+        
+            appdata_root = _get_appdata_root(app_name).resolve()
+        
+            use_appdata = bool(
+                frozen
+                or os.environ.get("KENPO_DATA_DIR")
+                or os.environ.get("KENPO_LOG_DIR")
+                or os.environ.get("KENPO_APPDATA_BASE_DIR")
+            )
+        
+            if use_appdata:
+                data_dir = Path(os.environ.get("KENPO_DATA_DIR") or (appdata_root / "data")).expanduser().resolve()
+                logs_dir = Path(os.environ.get("KENPO_LOG_DIR") or (appdata_root / "logs")).expanduser().resolve()
+            else:
+                data_dir = (project_root / "data").resolve()
+                logs_dir = (project_root / "logs").resolve()
+        
+            # Ensure writable dirs exist (best-effort; do not crash)
+            for p in (appdata_root, data_dir, logs_dir):
+                try:
+                    p.mkdir(parents=True, exist_ok=True)
+                except Exception:
+                    pass
+        
+            return AppPaths(
+                app_name=app_name,
+                project_root=project_root,
+                appdata_root=appdata_root,
+                data_dir=data_dir,
+                logs_dir=logs_dir,
+            )
+        
+        def _bundle_data_dir(paths: AppPaths) -> Optional[Path]:
+            # Prefer adjacent bundle data/
+            p = paths.project_root / "data"
+            if p.exists():
+                return p
+            # PyInstaller temp extraction fallback
+            meipass = getattr(sys, "_MEIPASS", None)
+            if meipass:
+                p2 = Path(meipass) / "data"
+                if p2.exists():
+                    return p2
+            return None
+        
+        def ensure_seeded_data(paths: AppPaths) -> None:
+            """Copy missing bundled default files/dirs into writable AppData/data.
+        
+            Never overwrites existing user data.
+            Safe no-op in dev mode (when data_dir is project-local).
+            """
+            try:
+                if paths.data_dir == (paths.project_root / "data").resolve():
+                    return  # dev mode
+                src_root = _bundle_data_dir(paths)
+                if not src_root:
+                    return
+                for src in src_root.rglob("*"):
+                    rel = src.relative_to(src_root)
+                    dst = paths.data_dir / rel
+                    if src.is_dir():
+                        dst.mkdir(parents=True, exist_ok=True)
+                        continue
+                    if not dst.exists():
+                        dst.parent.mkdir(parents=True, exist_ok=True)
+                        try:
+                            shutil.copy2(src, dst)
+                        except Exception:
+                            pass
+            except Exception:
+                pass
+        
+        def configure_logging(paths: AppPaths, logger_name: str = "advanced_flashcards") -> logging.Logger:
+            """Configure file + stream logging to AppData-safe logs_dir.
+        
+            Returns the configured logger (named logger_name).
+            """
+            logger = logging.getLogger(logger_name)
+            logger.setLevel(logging.INFO)
+        
+            try:
+                paths.logs_dir.mkdir(parents=True, exist_ok=True)
+            except Exception:
+                pass
+        
+            fmt = logging.Formatter('%(asctime)s | %(levelname)s | %(name)s | %(message)s')
+        
+            def _ensure_filehandler(filename: str, level: int):
+                target = str(paths.logs_dir / filename)
+                for h in logger.handlers:
+                    if isinstance(h, logging.FileHandler) and getattr(h, "baseFilename", "") == target:
+                        return
+                try:
+                    fh = logging.FileHandler(target, encoding="utf-8")
+                    fh.setLevel(level)
+                    fh.setFormatter(fmt)
+                    logger.addHandler(fh)
+                except Exception:
+                    pass
+        
+            _ensure_filehandler("server.log", logging.INFO)
+            _ensure_filehandler("error.log", logging.ERROR)
+        
+            # Stream handler (console)
+            if not any(isinstance(h, logging.StreamHandler) and not isinstance(h, logging.FileHandler) for h in logger.handlers):
+                sh = logging.StreamHandler()
+                sh.setLevel(logging.INFO)
+                sh.setFormatter(fmt)
+                logger.addHandler(sh)
+        
+            # Mirror handlers to werkzeug
+            werk = logging.getLogger("werkzeug")
+            werk.setLevel(logging.INFO)
+            for h in list(logger.handlers):
+                if h not in werk.handlers:
+                    werk.addHandler(h)
+        
+            return logger
+        ''')
+
+
+    def post_sync_autopatch(self) -> bool:
+        """Always enforce AppData-safe runtime paths in the synced Packaged output.
+
+        - Ensures app.py does NOT write to Program Files / _internal
+        - Forces DATA_DIR + LOG_DIR to point to per-user AppData when frozen (or when env vars are present)
+        - Seeds missing defaults from the bundled read-only data/ folder into AppData/data
+        """
+        app_py = self.pkg_dest / "app.py"
+        if not app_py.exists():
+            self.log("post_sync_autopatch: app.py not found in destination", "WARN")
+            self.record_action("app.py", "autopatch_skipped_missing")
+            return True
+
+        try:
+            original = app_py.read_text(encoding="utf-8", errors="ignore")
+        except Exception as e:
+            self.log(f"post_sync_autopatch: failed to read app.py: {e}", "ERROR")
+            self.record_action("app.py", "autopatch_failed_read", error=str(e))
+            return False
+
+        patched = original
+
+        # 0) Ensure runtime/app_paths.py exists in destination (Packaged-owned single source of truth)
+        try:
+            rt_dir = self.pkg_dest / 'runtime'
+            rt_dir.mkdir(parents=True, exist_ok=True)
+            rt_init = rt_dir / '__init__.py'
+            if not rt_init.exists():
+                rt_init.write_text('# runtime package\n', encoding='utf-8')
+            rt_file = rt_dir / 'app_paths.py'
+            if (not rt_file.exists()) or ('RUNTIME_APP_PATHS_MODULE_V1' not in rt_file.read_text(encoding='utf-8', errors='ignore')):
+                rt_file.write_text(self._runtime_app_paths_template(), encoding='utf-8')
+                self.record_action('runtime/app_paths.py', 'ensured_runtime_module')
+        except Exception as e:
+            self.log(f'post_sync_autopatch: failed to ensure runtime/app_paths.py: {e}', 'WARN')
+
+
+        # 1) Patch the APP_DIR/DATA_DIR early-runtime block (common in webserver truth)
+        appdata_block = """# === {marker} ===
+from runtime.app_paths import get_app_paths, ensure_seeded_data, configure_logging
+
+PATHS = get_app_paths(app_name="Advanced Flashcards WebApp Server")
+DATA_DIR = PATHS.data_dir
+LOG_DIR = PATHS.logs_dir
+
+# Seed bundled defaults into AppData/data (never overwrites)
+ensure_seeded_data(PATHS)
+
+# Configure file logging into AppData/logs
+logger = configure_logging(PATHS, logger_name="advanced_flashcards")
+# === /{marker} ===
+""".format(marker=self.APPDATA_PATCH_MARKER)
+
+        pattern1 = re.compile(
+            r"APP_DIR\s*=\s*os\.path\.dirname\(os\.path\.abspath\(__file__\)\)\s*\n\s*\nDATA_DIR\s*=\s*os\.path\.join\(APP_DIR,\s*['\"]data['\"]\)\s*\n\s*\nfrom\s+pathlib\s+import\s+Path\s*\n\s*\nDATA_DIR\s*=\s*Path\(DATA_DIR\)\s*\n",
+            re.MULTILINE
+        )
+        if pattern1.search(patched):
+            patched = pattern1.sub(lambda _m: appdata_block, patched, count=1)
+
+        else:
+            # Alternate pattern (some packaged truths don't convert DATA_DIR to Path here)
+            pattern2 = re.compile(
+                r"APP_DIR\s*=\s*os\.path\.dirname\(os\.path\.abspath\(__file__\)\)\s*\n\s*\nDATA_DIR\s*=\s*os\.path\.join\(APP_DIR,\s*['\"]data['\"]\)\s*\n",
+                re.MULTILINE
+            )
+            if pattern2.search(patched):
+                patched = pattern2.sub(lambda _m: appdata_block, patched, count=1)
+
+        # 2) Patch legacy LOG_DIR redefinition block (common in webserver truth)
+        patched = re.sub(
+            r"BASE_DIR\s*=\s*os\.path\.dirname\(os\.path\.abspath\(__file__\)\)\s*\nLOG_DIR\s*=\s*os\.path\.join\(BASE_DIR,\s*['\"]logs['\"]\)\s*\nos\.makedirs\(LOG_DIR,\s*exist_ok=True\)\s*\n",
+            "# LOG_DIR is defined near the top (AppData-safe when installed)\ntry:\n    LOG_DIR = Path(LOG_DIR)\n    LOG_DIR.mkdir(parents=True, exist_ok=True)\nexcept Exception:\n    pass\n\n",
+            patched,
+            count=1
+        )
+
+        # 3) Make FileHandler paths robust when LOG_DIR is a Path
+        patched = patched.replace("logging.FileHandler(os.path.join(LOG_DIR, 'server.log')", "logging.FileHandler(str(Path(LOG_DIR) / 'server.log')")
+        patched = patched.replace("logging.FileHandler(os.path.join(LOG_DIR, 'error.log')", "logging.FileHandler(str(Path(LOG_DIR) / 'error.log')")
+
+        changed = (patched != original)
+        # In dry-run, keep the would-be patched content for regression scanning
+        if self.dry_run:
+            self._dryrun_app_py_patched_content = patched
+            self.log(f"Would auto-patch app.py for AppData-safe paths (changed={changed})")
+            self.record_action("app.py", "would_autopatch", changed=changed)
+            return True
+
+        if changed:
+            try:
+                app_py.write_text(patched, encoding="utf-8")
+                self.log("Applied AppData-safe runtime auto-patch to app.py", "SUCCESS")
+                self.record_action("app.py", "autopatched")
+            except Exception as e:
+                self.log(f"Failed to write patched app.py: {e}", "ERROR")
+                self.record_action("app.py", "autopatch_failed_write", error=str(e))
+                return False
+        else:
+            self.record_action("app.py", "autopatch_no_change")
+            self.log("Auto-patch: app.py already AppData-safe (no change)", "SKIP")
+
+        return True
+
+    def regression_scan_or_fail(self) -> bool:
+        """Hard-fail if we detect regressions that would write logs/data into Program Files."""
+        app_py = self.pkg_dest / "app.py"
+        if not app_py.exists():
+            self.log("Regression scan: app.py missing", "ERROR")
+            return False
+
+        if self.dry_run and hasattr(self, '_dryrun_app_py_patched_content'):
+            content = getattr(self, '_dryrun_app_py_patched_content')
+        else:
+            content = app_py.read_text(encoding="utf-8", errors="ignore")
+
+        problems = []
+
+        # Required marker (ensures our patch is present)
+        if self.APPDATA_PATCH_MARKER not in content:
+            problems.append(f"Missing marker: {self.APPDATA_PATCH_MARKER}")
+
+        # Known-bad legacy blocks
+        if "LOG_DIR = os.path.join(BASE_DIR, 'logs')" in content or "LOG_DIR = os.path.join(BASE_DIR, \"logs\")" in content:
+            problems.append("Legacy LOG_DIR based on BASE_DIR detected")
+
+        # Must reference AppData/env-based routing when frozen
+        if ("runtime.app_paths" not in content) and "LOCALAPPDATA" not in content and "KENPO_DATA_DIR" not in content and "KENPO_APPDATA_BASE_DIR" not in content:
+            problems.append("No AppData/env routing detected (LOCALAPPDATA / KENPO_* missing)")
+
+        if problems:
+            self.log("REGRESSION SCAN FAILED:", "ERROR")
+            for p in problems:
+                self.log(f" - {p}", "ERROR")
+            self.record_action("app.py", "regression_failed", reasons=problems)
+            return False
+
+        self.log("Regression scan passed (AppData-safe runtime paths present)", "SUCCESS")
+        self.record_action("app.py", "regression_passed")
+        return True
+
+
     def run(self):
         """Execute the full sync process."""
         print("\n" + "="*60)
@@ -852,6 +1193,20 @@ class WebServerSyncer:
         self.log("Merging data folder...")
         self.sync_data_folder()
         print()
+
+        # Post-sync: enforce AppData-safe runtime + hard-fail regression scan
+        self.log("Post-sync auto-patch (AppData-safe runtime paths)...")
+        if not self.post_sync_autopatch():
+            self.log("Auto-patch failed", "ERROR")
+            return False
+        print()
+
+        self.log("Running regression scanner...")
+        if not self.regression_scan_or_fail():
+            self.log("Regression scanner hard-failed (refusing to continue)", "ERROR")
+            return False
+        print()
+
         # Update documentation
         self.log("Updating documentation (AI-assisted)...")
         doc_updater = DocumentationUpdater(self.pkg_dest, self.dry_run)
@@ -973,8 +1328,8 @@ Examples:
                         help='Preview changes without applying')
     parser.add_argument('--level', type=int, choices=[1,2,3],
                         help='Upgrade level: 1=patch, 2=minor, 3=major (skips interactive prompt)')
-    parser.add_argument('--output', choices=['inplace','synced'], default='inplace',
-                        help='Where to write results: inplace=modify destination folder; synced=create sibling <destination>-synced and write there')
+    parser.add_argument('--output', choices=['inplace','synced'], default='synced',
+                        help='Where to write results: inplace=modify destination folder; synced=write into sibling KenpoFlashcardsWebServer_Packaged_Synced')
     
     args = parser.parse_args()
     
@@ -994,14 +1349,17 @@ Examples:
     # Tools dir is where this script is located
     tools_dir = Path(__file__).parent.resolve()
 
-    # Optional output mode: create sibling "<destination>-synced" and write there
+    # Optional output mode: write into sibling "KenpoFlashcardsWebServer_Packaged_Synced"
     if args.output == 'synced':
         base_destination = destination
-        destination = base_destination.parent / (base_destination.name + '-synced')
+        synced_destination = base_destination.parent / 'KenpoFlashcardsWebServer_Packaged_Synced'
 
         if args.dry_run:
-            print(f"[DRY-RUN] Output mode: synced -> would write into: {destination}")
+            print(f"[DRY-RUN] Output mode: synced -> would write into: {synced_destination}")
+            # For dry-run, keep reading from the real Packaged destination so we can diff versions/actions.
+            destination = base_destination
         else:
+            destination = synced_destination
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
             backup_root = tools_dir / 'sync_backups' / 'synced_outputs'
             backup_root.mkdir(parents=True, exist_ok=True)

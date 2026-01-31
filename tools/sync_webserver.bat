@@ -27,7 +27,7 @@ REM Parse arguments
 set WEBSERVER_FOLDER=
 set PACKAGED_FOLDER=
 set DRY_RUN=
-set OUTPUT_MODE=
+set OUTPUT_MODE=--output synced
 
 :parse_args
 if "%~1"=="" goto done_parsing
@@ -142,10 +142,13 @@ echo   packaged_folder  - Path to KenpoFlashcardsWebServer_Packaged project
 echo.
 echo Defaults:
 echo   webserver_folder = ..\KenpoFlashcardsWebServer
-echo   packaged_folder  = ..\KenpoFlashcardsWebServer_Packaged
+echo   packaged_folder  = ..\KenpoFlashcardsWebServer_Packaged (base)
+echo   synced output    = ..\KenpoFlashcardsWebServer_Packaged_Synced (default output)
 echo.
 echo Options:
 echo   --dry-run, -n    Preview changes without applying them
+echo   --inplace        Write changes into the destination folder (modifies Packaged)
+echo   --synced         Write into sibling KenpoFlashcardsWebServer_Packaged_Synced (DEFAULT)
 echo   --help, -h       Show this help
 echo.
 echo Examples:

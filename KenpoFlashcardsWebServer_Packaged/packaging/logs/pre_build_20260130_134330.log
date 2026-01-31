@@ -1,0 +1,15 @@
+============================================================
+PRE BUILD started: Fri 01/30/2026 13:43:30.05
+Project root : C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced
+Packaging    : C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging
+Build data   : C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\build_data
+Local data   : C:\Users\Sidscri\AppData\Local\Advanced Flashcards WebApp Server\data
+Log file     : C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\logs\pre_build_20260130_134330.log
+============================================================
+[INFO] Using LOCALAPPDATA data
+[INFO] robocopy \"C:\Users\Sidscri\AppData\Local\Advanced
+
+
+[INFO] robocopy exit=1
+[INFO] Wrote flag: C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\build_data\.from_local.flag
+[OK] Data staged successfully.

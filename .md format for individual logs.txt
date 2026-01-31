@@ -1,0 +1,27 @@
+
+KenpoFlashcardsWebServer_Packaged — v5.0.1 v17 (Patch) 
+
+CHANGELOG.md entry (paste under v5.0.1 v17)
+
+v5.0.1 v17 – Patch: EXE startup + runtime packaging fix
+
+#### Changed
+- Rebranded the packaged app and installer to **Advanced Flashcards WebApp Server** (no more “Kenpo Flashcards”).
+- Runtime data moved out of Program Files; the app now uses:  
+  `%LOCALAPPDATA%\Advanced Flashcards WebApp Server\data`
+
+#### Added
+- Tray executable naming updated to match branding: `AdvancedFlashcardsWebAppServer.exe`
+- Installer output naming updated to include version: `AdvancedFlashcardsWebAppServer-<AppVersion>.exe`
+
+#### Fixed
+- Ensured the packaged build consistently points at the per-user LOCALAPPDATA data location (seeded from bundled data on first run).
+
+README.md Version History blurb v5.0.1 v17 (Patch)
+
+| Version | Build | Key Changes |
+|---------|-------|-------------|
+| **5.0.0** | 15 | Synced Packaged with the latest WebServer feature set to produce the first “hybrid truth” release for EXE distribution., Updated bundled Web Server to v8.2.0 (build 50). |
+
+KenpoFlashcardsWebServer — v8.3.0 v51 (Patch)
+ Same as other project

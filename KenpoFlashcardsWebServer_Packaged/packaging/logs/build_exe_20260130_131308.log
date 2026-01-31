@@ -1,0 +1,40 @@
+============================================================
+Build EXE started: Fri 01/30/2026 13:13:09.07
+Project root : C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced
+Packaging    : C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging
+Mode         : update
+Data dir     : C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\build_data
+============================================================
+[1/5] Creating venv
+[2/5] Installing packaging requirements
+Collecting pyinstaller==6.6.0 (from -r C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\requirements_packaging.txt (line 1))
+  Using cached https://files.pythonhosted.org/packages/63/d2/9e0c3cbbc9734797aa073cb856ad067e274ae5db83fac5fb990d948a0c37/pyinstaller-6.6.0-py3-none-win_amd64.whl
+Collecting pystray==0.19.5 (from -r C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\requirements_packaging.txt (line 2))
+  Using cached https://files.pythonhosted.org/packages/5c/64/927a4b9024196a4799eba0180e0ca31568426f258a4a5c90f87a97f51d28/pystray-0.19.5-py2.py3-none-any.whl
+Collecting pillow==10.4.0 (from -r C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\requirements_packaging.txt (line 3))
+  Using cached https://files.pythonhosted.org/packages/f2/75/3cb820b2812405fc7feb3d0deb701ef0c3de93dc02597115e00704591bc9/pillow-10.4.0-cp38-cp38-win_amd64.whl
+Collecting requests>=2.31.0 (from -r C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\requirements_packaging.txt (line 6))
+  Using cached https://files.pythonhosted.org/packages/7c/e4/56027c4a6b4ae70ca9de302488c5ca95ad4a39e190093d6c1a8ace08341b/requests-2.32.4-py3-none-any.whl
+Collecting flask<3.0,>=2.2.2 (from -r C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\requirements_packaging.txt (line 7))
+  Using cached https://files.pythonhosted.org/packages/fd/56/26f0be8adc2b4257df20c1c4260ddd0aa396cf8e75d90ab2f7ff99bc34f9/flask-2.3.3-py3-none-any.whl
+Collecting Werkzeug<3.0,>=2.2.2 (from -r C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\requirements_packaging.txt (line 8))
+  Using cached https://files.pythonhosted.org/packages/fd/21/0a674dfe66e9df9072c46269c882e9f901d36d987d8ea50ead033a9c1e01/werkzeug-2.3.8-py3-none-any.whl
+Collecting reportlab>=4.0.0 (from -r C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\requirements_packaging.txt (line 9))
+  Using cached https://files.pythonhosted.org/packages/52/c8/aaf4e08679e7b1dc896ad30de0d0527f0fd55582c2e6deee4f2cc899bf9f/reportlab-4.4.3-py3-none-any.whl
+Collecting platformdirs>=4.0.0 (from -r C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\requirements_packaging.txt (line 10))
+  Using cached https://files.pythonhosted.org/packages/3c/a6/bc1012356d8ece4d66dd75c4b9fc6c1f6650ddd5991e421177d9f8f671be/platformdirs-4.3.6-py3-none-any.whl
+Collecting jaraco.functools>=4.0.0 (from -r C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\requirements_packaging.txt (line 13))
+  Using cached https://files.pythonhosted.org/packages/9f/4f/24b319316142c44283d7540e76c7b5a6dbd5db623abd86bb7b3491c21018/jaraco.functools-4.1.0-py3-none-any.whl
+Collecting jaraco.context>=5.0.0 (from -r C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\requirements_packaging.txt (line 14))
+  Using cached https://files.pythonhosted.org/packages/ff/db/0c52c4cf5e4bd9f5d7135ec7669a3a767af21b3a308e1ed3674881e52b62/jaraco.context-6.0.1-py3-none-any.whl
+Collecting jaraco.classes>=3.0.0 (from -r C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\requirements_packaging.txt (line 15))
+  Using cached https://files.pythonhosted.org/packages/7f/66/b15ce62552d84bbfcec9a4873ab79d993a1dd4edb922cbfccae192bd5b5f/jaraco.classes-3.4.0-py3-none-any.whl
+Collecting jaraco.text>=3.0.0 (from -r C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\requirements_packaging.txt (line 16))
+  Using cached https://files.pythonhosted.org/packages/2f/29/350039bde32fbd7000e2fb81e1c4e42a857b5e77bcbaf6267c806c70ab9a/jaraco.text-4.0.0-py3-none-any.whl
+Collecting setuptools>=75.0 (from -r C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\requirements_packaging.txt (line 19))
+  Using cached https://files.pythonhosted.org/packages/78/fb/6788074dccc5c9826a81b85fd8f15972a6833521892817d091854be56133/setuptools-75.3.3-py3-none-any.whl
+Collecting wheel>=0.41 (from -r C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\requirements_packaging.txt (line 20))
+  Using cached https://files.pythonhosted.org/packages/0b/2c/87f3254fd8ffd29e4c02732eee68a83a1d3c346ae39bc6822dcbcb697f2b/wheel-0.45.1-py3-none-any.whl
+Collecting pefile>=2022.5.30; sys_platform == "win32" (from pyinstaller==6.6.0->-r C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\requirements_packaging.txt (line 1))
+  Using cached https://files.pythonhosted.org/packages/54/16/12b82f791c7f50ddec566873d5bdd245baa1491bac11d15ffb98aecc8f8b/pefile-2024.8.26-py3-none-any.whl
+Collecting altgraph (from pyinstaller==6.6.0->-r C:\Users\Sidscri\Desktop\TEST\KenpoFlashcardsWebServer_Packaged_Synced\packaging\requirements_packaging.txt (line 1))
