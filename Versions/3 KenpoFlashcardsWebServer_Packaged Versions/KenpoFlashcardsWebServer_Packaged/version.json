@@ -1,0 +1,10 @@
+{
+  "app_name": "AdvancedFlashcardsWebAppServer_Packaged",
+  "version": "5.1.0",
+  "build": 18,
+  "release_date": "2026-01-31",
+  "notes": "Synced to web server v8.5.1.",
+  "webserver_version": "8.5.1",
+  "webserver_build": 54,
+  "last_sync": "2026-01-31T20:35:25.029894"
+}

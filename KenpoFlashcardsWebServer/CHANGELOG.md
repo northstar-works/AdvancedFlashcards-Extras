@@ -16,17 +16,92 @@ The format is simple and practical:
 
 ---
 
+## 8.5.3 (build 56) — 2026-02-01
+
+### Changed
+- **Admin User Deck Access simplified:** removed Disable/Enable Built-In for User buttons and built-in status badge. The Allow/Deny buttons now handle all access control. Status line shows clear "Access: Granted" or "Access: Not granted" for all deck types including built-in decks.
+- **Allow/Deny preserves dropdowns:** clicking Allow or Deny no longer triggers a full config reload that resets the user and deck dropdowns, enabling bulk access changes without reselecting.
+- **Non-admin built-in editing off by default:** `allowNonAdminDeckEdits` now defaults to `false` in both backend config and admin UI checkbox. Label text changed from "Allow non-admins to edit built-in/unlocked decks" to "Allow non-admins to edit built-in decks".
+- **Deck Ownership blank state:** "Current owner" line is now hidden when no deck is selected, and shows "No owner assigned" when a deck has no owner ID instead of displaying raw IDs.
+- **Portrait card layout overhaul:** card height increased from 260px to 320px (280px on ≤400px screens). Card text enlarged to 26px (22px small screens). Card face now scrollable for long breakdown content that overflows.
+- **Status line inline with Card counter:** "All (flat) • Studying: X" text now appears on the same line as "Card 1 / 10" in portrait and landscape, replacing the separate header status line on mobile.
+- **Landscape controls compact:** group dropdown, All Cards, and search icon reduced to 11px font with 4px padding for minimal space usage.
+
+### Fixed
+- **Breakdown text overflow in portrait:** card faces now have `overflow-y: auto`, so long term breakdowns scroll instead of clipping or overlapping control buttons.
+- **Built-in status showing incorrectly:** previously showed "✓ Built-in active" even when the deck wasn't built-in or was disabled for the user. Removed entirely in favor of the simplified access status.
+
+---
+
+## 8.5.2 (build 55) — 2026-02-01
+
+### Added
+- **File-based logging system:** server.log, error.log, and user_activity.log now write to disk in the logs directory, persisting across server restarts.
+- **Log rotation on startup:** server.log and error.log are automatically rotated on each server start (previous saved as .prev); user_activity.log is continuous unless manually cleared (saved to .prev before clearing).
+- **Log download endpoint:** `/api/admin/logs/download` serves log files for download; returns 204 if file is empty (download button disabled for empty logs).
+- **Expandable admin stat tiles:** clicking any stat card (Users, Cards, Decks, Breakdowns, Learned, Unsure, Unlearned) expands a detail panel showing per-user and per-item breakdowns. Collapse by clicking again.
+- **Deck Short Answers mode:** new per-deck toggle (`⚙️ Deck AI Settings` section in AI Generator tab) that forces AI-generated definitions to 1-4 words. Ideal for capitals, translations, simple vocabulary. Setting persists via `/api/decks/<id>/settings`.
+- **Deck settings API:** `GET/POST /api/decks/<deck_id>/settings` for per-deck configuration (currently: shortAnswers).
+
+### Changed
+- **AI generation context-aware:** AI no longer assumes foreign language vocabulary when generating cards. Determines subject from keywords literally — "fast food chains types of food" produces menu items, not Spanish food words. Complex topics (science, etc.) get full definitions; simple ones get concise answers.
+- **Add Card pre-selects active deck:** Target Deck dropdown in "Add Cards" tab now defaults to the deck you're currently studying instead of always defaulting to Kenpo Vocabulary.
+- **Custom Set counts reflect custom status:** when studying a Custom Set, the Unlearned/Unsure/Learned counts line now shows the custom set's own card statuses instead of main deck statuses.
+- **Random card input narrower:** "Pick random cards to add" number field reduced to prevent overlapping the label text and Add Random button; max value increased to 9999.
+
+### Fixed
+- **Custom Set Manage Cards / Saved Sets tabs blank:** tabs appeared empty because the `.hidden` class (with `!important`) was never removed during tab switching, overriding `.csTabContent.active`. Now properly toggles both classes.
+- **Admin logs empty on fresh start:** logs were purely in-memory and lost on restart. Now backed by files that persist.
+
+---
+
+## 8.5.1 (build 54) — 2026-01-31
+
+### Changed
+- **Controls row rearranged:** group dropdown + All Cards on the left, search icon on the right (was reversed). Search overlay now expands from the right edge.
+- **Settings icon moved to title row:** ⚙️ button now sits directly right of User:**** display in the header title row.
+- **Study/Group label hidden:** "Study / Group" label text removed on mobile (≤600px) and landscape to save vertical space.
+- **Landscape group sizing:** "Select group..." dropdown matches "All Cards" button sizing (both 6px 10px padding, 12px font).
+- **Desktop search icon:** search bar replaced with 🔍 icon on all screen sizes; expands as overlay on click.
+- **Portrait controls layout:** group dropdown auto-width on left, All Cards + 🔍 pushed right via space-between.
+- **Landscape controls right-aligned:** controls row pushed to right side of screen.
+- **Mobile logo inline:** deck logo displays inline between Cards loaded and User line instead of overlapping.
+- **CSS selector fix:** corrected `.selectBtn` → `.select` to match actual HTML class on group dropdown button.
+- **Removed stale `.rightControls`:** cleaned up all references to the removed rightControls div from CSS.
+
+### Fixed (Admin Dashboard)
+- **Edit User deck access API:** fixed URL mismatch (`/api/admin/user/deck_access?user_id=` → `/api/admin/user/<id>/deck-access`). Edit User modal now loads deck access correctly.
+- **Edit User field name mismatch:** JS used `userDecks`/`grantedAdminDeckIds` but backend returns `ownedDecks`/`grantedAdminDecks`.
+- **Owned decks show 0 cards:** backend now includes `cardCount` in deck-access endpoint response.
+- **Edit User modal wider:** max-width increased from 700px to 900px; deck columns min-width 300px.
+- **Edit User deck access read-only:** removed checkboxes; shows Granted/Not granted text synced with Admin > Decks status. Manage link directs to Admin > Decks > User Deck Access.
+- **renderBuiltInDecks syntax:** fixed nested function causing potential JS errors.
+
+### Added (Admin Dashboard)
+- **Allow/Deny buttons:** replaced Unlock/Lock buttons with Allow/Deny + static "Access" label in User Deck Access section.
+- **Live access status indicators:** selecting user + deck shows current access state (Granted/Not granted, Built-in Active/Disabled, Owned).
+- **Built-in status badge:** shows ⛔ or ✓ next to Disable/Enable Built-In buttons.
+- **Deck Ownership section:** new Admin > Decks > Deck Ownership panel to transfer deck ownership between users with confirmation.
+- **`/api/admin/deck-ownership` endpoint:** transfers deck cards and metadata to new owner.
+- **`/api/admin/user-deck-status` endpoint:** returns access status for user+deck combination.
+
+---
+
 ## 8.5.0 (build 53) — 2026-01-31
 
 ### Changed
-- **Portrait responsive controls:** study controls (group dropdown, All Cards, search, settings) now display in a compact single row on portrait screens (≤600px). Group dropdown and search share available width; settings button shows icon-only (⚙️) with `.btnText` hidden.
-- **Landscape responsive controls:** all controls fit in one row without wrapping on landscape screens (≤500px height). Group dropdown constrained to 100–120px with text-overflow ellipsis; buttons use compact padding (6px 10px, 12px font).
-- **Settings toggle behavior:** settings button now toggles the settings view open/close instead of only opening. Close button (✕) added to the settings page header for quick exit from any screen size.
-- **Admin users table (mobile):** "Currently Studying" column hidden on screens ≤768px; deck name text moves under the progress bar. "Last Sync" column also hidden on screens ≤480px.
-- **Deck list badges (mobile):** badge text labels (Shared, Unlocked, Built-in, Default) hidden on portrait; only icons shown (📦🔓👥★) to conserve horizontal space.
-- **Deck list actions (portrait):** action buttons stack vertically with a top border separator on narrow screens; horizontal row restored in landscape.
-- **Deck list items (portrait):** flex-wrap layout with smaller logo (28px), column-stacked info, and truncated descriptions.
-- **Landscape card height:** study card max-height reduced to 180px so cards and controls coexist without scrolling.
+- **Portrait responsive controls:** study controls (group dropdown, All Cards, search, settings) display in a compact single row on portrait screens (≤600px).
+- **Landscape responsive controls:** all controls fit in one row without wrapping on landscape screens (≤500px height).
+- **Settings toggle behavior:** settings button toggles open/close. Close button (✕) added to settings header.
+- **Search bar → icon toggle:** search is now a 🔍 icon that expands an overlay input when tapped; auto-collapses when tapping outside.
+- **Saved Breakdowns moved to More:** 🧩 Saved Breakdowns relocated from main controls into Settings/More page.
+- **Got it button shortened:** "Got it ✓ (mark learned)" → "Got it ✓".
+- **Breakdown card button compact:** stays small and fixed next to Next in portrait.
+- **Admin users table (mobile):** "Currently Studying" column hidden on ≤768px; moves under progress bar. "Last Sync" hidden on ≤480px.
+- **Deck list badges (mobile):** icon-only (📦🔓👥★) on portrait.
+- **Deck list actions (portrait):** stack vertically with top border separator.
+- **Deck list items (portrait):** flex-wrap layout with smaller logo (28px).
+- **Landscape card height:** reduced to 180px.
 
 ---
 

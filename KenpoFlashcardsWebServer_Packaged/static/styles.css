@@ -9,10 +9,10 @@
 
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Arial,sans-serif}
-.wrap{max-width:980px;margin:0 auto;padding:18px}
+.wrap{max-width:980px;margin:0 auto;padding:18px;overflow-x:hidden}
 
 .top{display:flex;flex-direction:column;gap:10px}
-.titleRow{display:flex;justify-content:flex-start;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.titleRow{display:flex;justify-content:flex-start;align-items:flex-end;gap:12px;flex-wrap:wrap;position:relative}
 .titleRow h1{flex:1 1 auto; min-width:280px;}
 h1{margin:0;font-size:28px}
 .mini{font-size:12px;color:var(--muted)}
@@ -33,9 +33,14 @@ h1{margin:0;font-size:28px}
 
 .counts{font-size:13px;color:var(--muted)}
 
-.controls{display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap;align-items:end}
-.leftControls{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
-.rightControls{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+.countsControlsRow{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding-right:10%;margin-bottom:0}
+.countsControlsRow .field span{display:none}
+.countsControlsRow .groupDropdown .select{padding:7px 9px;font-size:12px}
+.countsControlsRow #allCardsBtn{padding:7px 9px;font-size:12px}
+.countsControlsRow .searchToggleBtn{padding:7px 9px;font-size:12px}
+
+.controls{display:flex;gap:8px;align-items:center}
+.leftControls{display:flex;gap:8px;flex-wrap:nowrap;align-items:center;flex:1;min-width:0}
 
 .field{display:flex;flex-direction:column;gap:6px}
 .field span{color:var(--muted);font-size:12px}
@@ -48,9 +53,9 @@ input{background:var(--panel2);min-width:280px}
 
 /* Custom dark dropdown for Study / Group (avoids native white option list on Windows) */
 .hiddenSelect{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
-.groupDropdown{position:relative;width:220px}
-.groupDropdown .selectBtn{width:100%;text-align:left;display:flex;align-items:center;justify-content:space-between}
-.groupDropdown .selectBtn::after{content:"▾";color:var(--muted);font-size:12px;margin-left:10px}
+.groupDropdown{position:relative;width:170px}
+.groupDropdown .select{width:100%;text-align:left;display:flex;align-items:center;justify-content:space-between}
+.groupDropdown .select::after{content:"▾";color:var(--muted);font-size:12px;margin-left:10px}
 .dropdownMenu{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:6px;max-height:260px;overflow:auto;z-index:60;box-shadow:0 12px 30px rgba(0,0,0,.35)}
 .dropdownMenu.hidden{display:none}
 .dropdownItem{padding:10px 10px;border-radius:10px;color:var(--text);cursor:pointer;user-select:none}
@@ -64,23 +69,30 @@ button.good{background:#12311f;border-color:#1d5a35}
 button.danger{background:#321313;border-color:#6e2222}
 
 .status{color:var(--muted);font-size:13px}
+.statusInMeta{color:var(--muted);font-size:12px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-.main{margin-top:12px}
+.main{margin-top:4px}
 .view.hidden{display:none}
 
-.cardMeta{position:relative;display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--muted);font-size:13px;margin:6px 0 10px}
+.cardMeta{position:relative;display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;margin:2px 0 6px}
 
 #cardPos{flex:1;text-align:center}
+.cardMeta .statusInMeta{flex:1}
+.cardMeta .randomRow{flex:1;justify-content:flex-end}
+
+/* Study view indented column */
+#viewStudy{padding:0 10%}
 
 /* Flip styles: fixed mirrored text */
 .card{
-  height:340px;border-radius:20px;border:1px solid var(--border);
+  border-radius:20px;border:1px solid var(--border);
   background:var(--panel);display:grid;place-items:center;
   perspective:1200px;outline:none;
+  padding:12px 0;
 }
 
 .card-inner{
-  width:92%;height:86%;
+  width:92%;
   position:relative;
   transform-style:preserve-3d;
   -webkit-transform-style:preserve-3d;
@@ -95,7 +107,7 @@ button.danger{background:#321313;border-color:#6e2222}
 .card-face{
   position:absolute;inset:0;
   padding:18px;
-  display:flex;flex-direction:column;gap:12px;
+  display:flex;flex-direction:column;gap:10px;
 
   backface-visibility:hidden;
   -webkit-backface-visibility:hidden;
@@ -214,6 +226,27 @@ button.danger{background:#321313;border-color:#6e2222}
 
 /* ---- User line / auth modal ---- */
 #userLine{ margin-left:auto; }
+.settingsBtnHeader{
+  padding: 6px 10px;
+  font-size: 14px;
+  margin-left: 6px;
+  flex-shrink: 0;
+  border-radius: 10px;
+}
+
+/* ---- Search icon toggle ---- */
+.searchToggleBtn{
+  padding: 8px 10px;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+/* Default: search icon visible, text box hidden (expands on click) */
+.searchWrapper .searchInput{ display: none; }
+.searchWrapper .searchToggleBtn{ display: inline-flex; }
+.searchWrapper.expanded .searchInput{ display: block; }
+.searchWrapper.expanded .searchClearBtn{ z-index: 51; }
+.searchWrapper.expanded .searchToggleBtn{ opacity: 0.3; }
+.searchInput{ min-width: 0 !important; }
 
 .modalOverlay{
   position:fixed;
@@ -425,7 +458,7 @@ button.danger{background:#321313;border-color:#6e2222}
 
 
 /* Random order toggle + refresh */
-.randomRow{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:13px}
+.randomRow{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}
 .randomText{white-space:nowrap}
 .iconBtn{border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:14px;line-height:1}
 .iconBtn:hover{background:rgba(255,255,255,0.06);color:var(--text)}
@@ -439,8 +472,6 @@ button.danger{background:#321313;border-color:#6e2222}
 .switch input:checked + .slider{background:#1f6feb}
 .switch input:checked + .slider:before{transform:translateX(20px)}
 
-
-#cardPos{width:100%;text-align:center}
 
 /* Study header right-side toggles */
 #randomStudyWrap{
@@ -1255,11 +1286,16 @@ button.danger{background:#321313;border-color:#6e2222}
   position: relative;
   display: flex;
   align-items: center;
-  flex: 1;
+  flex: 0 0 auto;
 }
-.searchWrapper input{
-  width: 100%;
+.searchWrapper .searchInput{
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 340px;
+  z-index: 50;
   padding-right: 32px;
+  border-radius: 12px;
 }
 .searchClearBtn{
   position: absolute;
@@ -1509,10 +1545,8 @@ button.danger{background:#321313;border-color:#6e2222}
 .deckActions{display:flex;gap:8px;align-items:center;}
 
 
-/* Header deck title */
+/* Header deck title - main definition moved to mobile responsive section */
 .appTitle{font-weight:700;}
-.deckTitle{font-weight:400;color:#5ca5ff;font-size:0.7em;opacity:0.9;}
-.deckTitle:before{content:"• ";color:#666;}
 
 
 /* Set default deck button */
@@ -1538,9 +1572,9 @@ button.danger{background:#321313;border-color:#6e2222}
 .csTabContent.active { display: block; animation: fadeIn 0.2s ease; }
 
 /* Settings Tab */
-.csRandomPickRow { display: flex; gap: 8px; align-items: center; flex-wrap: nowrap; }
-.csRandomPickRow button { white-space: nowrap; }
-.csRandomInput { width: 48px; text-align: center; padding: 6px 4px; }
+.csRandomPickRow { display: flex; gap: 8px; align-items: center; flex-wrap: nowrap; flex-shrink: 0; }
+.csRandomPickRow button { white-space: nowrap; font-size: 12px; }
+.csRandomInput { width: 52px; text-align: center; padding: 6px 2px; font-size: 13px; }
 
 /* Manage Cards Tab - Split View */
 .csManageSplit { display: flex; gap: 12px; margin-bottom: 12px; }
@@ -1586,22 +1620,39 @@ button.danger{background:#321313;border-color:#6e2222}
   align-items:center;
   justify-content:center;
   margin-left:auto;
+  position: relative;
+  flex-shrink: 0;
 }
 
-/* lower logo by 3/4 of its own height */
+/* Fixed position - no transform jumping */
 .deckLogoWrap img{
-  transform: translateY(69%);
+  transform: none;
 }
 
 .deckLogoImg{
-  width: 98px;
-  height: 98px;
+  width: 83px;
+  height: 83px;
   object-fit: contain;
   border-radius: 10px;
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.08);
   box-shadow: 0 10px 24px rgba(0,0,0,0.35);
 }
+
+/* ===== Deck Title truncation ===== */
+.deckTitle{
+  font-weight:400;
+  color:#5ca5ff;
+  font-size:0.7em;
+  opacity:0.9;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: bottom;
+}
+.deckTitle:before{content:"• ";color:#666;}
 
 /* ===== File input tuning ===== */
 .fileInput{
@@ -1610,3 +1661,329 @@ button.danger{background:#321313;border-color:#6e2222}
 
 
 .loginVersionCorner{ position:absolute; top:12px; right:16px; font-size:12px; color:#9ca3af; opacity:0.9; }
+
+
+/* ===============================================
+   MOBILE RESPONSIVENESS
+   =============================================== */
+
+/* Tablet breakpoint */
+@media (max-width: 900px) {
+  .wrap { padding: 12px; }
+  h1 { font-size: 24px; }
+  .titleRow h1 { min-width: 200px; }
+  .deckTitle { max-width: 140px; }
+  .deckLogoImg { width: 70px; height: 70px; }
+  
+  .controls { gap: 10px; }
+  .searchWrapper { flex: 1; }
+  .searchWrapper .searchInput { min-width: 200px; }
+  
+  .big { font-size: 28px; }
+  
+  /* Admin Edit User modal */
+  .modal-card { max-width: 95vw; max-height: 85vh; }
+  .deck-access-grid { flex-direction: column; gap: 12px; }
+  .deck-access-col { min-width: 100%; }
+  .deckAccessList { max-height: 150px; }
+}
+
+/* Mobile breakpoint */
+@media (max-width: 600px) {
+  .wrap { padding: 10px; }
+  h1 { font-size: 20px; }
+  .titleRow { flex-wrap: wrap; gap: 8px; align-items: center; }
+  .titleRow h1 { min-width: auto; width: 100%; }
+  /* Keep user line + settings on one row */
+  #userLine { margin-left: 0; }
+  .settingsBtnHeader { margin-left: 4px; }
+  
+  /* Deck logo inline on mobile */
+  .deckLogoWrap { 
+    margin-left: 0;
+    order: 0;
+  }
+  .deckLogoImg { width: 45px; height: 45px; }
+  .deckTitle { max-width: 120px; font-size: 0.6em; }
+  
+  .tabs { gap: 4px; flex-wrap: wrap; }
+  .tab { padding: 8px 10px; font-size: 13px; }
+  .tab.small { padding: 6px 8px; font-size: 12px; }
+  .tab.tiny { padding: 4px 8px; font-size: 11px; }
+  .tabsRight { margin-left: 0; margin-top: 6px; width: 100%; }
+  
+  .counts { font-size: 12px; }
+  
+  /* === COMPACT CONTROLS FOR PORTRAIT === */
+  .controls { 
+    flex-direction: row; 
+    flex-wrap: nowrap;
+    gap: 6px; 
+    align-items: center;
+  }
+  
+  /* Group (auto-width) left, then All Cards + Search pushed right */
+  .leftControls { 
+    flex: 1;
+    min-width: 0;
+    gap: 6px;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .leftControls .field { flex: 0 0 auto; min-width: 0; }
+  .leftControls .field > span { display: none; }
+  .groupDropdown { width: auto; flex: 0 0 auto; min-width: 0; }
+  .groupDropdown .select { padding: 8px 10px; font-size: 13px; }
+  #allCardsBtn { width: auto; padding: 8px 10px; font-size: 13px; flex-shrink: 0; }
+  
+  /* Search icon - collapsed by default, expands as overlay */
+  .searchWrapper { 
+    position: relative;
+    flex: 0 0 auto;
+  }
+  .searchWrapper .searchInput{ 
+    width: 60vw;
+    padding: 8px 32px 8px 10px;
+    font-size: 13px;
+  }
+  
+  input { min-width: auto; }
+  
+  /* Settings button in header */
+  .settingsBtnHeader { padding: 6px 8px; font-size: 12px; }
+  
+  .big { font-size: 26px; }
+  .small { font-size: 14px; }
+  .pill { padding: 4px 8px; font-size: 12px; }
+  .hint { font-size: 12px; }
+  
+  .cardMeta { margin: 2px 0 4px; gap: 8px; }
+  
+  /* Actions row - breakdownBtn stays small on right of Next */
+  .actionsRow { gap: 6px; flex-wrap: wrap; }
+  .actionsRow button { padding: 10px 12px; font-size: 13px; flex: 1 1 auto; min-width: 80px; }
+  #breakdownBtn { flex: 0 0 auto; min-width: auto; padding: 10px; }
+  
+  #userLine { font-size: 11px; padding: 4px 6px; }
+  .userMenu { right: 10px; top: 52px; min-width: 180px; }
+  
+  /* Modals */
+  .modalCard { width: 98vw; padding: 14px; }
+  .modalTitle { font-size: 18px; }
+  .modalForm input { min-width: 100%; }
+  
+  /* Admin modal */
+  .modal-card { 
+    width: 98vw; 
+    max-width: 98vw; 
+    max-height: 90vh; 
+    padding: 16px;
+    overflow-y: auto;
+  }
+  .modal-title { font-size: 16px; }
+  .form-group { margin-bottom: 12px; }
+  .deck-access-grid { flex-direction: column; gap: 10px; }
+  .deck-access-col { min-width: 100%; width: 100%; }
+  .deckAccessList { max-height: 120px; padding: 8px; }
+  .deckAccessRow { flex-direction: column; gap: 6px; align-items: flex-start; }
+  .deckAccessName { font-size: 13px; }
+  .deckAccessMeta { font-size: 10px; }
+  .quick-actions { flex-direction: column; gap: 8px; }
+  .quick-actions .btn { width: 100%; justify-content: center; }
+  
+  /* Settings page - add close button area */
+  .settingsPage h2 { display: flex; justify-content: space-between; align-items: center; }
+  .settingsCloseBtn { 
+    padding: 6px 12px; 
+    font-size: 14px; 
+    background: rgba(255,255,255,0.1); 
+    border: 1px solid rgba(255,255,255,0.2); 
+    border-radius: 8px; 
+    color: #ccc; 
+    cursor: pointer; 
+  }
+  .settingsCloseBtn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+  .settingsNav { flex-wrap: wrap; gap: 4px; }
+  .settingsNavBtn { padding: 8px 10px; font-size: 12px; }
+  .settingsCard { padding: 12px; }
+  .settingRow { padding: 8px; }
+  .settingTitle { font-size: 14px; }
+  .settingDesc { font-size: 11px; }
+  
+  /* === DECK ITEM PORTRAIT LAYOUT === */
+  .deckItem { 
+    flex-wrap: wrap; 
+    padding: 12px; 
+    gap: 10px;
+  }
+  .deckMiniLogo { width: 28px; height: 28px; }
+  .deckInfo { 
+    flex: 1; 
+    min-width: 0; 
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .deckName { 
+    font-size: 14px; 
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .deckDesc { 
+    font-size: 11px; 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .deckCount { font-size: 10px; }
+  .deckBadge { font-size: 9px; padding: 1px 5px; }
+  /* Icon-only badges on portrait */
+  .deckBadge .badgeText { display: none; }
+  .deckBadge::before { font-size: 11px; }
+  
+  /* Deck actions - vertical stack */
+  .deckActions { 
+    width: 100%; 
+    display: flex; 
+    flex-direction: row;
+    gap: 6px; 
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 8px;
+    margin-top: 4px;
+  }
+  .deckSwitchBtn { flex: 1; justify-content: center; }
+  .deckDefaultBtn, .deckClearDefaultBtn, .deckEditBtn, .deckDeleteBtn { 
+    padding: 6px 8px !important; 
+    font-size: 12px !important; 
+  }
+  .deckActiveLabel { font-size: 11px; flex: 1; text-align: center; }
+  
+  /* Edit Decks modal */
+  .csModalFixed { width: 98vw; max-width: 98vw; min-height: auto; }
+  .csManageSplit { flex-direction: column; }
+  .csManagePane { min-height: 150px; }
+  .csCardList { height: 130px; }
+  
+  /* Custom Set modal */
+  .customSetTabs { flex-wrap: wrap; }
+  .csTab { padding: 6px 10px; font-size: 12px; }
+  .csTabBody { min-height: auto; }
+  
+  /* Breakdowns modal */
+  .modalCardWide { width: 98vw; max-width: 98vw; }
+  .breakdownGrid { grid-template-columns: 1fr; }
+  .breakdownRow { grid-template-columns: 1fr; gap: 6px; }
+  .breakdownRow input { width: 100%; }
+}
+
+/* Small mobile breakpoint */
+@media (max-width: 400px) {
+  h1 { font-size: 18px; }
+  .deckLogoImg { width: 45px; height: 45px; }
+  .deckTitle { max-width: 80px; font-size: 0.55em; }
+  
+  .tab { padding: 6px 8px; font-size: 12px; }
+  
+  .big { font-size: 22px; }
+  
+  .actionsRow button { padding: 8px 10px; font-size: 12px; min-width: 70px; }
+  #breakdownBtn { padding: 8px; min-width: auto; }
+  
+  /* Even more compact controls */
+  .groupDropdown .select { padding: 6px 8px; font-size: 12px; }
+  #allCardsBtn { padding: 6px 8px; font-size: 12px; }
+}
+
+/* === LANDSCAPE MODE OPTIMIZATIONS === */
+@media (orientation: landscape) and (max-height: 500px) {
+  .wrap { padding: 6px 12px; }
+  
+  /* Compact header */
+  h1 { font-size: 18px; }
+  .titleRow { gap: 6px; }
+  .deckLogoImg { width: 40px; height: 40px; }
+  
+  /* Compact controls row */
+  .controls { 
+    flex-direction: row; 
+    flex-wrap: nowrap;
+    gap: 6px;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 0;
+  }
+  .leftControls { 
+    flex: 0 0 auto;
+    gap: 4px;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+  .leftControls .field { flex: 0 0 auto; min-width: 0; }
+  .leftControls .field > span { display: none; }
+  .groupDropdown { width: auto; min-width: 0; flex: 0 0 auto; }
+  .groupDropdown .select { padding: 4px 8px; font-size: 11px; }
+  #allCardsBtn { padding: 4px 8px; font-size: 11px; flex-shrink: 0; }
+  .searchWrapper { flex: 0 0 auto; }
+  .searchWrapper .searchToggleBtn{ padding: 4px 8px; font-size: 11px; }
+  .searchWrapper .searchInput{ width: 30vw; padding: 4px 26px 4px 8px; font-size: 11px; }
+  
+  /* Card meta row */
+  .cardMeta { margin: 2px 0 4px; gap: 6px; }
+  .statusInMeta { font-size: 11px; }
+  
+  .settingsBtnHeader { padding: 4px 8px; font-size: 12px; }
+  
+  .card { padding: 6px 0; }
+  .card-face { padding: 12px 16px; gap: 6px; }
+  .defExtras { margin-top: 6px; font-size: 12px; line-height: 1.35; }
+  .big { font-size: 20px; }
+  .pill { padding: 3px 6px; font-size: 11px; }
+  .hint { font-size: 11px; }
+  
+  .actionsRow { gap: 4px; margin-top: 6px; }
+  .actionsRow button { padding: 6px 10px; font-size: 12px; }
+  #breakdownBtn { flex: 0 0 auto; min-width: auto; padding: 6px 8px; }
+  
+  .tabs { gap: 3px; }
+  .tab { padding: 5px 8px; font-size: 12px; }
+  .counts { font-size: 11px; margin: 2px 0; }
+  
+  .settingsPage h2 { font-size: 18px; margin-bottom: 10px; }
+  .settingsNav { gap: 3px; margin-bottom: 12px; padding-bottom: 10px; }
+  .settingsNavBtn { padding: 6px 10px; font-size: 11px; }
+  .settingsCard { padding: 10px; margin-bottom: 10px; }
+  .settingsCardHeader { font-size: 14px; margin-bottom: 10px; padding-bottom: 8px; }
+  
+  .deckItem { padding: 10px; gap: 8px; }
+  .deckMiniLogo { width: 30px; height: 30px; }
+  .deckName { font-size: 13px; }
+  .deckDesc { font-size: 11px; }
+  .deckCount { font-size: 10px; }
+  .deckActions { flex-direction: row; width: auto; border-top: none; padding-top: 0; margin-top: 0; }
+}
+
+/* === RESPONSIVE TEXT HIDING === */
+/* Hide button text on mobile, show only icons */
+@media (max-width: 600px) {
+  .btnText { display: none; }
+  .badgeText { display: none; }
+}
+
+/* Settings close button always visible on desktop too */
+.settingsCloseBtn { 
+  padding: 6px 12px; 
+  font-size: 14px; 
+  background: rgba(255,255,255,0.08); 
+  border: 1px solid rgba(255,255,255,0.15); 
+  border-radius: 8px; 
+  color: #aaa; 
+  cursor: pointer;
+  margin-left: auto;
+}
+.settingsCloseBtn:hover { 
+  background: rgba(255,255,255,0.12); 
+  color: #fff; 
+}

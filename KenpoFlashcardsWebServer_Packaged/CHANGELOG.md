@@ -2,6 +2,30 @@
 
 All notable changes to the Windows packaged/installer distribution are documented here.
 
+## v5.1.1 (build 19) — 2026-02-01
+
+### Changed
+- **Updated bundled Web Server to v8.5.3 (build 56)** (from v8.5.1 build 54), including:
+  - **File-based logging system:**
+  - **Log rotation on startup:**
+  - **Log download endpoint:**
+  - **Expandable admin stat tiles:**
+  - **Deck Short Answers mode:**
+  - **Deck settings API:**
+
+## v5.1.0 (build 18) — 2026-01-31
+
+### Changed
+- **Updated bundled Web Server to v8.5.1 (build 54)** (from v8.2.0 build 50), including:
+  - **Remember me functionality**
+  - **Mobile responsive design**
+  - **Admin edit built-in decks**
+  - **Runtime paths module**
+  - **Environment overrides**
+  - **First-run data seeding**
+  - Dev/source run: project-local `./data` and `./logs`
+  - Packaged/frozen run: `%LOCALAPPDATA%\Advanced Flashcards WebApp Server\{data,logs}` (or env overrides)
+
 ## v5.0.1 (build 17) — 2026-01-30
 
 ### Fixed

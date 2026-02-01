@@ -259,7 +259,15 @@ async function jpost(url, body){
   return r.json();
 }
 
-function setStatus(msg){ $("status").textContent = msg; }
+function setStatus(msg){ 
+  const hdr = $("statusHeader");
+  const study = $("statusStudy");
+  if(hdr) hdr.textContent = msg;
+  if(study) study.textContent = msg;
+  // Show header status only when study view is hidden (list mode)
+  const studyVisible = $("viewStudy") && !$("viewStudy").classList.contains("hidden");
+  if(hdr) hdr.style.display = studyVisible ? "none" : "";
+}
 
 function escapeHtml(str){
   return String(str ?? "")
@@ -296,9 +304,38 @@ function reshuffleDeck(){
 }
 
 function isFlipped(){ return $("card").classList.contains("flipped"); }
+
+function resizeCard(){
+  const inner = $("cardInner");
+  if(!inner) return;
+  const faces = inner.querySelectorAll(".card-face");
+  let maxH = 200; // minimum height
+  faces.forEach(f => {
+    // Temporarily position relative to measure natural height
+    const savedPos = f.style.position;
+    const savedVis = f.style.visibility;
+    const savedTrans = f.style.transform;
+    const savedBf = f.style.backfaceVisibility;
+    f.style.position = "relative";
+    f.style.visibility = "hidden";
+    f.style.transform = "none";
+    f.style.backfaceVisibility = "visible";
+    f.style.webkitBackfaceVisibility = "visible";
+    const h = f.scrollHeight;
+    f.style.position = savedPos;
+    f.style.visibility = savedVis;
+    f.style.transform = savedTrans;
+    f.style.backfaceVisibility = savedBf;
+    f.style.webkitBackfaceVisibility = savedBf;
+    if(h > maxH) maxH = h;
+  });
+  inner.style.height = maxH + "px";
+}
+
 function flip(){ 
   const wasFlipped = isFlipped();
   $("card").classList.toggle("flipped");
+  resizeCard();
   
   // Speak definition when flipped to back (definition side)
   const settings = window.__activeSettings || settingsAll || {};
@@ -367,7 +404,7 @@ function updateStudyActionButtons(){
   if(!got || !ub) return;
 
   // Default (Unlearned/Unsure study)
-  got.textContent = "Got it ✓ (mark learned)";
+  got.textContent = "Got it ✓";
   got.classList.remove("neutral", "warn");
   got.classList.add("good");
 
@@ -964,6 +1001,7 @@ function renderStudyCard(){
     $("cardPos").textContent = "Card 0 / 0";
     // Clear any inline breakdown extras
     updateStudyDefinitionExtras(null, window.__activeSettings || settingsAll || {});
+    resizeCard();
     return;
   }
 
@@ -998,6 +1036,9 @@ function renderStudyCard(){
 
   // Optional: show saved breakdown + literal meaning on the definition side
   updateStudyDefinitionExtras(c, settings);
+  
+  // Auto-size card to fit content
+  resizeCard();
 }
 
 // Update breakdown indicator icon
@@ -1258,6 +1299,8 @@ async function loadCustomSetForStudy(){
     // Update counts display for custom set
     if(customSetData){
       const counts = customSetData.counts || {};
+      // Show custom set's own Unlearned/Unsure/Learned in the counts bar
+      $("countsLine").textContent = `Unlearned: ${counts.active || 0} | Unsure: ${counts.unsure || 0} | Learned: ${counts.learned || 0}`;
       let statusMsg = `Custom Set: ${counts.total || 0} cards`;
       if(customRandomLimit > 0){
         statusMsg = `🎲 Random ${Math.min(customRandomLimit, deck.length)} of ${counts.total || 0} cards`;
@@ -2369,8 +2412,34 @@ bind("card","click", flip);
   bind("searchClearBtn","click", async ()=>{
     $("searchBox").value = "";
     updateSearchClearButton();
+    collapseSearch();
     await refresh();
   });
+
+  // Search icon toggle (expand/collapse search box)
+  bind("searchIconBtn","click", (e)=>{
+    e.stopPropagation();
+    const wrapper = $("searchWrapper");
+    if(wrapper.classList.contains("expanded")){
+      if(!$("searchBox").value.trim()) collapseSearch();
+    } else {
+      wrapper.classList.add("expanded");
+      $("searchBox").focus();
+    }
+  });
+
+  // Close search on outside click
+  document.addEventListener("click", (e)=>{
+    const wrapper = $("searchWrapper");
+    if(wrapper && wrapper.classList.contains("expanded") && !wrapper.contains(e.target)){
+      if(!$("searchBox").value.trim()) collapseSearch();
+    }
+  });
+
+  function collapseSearch(){
+    const wrapper = $("searchWrapper");
+    if(wrapper) wrapper.classList.remove("expanded");
+  }
 
   bind("allCardsBtn","click", async ()=>{
     scopeGroup = "";
@@ -2689,6 +2758,9 @@ function switchEditDecksTab(tabName){
   
   document.querySelector(`.editDecksTab[data-tab="${tabName}"]`)?.classList.add("active");
   document.querySelector(`.editDecksSection[data-section="${tabName}"]`)?.classList.add("active");
+  
+  // Load deck-specific settings when generate tab opens
+  if(tabName === "generate") loadDeckShortAnswersSetting();
 }
 
 // Show status message in Edit Decks
@@ -3110,6 +3182,7 @@ function updateDeckDropdown(){
     const opt = document.createElement("option");
     opt.value = deck.id;
     opt.textContent = deck.name;
+    if(deck.id === activeDeckId) opt.selected = true;
     select.appendChild(opt);
   }
 }
@@ -3611,7 +3684,14 @@ async function aiGenFromKeywords(){
     }
   }
   
-  await generateCards({ type: "keywords", keywords, maxCards });
+  // Check deck-level short answers setting
+  let shortAnswers = false;
+  try {
+    const ds = await jget(`/api/decks/${encodeURIComponent(activeDeckId)}/settings`);
+    shortAnswers = !!ds.shortAnswers;
+  } catch(e){}
+  
+  await generateCards({ type: "keywords", keywords, maxCards, shortAnswers });
 }
 
 async function aiGenFromPhoto(){
@@ -3885,10 +3965,11 @@ async function saveCustomSetSettings(){
 document.querySelectorAll(".csTab").forEach(tab => {
   tab.addEventListener("click", () => {
     document.querySelectorAll(".csTab").forEach(t => t.classList.remove("active"));
-    document.querySelectorAll(".csTabContent").forEach(c => c.classList.remove("active"));
+    document.querySelectorAll(".csTabContent").forEach(c => { c.classList.remove("active"); c.classList.add("hidden"); });
     tab.classList.add("active");
     const tabId = "csTab-" + tab.dataset.cstab;
-    $(tabId)?.classList.add("active");
+    const el = $(tabId);
+    if(el){ el.classList.remove("hidden"); el.classList.add("active"); }
     
     if(tab.dataset.cstab === "manage"){
       loadManageCardsTab();
@@ -4189,12 +4270,105 @@ function loadSavedCustomSets(){
         </div>
         <div class="setActions">
           <button class="appBtn ${isActive ? 'primary' : 'secondary'} small" onclick="switchToSavedSet(${i})">${isActive ? 'Active' : 'Switch'}</button>
-          <button class="appBtn danger small" onclick="deleteSavedSet(${i})">🗑️</button>
+          <button class="appBtn secondary small" onclick="renameSavedSet(${i})" title="Rename">✏️</button>
+          <button class="appBtn danger small" onclick="deleteSavedSet(${i})" title="Delete">🗑️</button>
         </div>
       </div>
     `;
   }).join('');
   
+  updateCurrentSetDisplay();
+}
+
+// Quick save from Settings tab
+async function quickSaveCustomSet(){
+  const nameInput = $("csQuickSaveName");
+  const name = nameInput?.value?.trim();
+  if(!name){ alert("Please enter a name"); return; }
+  
+  try {
+    const customSet = await jget("/api/custom_set");
+    const cardIds = customSet.cards || [];
+    const statuses = customSet.statuses || {};
+    
+    // Check if set with same name exists - overwrite it
+    const existIdx = savedCustomSets.findIndex(s => s.name.toLowerCase() === name.toLowerCase());
+    const newSet = {
+      id: existIdx >= 0 ? savedCustomSets[existIdx].id : "set_" + Date.now(),
+      name,
+      cardIds,
+      statuses,
+      settings: { randomize: $("csRandomOrder")?.checked||false, reflectStatus: $("csReflectStatus")?.checked||false },
+      savedAt: Date.now()
+    };
+    
+    if(existIdx >= 0) savedCustomSets[existIdx] = newSet;
+    else savedCustomSets.push(newSet);
+    
+    localStorage.setItem("kenpo_saved_custom_sets", JSON.stringify(savedCustomSets));
+    nameInput.value = "";
+    activeCustomSetId = newSet.id;
+    updateCurrentSetDisplay();
+    alert(`Saved "${name}" with ${cardIds.length} cards`);
+  } catch(e){
+    alert("Failed to save: " + e.message);
+  }
+}
+
+// Create new empty set (auto-saves current first)
+async function createNewEmptySet(){
+  const nameInput = $("csNewEmptyName");
+  const name = nameInput?.value?.trim();
+  if(!name){ alert("Please enter a name"); return; }
+  
+  try {
+    // Auto-save current set if it has cards
+    const currentCustom = await jget("/api/custom_set");
+    if((currentCustom.cards||[]).length > 0 && activeCustomSetId !== "default"){
+      const activeSet = savedCustomSets.find(s => s.id === activeCustomSetId);
+      if(activeSet){
+        activeSet.cardIds = currentCustom.cards || [];
+        activeSet.statuses = currentCustom.statuses || {};
+        activeSet.savedAt = Date.now();
+        localStorage.setItem("kenpo_saved_custom_sets", JSON.stringify(savedCustomSets));
+      }
+    }
+    
+    // Clear current custom set
+    await jpost("/api/custom_set/clear", {});
+    
+    // Create new saved entry
+    const newSet = {
+      id: "set_" + Date.now(),
+      name,
+      cardIds: [],
+      statuses: {},
+      settings: { randomize: false, reflectStatus: false },
+      savedAt: Date.now()
+    };
+    savedCustomSets.push(newSet);
+    localStorage.setItem("kenpo_saved_custom_sets", JSON.stringify(savedCustomSets));
+    
+    activeCustomSetId = newSet.id;
+    nameInput.value = "";
+    loadSavedCustomSets();
+    updateCurrentSetDisplay();
+    await refreshCounts();
+    alert(`Created empty set "${name}". Add cards via Manage Cards tab.`);
+  } catch(e){
+    alert("Failed: " + e.message);
+  }
+}
+
+// Rename a saved set
+function renameSavedSet(index){
+  const set = savedCustomSets[index];
+  if(!set) return;
+  const newName = prompt("Rename custom deck:", set.name);
+  if(!newName || !newName.trim()) return;
+  set.name = newName.trim();
+  localStorage.setItem("kenpo_saved_custom_sets", JSON.stringify(savedCustomSets));
+  loadSavedCustomSets();
   updateCurrentSetDisplay();
 }
 
@@ -4296,10 +4470,33 @@ function deleteSavedSet(index){
   loadSavedCustomSets();
 }
 
+// ========== DECK-SPECIFIC SETTINGS ==========
+
+async function loadDeckShortAnswersSetting(){
+  const cb = $("deckShortAnswers");
+  if(!cb) return;
+  try {
+    const s = await jget(`/api/decks/${encodeURIComponent(activeDeckId)}/settings`);
+    cb.checked = !!s.shortAnswers;
+  } catch(e){ cb.checked = false; }
+}
+
+async function toggleDeckShortAnswers(){
+  const cb = $("deckShortAnswers");
+  if(!cb) return;
+  try {
+    await jpost(`/api/decks/${encodeURIComponent(activeDeckId)}/settings`, { shortAnswers: cb.checked });
+    showEditDecksStatus(cb.checked ? "Short answers mode ON for this deck" : "Short answers mode OFF", "success");
+  } catch(e){
+    console.error("Failed to save deck setting:", e);
+  }
+}
+
 // Bind custom set settings button
 document.addEventListener("DOMContentLoaded", () => {
   const btn = $("customSetSettingsBtn");
   if(btn){
     btn.addEventListener("click", openCustomSetModal);
   }
+  window.addEventListener("resize", () => { if(typeof resizeCard === "function") resizeCard(); });
 });

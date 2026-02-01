@@ -15,6 +15,7 @@ from flask import Flask, jsonify, request, send_from_directory, session, send_fi
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import logging
+# APPDATA_SAFE_PATHS_PATCH_v1
 
 # =========================================================
 # Advanced Flashcards WebApp Server (Multi-user with Username/Password Auth)
@@ -2083,88 +2084,171 @@ def api_admin_stats():
             "version": get_version().get("version", ""),
             "build": get_version().get("build", ""),
             "uptime": _now()
+        },
+        "logs": {
+            "server_size": _log_file_size("server"),
+            "error_size": _log_file_size("error"),
+            "user_size": _log_file_size("user")
         }
     })
 
 
-# Server activity log storage
+# Server activity log storage (in-memory + file-backed)
 ACTIVITY_LOG = []
 MAX_LOG_ENTRIES = 500
 
+# ---- File-based logging ----
+def _ensure_log_dir():
+    os.makedirs(LOG_DIR, exist_ok=True)
+
+def _rotate_log_file(fpath):
+    """Rename current log to .prev (keeps 1 previous)."""
+    if os.path.exists(fpath) and os.path.getsize(fpath) > 0:
+        prev = fpath + ".prev"
+        try:
+            if os.path.exists(prev):
+                os.remove(prev)
+            os.rename(fpath, prev)
+        except Exception as e:
+            print(f"[LOG] rotate failed {fpath}: {e}")
+
+def _init_log_files():
+    """On server start: rotate server/error logs; keep user_activity continuous."""
+    _ensure_log_dir()
+    _rotate_log_file(os.path.join(LOG_DIR, "server.log"))
+    _rotate_log_file(os.path.join(LOG_DIR, "error.log"))
+    _write_log_line("server", {"timestamp": _now(), "level": "info", "message": "=== Server started ===", "user": ""})
+
+def _write_log_line(log_type, entry):
+    try:
+        _ensure_log_dir()
+        fname = {"error": "error.log", "user": "user_activity.log"}.get(log_type, "server.log")
+        with open(os.path.join(LOG_DIR, fname), "a", encoding="utf-8") as f:
+            f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    except Exception as e:
+        print(f"[LOG WRITE] {e}")
+
+def _read_log_file(log_type, limit=200):
+    fname = {"error": "error.log", "user": "user_activity.log"}.get(log_type, "server.log")
+    path = os.path.join(LOG_DIR, fname)
+    if not os.path.exists(path):
+        return []
+    entries = []
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line: continue
+                try:
+                    entries.append(json.loads(line))
+                except json.JSONDecodeError:
+                    entries.append({"timestamp": "", "level": "info", "message": line, "user": ""})
+    except Exception:
+        pass
+    return list(reversed(entries[-limit:]))
+
+def _log_file_size(log_type):
+    fname = {"error": "error.log", "user": "user_activity.log"}.get(log_type, "server.log")
+    path = os.path.join(LOG_DIR, fname)
+    try: return os.path.getsize(path) if os.path.exists(path) else 0
+    except Exception: return 0
+
+def _clear_log_file(log_type, username=""):
+    fname = {"error": "error.log", "user": "user_activity.log"}.get(log_type, "server.log")
+    path = os.path.join(LOG_DIR, fname)
+    if log_type == "user":
+        _rotate_log_file(path)  # save user_activity before clearing
+    try:
+        with open(path, "w", encoding="utf-8") as f: f.write("")
+        _write_log_line(log_type, {"timestamp": _now(), "level": "info", "message": f"Log cleared by {username}", "user": username})
+    except Exception: pass
+
+# Initialize log files on server start
+_init_log_files()
+
+
 def log_activity(level: str, message: str, user: str = ""):
-    """Add an entry to the activity log."""
+    """Add entry to in-memory log AND write to log files."""
     global ACTIVITY_LOG
     entry = {
         "timestamp": _now(),
-        "level": level,  # info, warn, error
+        "level": level,
         "message": message,
         "user": user
     }
     ACTIVITY_LOG.append(entry)
-    # Keep only recent entries
     if len(ACTIVITY_LOG) > MAX_LOG_ENTRIES:
         ACTIVITY_LOG = ACTIVITY_LOG[-MAX_LOG_ENTRIES:]
+    _write_log_line("server", entry)
+    if level in ("error", "warn"):
+        _write_log_line("error", entry)
+    if user:
+        _write_log_line("user", entry)
 
 
 @app.get("/api/admin/logs")
 def api_admin_logs():
-    """Get server activity logs (admin only)."""
+    """Get server activity logs from files (admin only)."""
     uid = current_user_id()
     if not uid:
         return jsonify({"error": "login_required"}), 401
-    
     user = _get_user(uid)
     username = user.get("username", "") if user else ""
     if not _is_admin_user(username):
         return jsonify({"error": "admin_required"}), 403
-    
+
     log_type = request.args.get("type", "all")
-    limit = int(request.args.get("limit", 100))
-    
-    logs = ACTIVITY_LOG.copy()
-    
-    # Filter by type
-    if log_type == "error":
-        logs = [l for l in logs if l["level"] == "error"]
-    elif log_type == "user":
-        logs = [l for l in logs if l["user"]]
-    elif log_type == "server":
-        logs = [l for l in logs if not l["user"]]
-    
-    # Return most recent first, limited
-    logs = logs[-limit:]
-    logs.reverse()
-    
-    return jsonify({"logs": logs})
+    limit = int(request.args.get("limit", 200))
+
+    if log_type in ("server", "error", "user"):
+        logs = _read_log_file(log_type, limit)
+    else:
+        logs = _read_log_file("server", limit)
+
+    fsize = _log_file_size(log_type if log_type != "all" else "server")
+    return jsonify({"logs": logs, "fileSize": fsize})
+
+
+@app.get("/api/admin/logs/download")
+def api_admin_logs_download():
+    """Download a log file. Returns 204 if empty."""
+    uid = current_user_id()
+    if not uid:
+        return jsonify({"error": "login_required"}), 401
+    user = _get_user(uid)
+    username = user.get("username", "") if user else ""
+    if not _is_admin_user(username):
+        return jsonify({"error": "admin_required"}), 403
+
+    log_type = request.args.get("type", "server")
+    fname = {"error": "error.log", "user": "user_activity.log"}.get(log_type, "server.log")
+    path = os.path.join(LOG_DIR, fname)
+    if not os.path.exists(path) or os.path.getsize(path) == 0:
+        return "", 204
+    return send_file(path, as_attachment=True, download_name=fname)
 
 
 @app.post("/api/admin/logs/clear")
 def api_admin_logs_clear():
     """Clear activity logs (admin only)."""
     global ACTIVITY_LOG
-    
     uid = current_user_id()
     if not uid:
         return jsonify({"error": "login_required"}), 401
-    
     user = _get_user(uid)
     username = user.get("username", "") if user else ""
     if not _is_admin_user(username):
         return jsonify({"error": "admin_required"}), 403
-    
+
     log_type = request.args.get("type", "all")
-    
     if log_type == "all":
+        _clear_log_file("server", username)
+        _clear_log_file("error", username)
+        _clear_log_file("user", username)
         ACTIVITY_LOG = []
-    elif log_type == "error":
-        ACTIVITY_LOG = [l for l in ACTIVITY_LOG if l["level"] != "error"]
-    elif log_type == "user":
-        ACTIVITY_LOG = [l for l in ACTIVITY_LOG if not l["user"]]
-    elif log_type == "server":
-        ACTIVITY_LOG = [l for l in ACTIVITY_LOG if l["user"]]
-    
-    log_activity("info", f"Logs cleared by {username}", username)
-    
+    elif log_type in ("server", "error", "user"):
+        _clear_log_file(log_type, username)
+
     return jsonify({"success": True})
 
 
@@ -2331,7 +2415,8 @@ def api_admin_get_user_deck_access(target_user_id: str):
         if d.get("isBuiltIn"):
             continue
         if _deck_owner_id(d) == target_user_id:
-            owned.append({"id": d.get("id"), "name": d.get("name", d.get("id"))})
+            cc = len(_load_deck_cards(d.get("id", "")))
+            owned.append({"id": d.get("id"), "name": d.get("name", d.get("id")), "cardCount": cc})
 
     # Decks owned by the current admin (shareable)
     shareable = []
@@ -2339,7 +2424,8 @@ def api_admin_get_user_deck_access(target_user_id: str):
         if d.get("isBuiltIn"):
             continue
         if _deck_owner_id(d) == uid:
-            shareable.append({"id": d.get("id"), "name": d.get("name", d.get("id"))})
+            cc = len(_load_deck_cards(d.get("id", "")))
+            shareable.append({"id": d.get("id"), "name": d.get("name", d.get("id")), "cardCount": cc})
 
     access = _load_deck_access()
     current_unlocks = set(access.get("userUnlocks", {}).get(target_user_id, []) or [])
@@ -2513,6 +2599,150 @@ def api_admin_update_user_deck_access():
     _save_deck_access(access)
     
     return jsonify({"success": True})
+
+
+@app.post("/api/admin/deck-ownership")
+def api_admin_transfer_deck_ownership():
+    """Transfer ownership of a deck from one user to another (admin only)."""
+    uid = current_user_id()
+    if not uid:
+        return jsonify({"error": "login_required"}), 401
+
+    user = _get_user(uid)
+    username = user.get("username", "") if user else ""
+    if not _is_admin_user(username):
+        return jsonify({"error": "admin_required"}), 403
+
+    data = request.get_json() or {}
+    deck_id = data.get("deckId", "")
+    new_owner_id = data.get("newOwnerId", "")
+
+    if not deck_id or not new_owner_id:
+        return jsonify({"error": "deckId and newOwnerId required"}), 400
+
+    profiles = _load_profiles()
+    if new_owner_id not in profiles.get("users", {}):
+        return jsonify({"error": "Target user not found"}), 404
+
+    decks = _load_decks(include_all=True)
+    deck = None
+    for d in decks:
+        if d.get("id") == deck_id:
+            deck = d
+            break
+
+    if not deck:
+        return jsonify({"error": "Deck not found"}), 404
+
+    if deck.get("isBuiltIn"):
+        return jsonify({"error": "Cannot transfer built-in decks"}), 400
+
+    old_owner_id = _deck_owner_id(deck)
+    old_owner_name = profiles.get("users", {}).get(old_owner_id, {}).get("username", old_owner_id)
+    new_owner_name = profiles.get("users", {}).get(new_owner_id, {}).get("username", new_owner_id)
+
+    # Move card files from old owner to new owner
+    old_cards_dir = os.path.join(DATA_DIR, "user_cards", old_owner_id)
+    new_cards_dir = os.path.join(DATA_DIR, "user_cards", new_owner_id)
+    os.makedirs(new_cards_dir, exist_ok=True)
+
+    old_cards_file = os.path.join(old_cards_dir, "cards.json")
+    new_cards_file = os.path.join(new_cards_dir, "cards.json")
+
+    # Load existing cards for both users
+    old_cards = []
+    new_cards = []
+    if os.path.exists(old_cards_file):
+        try:
+            with open(old_cards_file, "r", encoding="utf-8") as f:
+                old_cards = json.load(f)
+        except Exception:
+            old_cards = []
+    if os.path.exists(new_cards_file):
+        try:
+            with open(new_cards_file, "r", encoding="utf-8") as f:
+                new_cards = json.load(f)
+        except Exception:
+            new_cards = []
+
+    # Move cards belonging to this deck from old owner to new owner
+    moving = [c for c in old_cards if c.get("deckId") == deck_id]
+    staying = [c for c in old_cards if c.get("deckId") != deck_id]
+    new_cards.extend(moving)
+
+    with open(old_cards_file, "w", encoding="utf-8") as f:
+        json.dump(staying, f, ensure_ascii=False, indent=2)
+    with open(new_cards_file, "w", encoding="utf-8") as f:
+        json.dump(new_cards, f, ensure_ascii=False, indent=2)
+
+    # Also move deck_cards/<deck_id>/ directory stays as-is (shared storage)
+    # Update the deck metadata to reflect new owner
+    decks_file = os.path.join(DATA_DIR, "decks.json")
+    try:
+        with open(decks_file, "r", encoding="utf-8") as f:
+            decks_data = json.load(f)
+    except Exception:
+        decks_data = []
+    if isinstance(decks_data, dict):
+        decks_data = decks_data.get("decks", [])
+
+    for d in decks_data:
+        if d.get("id") == deck_id:
+            d["ownerId"] = new_owner_id
+            d["createdBy"] = new_owner_id
+            break
+
+    with open(decks_file, "w", encoding="utf-8") as f:
+        json.dump(decks_data, f, ensure_ascii=False, indent=2)
+
+    log_activity("info", f"Deck '{deck_id}' ownership transferred from {old_owner_name} to {new_owner_name} by {username}", username)
+
+    return jsonify({"success": True, "message": f"Deck transferred to {new_owner_name}"})
+
+
+@app.get("/api/admin/user-deck-status")
+def api_admin_user_deck_status():
+    """Get the access status for a specific user+deck combination (admin only)."""
+    uid = current_user_id()
+    if not uid:
+        return jsonify({"error": "login_required"}), 401
+
+    user = _get_user(uid)
+    username = user.get("username", "") if user else ""
+    if not _is_admin_user(username):
+        return jsonify({"error": "admin_required"}), 403
+
+    target_user_id = request.args.get("userId", "")
+    deck_id = request.args.get("deckId", "")
+
+    if not target_user_id or not deck_id:
+        return jsonify({"error": "userId and deckId required"}), 400
+
+    config = _load_deck_config()
+    access = _load_deck_access()
+
+    built_in_ids = config.get("builtInDecks", [])
+    is_built_in = deck_id in built_in_ids
+    user_disabled = target_user_id in access.get("userBuiltInDisabled", [])
+    user_unlocks = access.get("userUnlocks", {}).get(target_user_id, [])
+    is_unlocked = deck_id in user_unlocks
+
+    # Check if the target user owns this deck
+    decks_all = _load_decks(include_all=True)
+    is_owned = False
+    for d in decks_all:
+        if d.get("id") == deck_id and _deck_owner_id(d) == target_user_id:
+            is_owned = True
+            break
+
+    return jsonify({
+        "userId": target_user_id,
+        "deckId": deck_id,
+        "isBuiltIn": is_built_in,
+        "builtInDisabled": user_disabled,
+        "isUnlocked": is_unlocked,
+        "isOwned": is_owned
+    })
 
 
 @app.post("/api/redeem-invite-code")
@@ -3779,14 +4009,14 @@ def _load_deck_config() -> Dict[str, Any]:
     if not os.path.exists(DECK_CONFIG_PATH):
         return {
             "newUsersGetBuiltInDecks": True,  # New users get built-in decks by default
-            "allowNonAdminDeckEdits": True,   # Non-admins can edit built-in/unlocked decks
+            "allowNonAdminDeckEdits": False,   # Non-admins cannot edit built-in decks by default
             "builtInDecks": ["kenpo"]          # List of built-in deck IDs
         }
     try:
         with open(DECK_CONFIG_PATH, "r", encoding="utf-8") as f:
             return json.load(f)
     except Exception:
-        return {"newUsersGetBuiltInDecks": True, "allowNonAdminDeckEdits": True, "builtInDecks": ["kenpo"]}
+        return {"newUsersGetBuiltInDecks": True, "allowNonAdminDeckEdits": False, "builtInDecks": ["kenpo"]}
 
 
 def _save_deck_config(config: Dict[str, Any]) -> None:
@@ -4199,7 +4429,7 @@ def api_get_decks():
     
     # Permission flags for Web UI (Edit / Delete buttons)
     config = _load_deck_config()
-    allow_non_admin_edits = config.get("allowNonAdminDeckEdits", True)
+    allow_non_admin_edits = config.get("allowNonAdminDeckEdits", False)
     me = _get_user(uid) or {}
     me_is_admin = _is_admin_user(me.get("username", ""))
 
@@ -4215,6 +4445,56 @@ def api_get_decks():
             deck["canDelete"] = bool(is_owner)
 
     return jsonify(decks)
+
+
+@app.get("/api/decks/<deck_id>/settings")
+def api_get_deck_settings(deck_id: str):
+    """Get deck-specific settings (e.g. shortAnswers mode)."""
+    uid = current_user_id()
+    if not uid:
+        return jsonify({"error": "Not logged in"}), 401
+    deck = _get_deck_by_id(deck_id)
+    if not deck:
+        return jsonify({}), 200  # Return empty settings for unknown decks
+    return jsonify(deck.get("settings", {}))
+
+
+@app.post("/api/decks/<deck_id>/settings")
+def api_update_deck_settings(deck_id: str):
+    """Update deck-specific settings (owner or admin only)."""
+    uid = current_user_id()
+    if not uid:
+        return jsonify({"error": "Not logged in"}), 401
+    deck = _get_deck_by_id(deck_id)
+    if not deck:
+        return jsonify({"error": "Deck not found"}), 404
+    me = _get_user(uid) or {}
+    is_owner = _deck_owner_id(deck) == uid
+    is_admin = _is_admin_user(me.get("username", ""))
+    if not (is_owner or is_admin):
+        return jsonify({"error": "Not authorized"}), 403
+
+    data = request.get_json() or {}
+    decks_file = os.path.join(DATA_DIR, "decks.json")
+    try:
+        with open(decks_file, "r", encoding="utf-8") as f:
+            decks_data = json.load(f)
+    except Exception:
+        decks_data = []
+    if isinstance(decks_data, dict):
+        decks_data = decks_data.get("decks", [])
+
+    for d in decks_data:
+        if d.get("id") == deck_id:
+            existing = d.get("settings", {})
+            if "shortAnswers" in data:
+                existing["shortAnswers"] = bool(data["shortAnswers"])
+            d["settings"] = existing
+            break
+
+    with open(decks_file, "w", encoding="utf-8") as f:
+        json.dump(decks_data, f, ensure_ascii=False, indent=2)
+    return jsonify({"success": True})
 
 
 @app.post("/api/decks")
@@ -4840,8 +5120,9 @@ def api_ai_generate_deck():
             keywords = str(data.get("keywords", "")).strip()
             if not keywords:
                 return jsonify({"error": "Keywords required"}), 400
-            print(f"[AI GEN] Generating {max_cards} cards for keywords: {keywords[:100]}")
-            cards = _ai_generate_from_keywords(keywords, max_cards)
+            short_answers = bool(data.get("shortAnswers", False))
+            print(f"[AI GEN] Generating {max_cards} cards for keywords: {keywords[:100]} (short={short_answers})")
+            cards = _ai_generate_from_keywords(keywords, max_cards, short_answers=short_answers)
             print(f"[AI GEN] Generated {len(cards)} cards")
         
         elif gen_type == "photo":
@@ -4872,25 +5153,41 @@ def api_ai_generate_deck():
         return jsonify({"error": str(e)}), 500
 
 
-def _ai_generate_from_keywords(keywords: str, max_cards: int) -> list:
+def _ai_generate_from_keywords(keywords: str, max_cards: int, short_answers: bool = False) -> list:
     """Generate flashcards from search keywords."""
-    prompt = f"""Generate exactly {max_cards} vocabulary flashcards about: {keywords}
+    if short_answers:
+        answer_rule = """CRITICAL: ALL definitions MUST be SHORT (1-4 words max).
+Examples: "Austin", "Hello", "Washington D.C.", "Slow down", "Prime meridian"
+NEVER write full sentences for definitions."""
+    else:
+        answer_rule = """Definition length rules - be SMART about length:
+- Simple translations/facts: 1-3 words (e.g., "Hello", "Austin", "Red")
+- Factual answers: 1-5 words (e.g., "Washington D.C.", "1776")
+- Complex concepts requiring explanation: use a clear sentence
+Examples:
+  "Hola" -> "Hello" (1 word is enough)
+  "Texas capital" -> "Austin" (1 word)
+  "Nucleus" -> "Central part of a cell containing genetic material" (needs explanation)"""
 
-IMPORTANT: For foreign language vocabulary, definitions should be SHORT LITERAL TRANSLATIONS.
-Example for Spanish: "Hola" -> definition: "Hello" (NOT a long explanation)
+    prompt = f"""Generate exactly {max_cards} flashcards about: {keywords}
+
+IMPORTANT: Determine the SUBJECT from the keywords ONLY. Do NOT assume any foreign language unless the keywords explicitly mention one (e.g., "Spanish", "French", "Japanese").
+- If keywords mention a specific language: generate vocabulary in that language with English translations.
+- If keywords are about a general topic (food, science, geography, history, etc.): generate ENGLISH term/definition cards about that exact topic.
+- Match content to keywords LITERALLY. "fast food chains types of food" = fast food menu items, NOT foreign food.
+{answer_rule}
 
 For each card provide:
-- term: the vocabulary word in the target language
-- definition: SHORT English translation or meaning (1-5 words max)
-- pronunciation: phonetic guide (e.g., "oh-lah"), or empty string if obvious
-- group: category (e.g., "Greetings", "Numbers", "Colors")
+- term: the word, concept, or question
+- definition: the answer or meaning
+- pronunciation: phonetic guide ONLY for foreign language terms, otherwise empty string ""
+- group: category for organization
 
-Respond ONLY with valid JSON, no markdown or explanation:
+Respond ONLY with valid JSON, no markdown:
 {{"cards": [
-    {{"term": "Hola", "definition": "Hello", "pronunciation": "oh-lah", "group": "Greetings"}},
-    {{"term": "Adiós", "definition": "Goodbye", "pronunciation": "ah-dee-ohs", "group": "Greetings"}}
+    {{"term": "Example Term", "definition": "Example definition", "pronunciation": "", "group": "Category"}}
 ]}}"""
-    
+
     return _parse_ai_cards_response(_call_ai_chat(prompt))
 
 

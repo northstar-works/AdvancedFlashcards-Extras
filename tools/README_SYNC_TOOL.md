@@ -117,21 +117,6 @@ The build number always increments by 1.
 | `INSTALL_WINDOWS.md` | Packaged-specific docs |
 | `*.lnk` | Windows shortcuts |
 
-## Backups
-
-Before making any changes, the tool creates a timestamped backup in the **tools folder**:
-
-```
-tools/sync_backups/v1.4.0_b9_20260124_123456/
-```
-
-This folder contains copies of all files that will be modified:
-- `app.py`, `requirements.txt`, etc.
-- `static/` folder
-- `README.md`, `CHANGELOG.md`, `version.json`
-- `Version-WebServerPackaged-*.txt`
-
-Backups are organized by version for easy reference.
 
 ## Example Session
 

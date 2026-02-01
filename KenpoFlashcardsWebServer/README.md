@@ -5,7 +5,7 @@
 
 Flask-based web application providing sync API and web UI for Advanced Flashcards WebApp.
 
-**Current Version:** v8.5.0 (build 53)  
+**Current Version:** v8.5.3 (build 56)  
 **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
 ---
@@ -269,7 +269,7 @@ Upload PDF, TXT, or MD files. AI reads the content and generates flashcards from
 
 ### Packaged Install Marker
 - Packaged installs include `data/install_type.txt` containing `packaged`.
-- When present, the UI shows **Web Server Version: v8.5.0 (build 53)** in the User menu, About, and Admin > System.
+- When present, the UI shows **Web Server Version: v8.5.3 (build 56)** in the User menu, About, and Admin > System.
 
 **Note:** API keys are now stored encrypted in `data/api_keys.enc`. You no longer need to set `OPENAI_API_KEY` in the batch file - keys are loaded from the encrypted file on startup.
 
@@ -354,7 +354,7 @@ Should return JSON with `version`, `term_to_id`, `cards`
 ```
 http://localhost:8009/api/version
 ```
-Should return `{"version": "8.5.0", "build": 53, ...}`
+Should return `{"version": "8.5.3", "build": 56, ...}`
 
 ### 3. Test Admin Users Endpoint
 ```
@@ -414,34 +414,66 @@ Interactive page with tabbed sections:
 
 ---
 
-## 🆕 Recent Updates (8.3.0 → 8.5.0)
+## 🆕 Recent Updates (8.4.0 → 8.5.3)
+
+### v8.5.3 (build 56)
+- **Admin deck access cleanup:** Allow/Deny buttons no longer reset user/deck dropdowns, enabling bulk access changes. Removed Disable/Enable Built-In buttons (simplified). Status line now always shows "Access: Granted" or "Access: Not granted" clearly.
+- **Deck Ownership blank fix:** "Current owner" line hidden when no deck is selected instead of showing stale data.
+- **Non-admin editing off by default:** "Allow non-admins to edit built-in decks" checkbox defaults to off; removed "/unlocked" from label text.
+- **Portrait card layout:** card height increased to 320px (280px on small phones), bigger text (26px), card face scrollable for long breakdowns. "All (flat) • Studying: X" status line now inline with "Card 1/10" counter.
+- **Landscape controls compact:** group/All Cards/search controls reduced to 11px font with tighter padding. Card height 200px.
+- **Breakdown overflow fix:** card faces now scroll when breakdown content exceeds card height.
+
+### v8.5.2 (build 55)
+- **File-based logging overhaul:** server.log, error.log, and user_activity.log now persist to disk; previous server/error logs are rotated on each restart (.prev); user activity is continuous unless manually cleared (saved before clearing); Admin > Logs reads from files; download disabled for empty logs.
+- **Expandable admin stat tiles:** click any stat card (Users, Cards, Decks, etc.) to expand in-depth details per tile.
+- **Custom Set tab fix:** Manage Cards and Saved Sets tabs were blank due to hidden-class conflict; now properly toggle visibility.
+- **AI generation context fix:** AI no longer assumes foreign language when generating cards; matches content to keywords literally (e.g., "fast food chains" produces fast food items, not Spanish food words).
+- **Deck Short Answers mode:** new per-deck toggle in AI Generator tab forces definitions to 1-4 words (ideal for capitals, translations, simple vocabulary).
+- **Add Card pre-selects active deck:** Target Deck dropdown now defaults to the deck you're currently studying instead of always Kenpo.
+- **Custom Set counts line:** Unlearned/Unsure/Learned counts now reflect Custom Set card statuses instead of main deck statuses when studying Custom Set.
+- **Random card input fix:** number field narrowed to prevent overlapping "Pick random cards to add" text and the Add Random button.
+
+### v8.5.1 (build 54)
+- **Controls rearranged:** group dropdown + All Cards on the left, search 🔍 icon on the right; search expands as overlay.
+- **Settings icon (⚙️) moved to title row:** now sits right of User:**** display.
+- **Desktop search icon:** search bar replaced with 🔍 icon on all screen sizes.
+- **Portrait controls:** group dropdown auto-width left, All Cards + search pushed right.
+- **Landscape controls right-aligned:** controls row pushed to right side of screen.
+- **Mobile logo inline:** deck logo displays inline instead of overlapping.
+- **Admin: Edit User deck access fixed:** corrected API URL, field name mismatches, card counts now show.
+- **Admin: Edit User modal wider:** 900px max-width, read-only Granted/Not granted text (no checkboxes).
+- **Admin: Allow/Deny buttons:** replaced Unlock/Lock in User Deck Access; live status indicators.
+- **Admin: Deck Ownership section:** transfer deck ownership between users.
+- **Admin: Built-in status badge:** shows active/disabled state for selected user.
+- **CSS cleanup:** fixed `.selectBtn` → `.select`; removed stale `.rightControls`.
 
 ### v8.5.0 (build 53)
-- **Portrait/landscape responsive overhaul:** compact single-row study controls in both orientations; group dropdown, search, and buttons fit without wrapping on small screens.
-- **Settings toggle:** settings button (⚙️) now toggles open/close; close button (✕) added to settings header for quick exit.
-- **Admin users table (mobile):** "Currently Studying" column moves under the progress bar on small screens; "Last Sync" column hidden on very small screens.
-- **Deck list badges (mobile):** badge labels hidden on narrow viewports, showing icon-only (📦🔓👥★) to save horizontal space.
-- **Deck actions (portrait):** action buttons stack vertically with a separator border on mobile.
-- **Landscape card height:** reduced to 180px so cards and controls coexist without scrolling.
+- **Portrait/landscape responsive overhaul:** compact single-row study controls in both orientations.
+- **Search bar → icon toggle:** search becomes a 🔍 icon that expands an overlay input on tap; auto-collapses when touching outside the search area.
+- **Saved Breakdowns moved to More:** the 🧩 button relocated from main controls into the Settings/More page.
+- **Got it button shortened:** "Got it ✓ (mark learned)" → "Got it ✓".
+- **Breakdown button compact:** stays small and fixed next to Next in portrait.
+- **Settings toggle:** settings button toggles open/close; close button (✕) added to settings header.
+- **Admin users table (mobile):** "Currently Studying" moves under progress bar; "Last Sync" hidden on very small screens.
+- **Deck list badges (mobile):** icon-only (📦🔓👥★) on narrow viewports.
+- **Deck actions (portrait):** stack vertically with separator border.
+- **Landscape card height:** reduced to 180px.
 
 ### v8.4.0 (build 52)
 - **Remember me (30-day sessions):** sessions persist across browser restarts and refresh on each request; no re-login required.
-- **Mobile responsive design (initial):** comprehensive CSS media queries for tablet (≤900px), mobile (≤600px), and small mobile (≤400px) viewports covering controls, tabs, cards, and modals.
+- **Mobile responsive design (initial):** comprehensive CSS media queries for tablet (≤900px), mobile (≤600px), and small mobile (≤400px) viewports.
 - **Admin edit built-in decks:** admins can now edit built-in decks (like Kenpo Vocabulary) and upload logos for them.
 - **Deck logo/title cleanup:** logo reduced ~15% (98→83px), fixed jumping transform; title truncates with ellipsis on overflow.
 - **Edit User modal:** widened to 700px with responsive breakpoints; deck access lists scroll and stack vertically on mobile.
-
-### v8.3.0 (build 51)
-- **AppData-safe runtime paths (Packaged/EXE):** centralized writable `DATA_DIR` and `LOG_DIR` via a shared runtime paths module so installed builds never attempt to write under `C:\Program Files\...\_internal\...`.
-- **Environment overrides:** support optional overrides for advanced/portable setups (`KENPO_APPDATA_BASE_DIR`, `KENPO_DATA_DIR`, `KENPO_LOG_DIR`).
-- **First-run data seeding:** in packaged/frozen mode, missing default data files are copied from the bundled read-only `data/` into the user’s AppData `data/` folder (non-destructive; does not overwrite existing user data).
-- **Logging reliability:** `server.log` consistently initializes in the writable AppData logs folder when launched via tray/service/installer builds.
-
 ## 📋 Version History
 
 | Version | Build | Key Changes |
 |---------|-------|-------------|
-| **8.5.0** | 53 | Portrait/landscape responsive overhaul (compact controls, single-row layout), settings toggle + close button, admin table responsive columns, deck badges icon-only on mobile, deck actions stack in portrait, landscape card height reduced |
+| **8.5.3** | 56 | Admin deck access cleanup (dropdowns persist, removed built-in toggles, clear status), ownership blank fix, non-admin editing off by default, portrait card taller/bigger, inline status+card counter, landscape compact controls, card face scrollable |
+| **8.5.2** | 55 | File-based logging (server/error/user_activity persist, rotation on restart), expandable admin stat tiles, Custom Set tab switching fix, AI context-aware generation, deck Short Answers mode, add-card pre-selects active deck, custom set counts line, random input layout fix |
+| **8.5.1** | 54 | Controls rearranged, search icon all screens, portrait/landscape layout fixes; Admin: fixed Edit User deck access API/card counts, Allow/Deny buttons, access status indicators, deck ownership transfer, wider modal |
+| **8.5.0** | 53 | Portrait/landscape responsive overhaul, search bar → icon toggle, Saved Breakdowns moved to Settings/More, Got it button shortened, breakdown button compact, settings toggle, admin table mobile columns, deck badges icon-only, deck actions stacking, landscape card height 180px |
 | **8.4.0** | 52 | Remember me 30-day sessions, initial mobile responsive design (tablet/mobile/small breakpoints), admin edit built-in decks, deck logo/title fixes, Edit User modal responsive widening |
 | **8.3.0** | 51 | AppData-safe runtime paths for packaged installs (no writes to Program Files), env overrides for data/log dirs, first-run seeding of bundled defaults into AppData, server logging reliability in tray/service launches, fixed startup indention issue and ensured runtime is included/available in _internal for tray/service |
 | **8.2.0** | 50 | Forced password reset flow (temp login → reset on login screen), Create Deck add-cards method selector + auto-jump, Admin dashboard no longer hangs on load, Packaged install marker (`data/install_type.txt`) for showing Web Server Version |

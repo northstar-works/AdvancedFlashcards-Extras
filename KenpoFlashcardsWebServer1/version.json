@@ -1,7 +1,0 @@
-{
-  "name": "Advanced Flashcards WebAppServer",
-  "version": "8.4.0",
-  "build": 52,
-  "released": "2026-01-30",
-  "notes": "8.4.0 (build 52): Mobile responsiveness improvements; fixed deck logo positioning and size (15% smaller, no jumping); deck title truncation with ellipsis; 30-day persistent sessions (remember me functionality); admins can now edit built-in decks; wider Edit User modal with responsive layout; fixed duplicate updateHeaderDeckLogo call."
-}

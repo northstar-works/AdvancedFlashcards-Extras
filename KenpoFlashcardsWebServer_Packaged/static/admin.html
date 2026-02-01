@@ -41,6 +41,18 @@
     .stat-label { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
     .stat-sub { font-size: 11px; color: #666; margin-top: 4px; }
     
+    /* Expandable stat tiles */
+    .stat-card.expandable { cursor: pointer; transition: transform .15s, box-shadow .15s; }
+    .stat-card.expandable:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.3); }
+    .stat-card.expandable::after { content: '▸'; position: absolute; top: 12px; right: 12px; font-size: 12px; color: #555; transition: transform .2s; }
+    .stat-card.expandable.expanded::after { transform: rotate(90deg); color: #fff; }
+    .stat-expand-panel { display: none; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.08); font-size: 12px; color: #aaa; max-height: 200px; overflow-y: auto; }
+    .stat-card.expanded .stat-expand-panel { display: block; animation: fadeIn .2s ease; }
+    .stat-expand-item { padding: 4px 0; display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px solid rgba(255,255,255,.04); }
+    .stat-expand-item:last-child { border-bottom: none; }
+    .stat-expand-name { color: #ccc; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .stat-expand-val { color: #60a5fa; font-weight: 600; flex-shrink: 0; }
+    
     /* Section card */
     .section-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
     .section-title { font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
@@ -59,6 +71,12 @@
     .progress-bar { height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; width: 100px; }
     .progress-fill { height: 100%; background: linear-gradient(90deg, #22c55e, #16a34a); border-radius: 3px; }
     .deck-badge { font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+    
+    /* Progress cell with studying text underneath */
+    .progress-cell { display: flex; flex-direction: column; gap: 4px; }
+    .progress-row { display: flex; align-items: center; gap: 8px; }
+    .progress-text { font-size: 12px; color: #888; }
+    .studying-text { font-size: 11px; color: #60a5fa; margin-top: 2px; }
     
     /* Server info */
     .server-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
@@ -120,9 +138,9 @@
     .user-access-actions { display: flex; gap: 8px; flex-wrap: wrap; }
     
     /* Modal */
-    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
     .modal-overlay.hidden { display: none; }
-    .modal-card { background: #1a1f2e; border-radius: 16px; padding: 24px; max-width: 500px; width: 90%; max-height: 80vh; overflow: auto; }
+    .modal-card { background: #1a1f2e; border-radius: 16px; padding: 24px; max-width: 900px; width: 95%; max-height: 85vh; overflow: auto; }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .modal-title { font-size: 18px; font-weight: 600; color: #fff; }
     .modal-close { background: none; border: none; color: #888; font-size: 24px; cursor: pointer; padding: 0; line-height: 1; }
@@ -137,11 +155,49 @@
     /* Loading */
     #loading { text-align: center; padding: 60px; color: #888; }
     #dashboard { display: none; }
+    
+    /* Mobile responsiveness for admin page */
+    @media (max-width: 768px) {
+      .admin-page { padding: 12px; }
+      .admin-header { flex-direction: column; align-items: flex-start; }
+      .admin-tabs { flex-wrap: wrap; }
+      .admin-tab { padding: 10px 14px; font-size: 13px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .ai-grid { grid-template-columns: 1fr; }
+      .modal-card { max-width: 98%; width: 98%; padding: 16px; }
+      .deck-access-grid { flex-direction: column; }
+      .deck-access-col { min-width: 100%; }
+      .deckAccessList { max-height: 180px; }
+      .quick-actions { flex-direction: column; }
+      .quick-actions .btn { width: 100%; justify-content: center; }
+      
+      /* User table - hide Currently Studying column, show in progress cell */
+      .user-table th:nth-child(3),
+      .user-table td:nth-child(3) { display: none; }
+      .studying-text { display: block; }
+    }
+    
+    @media (min-width: 769px) {
+      /* Desktop - hide studying text in progress cell since it has its own column */
+      .studying-text { display: none; }
+    }
+    
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .user-table { font-size: 12px; }
+      .user-table th, .user-table td { padding: 8px 6px; }
+      .admin-tab span { display: none; }
+      
+      /* Further simplify table */
+      .user-table th:nth-child(4),
+      .user-table td:nth-child(4) { display: none; }
+      .progress-bar { width: 70px; }
+    }
   
 
 /* Edit user deck access */
 .deck-access-grid{ display:flex; gap:16px; align-items:flex-start; }
-.deck-access-col{ flex:1; min-width: 220px; }
+.deck-access-col{ flex:1; min-width: 300px; }
 .deck-access-title{ font-size: 12px; color:#aaa; margin: 6px 0 8px; text-transform: uppercase; letter-spacing: .04em; }
 .deckAccessList{ border:1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 10px; background: rgba(0,0,0,0.15); max-height: 220px; overflow:auto; }
 .deckAccessRow{ display:flex; justify-content: space-between; align-items:center; gap:10px; padding: 8px 6px; border-bottom:1px solid rgba(255,255,255,0.06); }
@@ -198,46 +254,53 @@
       <!-- Overview Tab -->
       <div class="tab-content active" id="tab-overview">
         <div class="stats-grid">
-          <div class="stat-card blue">
+          <div class="stat-card blue expandable" onclick="toggleStatExpand(this)">
             <div class="stat-icon">👥</div>
             <div class="stat-value" id="statUsers">-</div>
             <div class="stat-label">Total Users</div>
             <div class="stat-sub" id="statAdmins">-</div>
+            <div class="stat-expand-panel" id="statUsersDetail"></div>
           </div>
-          <div class="stat-card green">
+          <div class="stat-card green expandable" onclick="toggleStatExpand(this)">
             <div class="stat-icon">📚</div>
             <div class="stat-value" id="statCards">-</div>
             <div class="stat-label">Total Cards</div>
             <div class="stat-sub" id="statGroups">-</div>
+            <div class="stat-expand-panel" id="statCardsDetail"></div>
           </div>
-          <div class="stat-card purple">
+          <div class="stat-card purple expandable" onclick="toggleStatExpand(this)">
             <div class="stat-icon">📁</div>
             <div class="stat-value" id="statDecks">-</div>
             <div class="stat-label">Study Decks</div>
             <div class="stat-sub" id="statUserDecks">-</div>
+            <div class="stat-expand-panel" id="statDecksDetail"></div>
           </div>
-          <div class="stat-card yellow">
+          <div class="stat-card yellow expandable" onclick="toggleStatExpand(this)">
             <div class="stat-icon">🧩</div>
             <div class="stat-value" id="statBreakdowns">-</div>
             <div class="stat-label">Breakdowns</div>
             <div class="stat-sub" id="statBreakdownsContent">-</div>
+            <div class="stat-expand-panel" id="statBreakdownsDetail"></div>
           </div>
         </div>
         
         <div class="section-card">
           <div class="section-title"><span>📈</span> Learning Progress (All Users)</div>
           <div class="stats-grid">
-            <div class="stat-card green" style="--accent:#22c55e">
+            <div class="stat-card green expandable" style="--accent:#22c55e" onclick="toggleStatExpand(this)">
               <div class="stat-value" id="statLearned">-</div>
               <div class="stat-label">Cards Learned</div>
+              <div class="stat-expand-panel" id="statLearnedDetail"></div>
             </div>
-            <div class="stat-card yellow" style="--accent:#eab308">
+            <div class="stat-card yellow expandable" style="--accent:#eab308" onclick="toggleStatExpand(this)">
               <div class="stat-value" id="statUnsure">-</div>
               <div class="stat-label">Cards Unsure</div>
+              <div class="stat-expand-panel" id="statUnsureDetail"></div>
             </div>
-            <div class="stat-card blue" style="--accent:#3b82f6">
+            <div class="stat-card blue expandable" style="--accent:#3b82f6" onclick="toggleStatExpand(this)">
               <div class="stat-value" id="statActive">-</div>
               <div class="stat-label">Cards Unlearned</div>
+              <div class="stat-expand-panel" id="statActiveDetail"></div>
             </div>
           </div>
         </div>
@@ -275,7 +338,7 @@
               <tr>
                 <th>User</th>
                 <th>Progress</th>
-                <th>Currently Studying</th>
+                <th class="studying-col">Currently Studying</th>
                 <th>Last Sync</th>
                 <th>Actions</th>
               </tr>
@@ -298,7 +361,7 @@
             </label>
             <label class="setting-row">
               <input type="checkbox" id="cfgAllowNonAdminEdits" onchange="saveDeckConfig()">
-              <span>Allow non-admins to edit built-in/unlocked decks</span>
+              <span>Allow non-admins to edit built-in decks</span>
             </label>
           </div>
         </div>
@@ -335,20 +398,33 @@
           <div class="section-title"><span>👤</span> User Deck Access</div>
           <p class="section-desc">Manually manage deck access for specific users.</p>
           <div class="user-access-form">
-            <select id="userAccessSelect" class="form-select">
+            <select id="userAccessSelect" class="form-select" onchange="onUserDeckSelectChange()">
               <option value="">Select user...</option>
             </select>
-            <select id="userDeckSelect" class="form-select">
+            <select id="userDeckSelect" class="form-select" onchange="onUserDeckSelectChange()">
               <option value="">Select deck...</option>
             </select>
-            <button class="btn btn-primary btn-sm" onclick="unlockDeckForUser()">Unlock</button>
-            <button class="btn btn-danger btn-sm" onclick="lockDeckForUser()">Lock</button>
+            <button class="btn btn-primary btn-sm" onclick="allowDeckForUser()">Allow</button>
+            <button class="btn btn-danger btn-sm" onclick="denyDeckForUser()">Deny</button>
           </div>
-          <div class="user-access-actions" style="margin-top:12px;">
-            <button class="btn btn-warning btn-sm" onclick="disableBuiltInForUser()">Disable Built-In for User</button>
-            <button class="btn btn-secondary btn-sm" onclick="enableBuiltInForUser()">Enable Built-In for User</button>
+          <div id="userDeckStatusLine" style="margin-top:10px;font-size:13px;"></div>
+          <div id="userAccessStatus" style="margin-top:8px;"></div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title"><span>🔄</span> Deck Ownership</div>
+          <p class="section-desc">Transfer ownership of a deck from one user to another.</p>
+          <div class="user-access-form">
+            <select id="ownershipDeckSelect" class="form-select">
+              <option value="">Select deck...</option>
+            </select>
+            <select id="ownershipNewOwnerSelect" class="form-select">
+              <option value="">Transfer to user...</option>
+            </select>
+            <button class="btn btn-primary btn-sm" onclick="transferDeckOwnership()">Transfer</button>
           </div>
-          <div id="userAccessStatus" style="margin-top:12px;"></div>
+          <div id="ownershipCurrentOwner" style="margin-top:8px;font-size:13px;color:#9ca3af;"></div>
+          <div id="ownershipStatus" style="margin-top:10px;"></div>
         </div>
       </div>
       
@@ -378,15 +454,18 @@
       <div class="tab-content" id="tab-logs">
         <div class="section-card">
           <div class="section-title"><span>📋</span> App Logs</div>
+          <div class="quick-actions" style="margin-bottom:12px;">
+            <button class="btn btn-secondary btn-sm" id="logBtnServer" onclick="loadLogs('server')">App Logs</button>
+            <button class="btn btn-secondary btn-sm" id="logBtnError" onclick="loadLogs('error')">Error Logs</button>
+            <button class="btn btn-secondary btn-sm" id="logBtnUser" onclick="loadLogs('user')">User Activity</button>
+          </div>
           <div class="quick-actions" style="margin-bottom:16px;">
-            <button class="btn btn-secondary btn-sm" onclick="loadLogs('server')">App Logs</button>
-            <button class="btn btn-secondary btn-sm" onclick="loadLogs('error')">Error Logs</button>
-            <button class="btn btn-secondary btn-sm" onclick="loadLogs('user')">User Activity</button>
-            <button class="btn btn-secondary btn-sm" onclick="downloadLogs()">⬇️ Download</button>
-            <button class="btn btn-danger btn-sm" onclick="clearLogs()">🗑️ Clear Logs</button>
+            <button class="btn btn-secondary btn-sm" onclick="downloadLogFile()">⬇️ Download</button>
+            <button class="btn btn-danger btn-sm" onclick="clearLogs()">🗑️ Clear</button>
+            <span id="logFileSize" style="font-size:11px;color:#666;margin-left:8px;"></span>
           </div>
           <div class="log-container" id="logContainer">
-            <div class="log-line">No logs available. Logs are generated during app operation.</div>
+            <div class="log-line">Loading logs...</div>
           </div>
         </div>
       </div>
@@ -422,12 +501,13 @@
       </div>
     </div>
     <div class="deck-access-col">
-      <div class="deck-access-title">Your decks (grant/revoke access)</div>
+      <div class="deck-access-title">Your decks (access status)</div>
       <div id="editUserAdminDecks" class="deckAccessList">
         <div style="color:#9ca3af;font-size:13px;padding:8px;">Loading...</div>
       </div>
     </div>
   </div>
+  <div style="margin-top:8px;font-size:11px;color:#6b7280;">Manage access via Admin → Decks → User Deck Access</div>
   <div id="editUserDeckAccessStatus" style="margin-top:10px;"></div>
 </div>
 
@@ -463,6 +543,8 @@
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         tab.classList.add('active');
         document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+        // Auto-load logs when logs tab opened
+        if(tab.dataset.tab === 'logs') loadLogs(currentLogType || 'server');
       });
     });
     
@@ -544,6 +626,7 @@
         const lastSync = u.last_sync ? new Date(u.last_sync * 1000).toLocaleDateString() : 'Never';
         const adminBadge = u.is_admin ? '<span class="admin-badge">Admin</span>' : '';
         const adminIcon = u.is_admin ? '<span class="admin-icon">👑</span>' : '';
+        const deckName = u.active_deck_name || 'Kenpo';
         
         return `
           <tr>
@@ -554,13 +637,16 @@
               </div>
             </td>
             <td>
-              <div style="display:flex;align-items:center;gap:10px;">
-                <div class="progress-bar"><div class="progress-fill" style="width:${progressPct}%"></div></div>
-                <span style="font-size:12px;color:#888;">${progressPct}%</span>
+              <div class="progress-cell">
+                <div class="progress-row">
+                  <div class="progress-bar"><div class="progress-fill" style="width:${progressPct}%"></div></div>
+                  <span class="progress-text">${progressPct}%</span>
+                </div>
+                <div style="font-size:11px;color:#666;">${u.learned} learned, ${u.unsure} unsure</div>
+                <div class="studying-text">📚 ${deckName}</div>
               </div>
-              <div style="font-size:11px;color:#666;margin-top:4px;">${u.learned} learned, ${u.unsure} unsure</div>
             </td>
-            <td><span class="deck-badge">${u.active_deck_name || 'Kenpo'}</span></td>
+            <td><span class="deck-badge">${deckName}</span></td>
             <td style="font-size:12px;color:#888;">${lastSync}</td>
             <td>
               <button class="btn btn-secondary btn-sm" onclick="editUser('${u.id}','${u.username}',${u.is_admin})">Edit</button>
@@ -700,17 +786,17 @@ async function loadEditUserDeckAccess(userId){
   if(ownedEl) ownedEl.innerHTML = '<div style="color:#9ca3af;font-size:13px;padding:8px;">Loading...</div>';
   if(adminEl) adminEl.innerHTML = '<div style="color:#9ca3af;font-size:13px;padding:8px;">Loading...</div>';
   try{
-    const data = await jget(`/api/admin/user/deck_access?user_id=${encodeURIComponent(userId)}`);
-    const userDecks = data.userDecks || [];
+    const data = await jget(`/api/admin/user/${encodeURIComponent(userId)}/deck-access`);
+    const ownedDecks = data.ownedDecks || [];
     const adminDecks = data.adminDecks || [];
-    const granted = new Set(data.grantedAdminDeckIds || []);
+    const granted = new Set(data.grantedAdminDecks || []);
 
     if(ownedEl){
-      if(userDecks.length === 0){
+      if(ownedDecks.length === 0){
         ownedEl.innerHTML = '<div style="color:#9ca3af;font-size:13px;padding:8px;">No user-created decks.</div>';
       }else{
         ownedEl.innerHTML = '';
-        userDecks.forEach(d=>{
+        ownedDecks.forEach(d=>{
           const row = document.createElement('div');
           row.className='deckAccessRow';
           row.innerHTML = `
@@ -718,7 +804,7 @@ async function loadEditUserDeckAccess(userId){
               <div class="deckAccessName">${escapeHtml(d.name || d.id)}</div>
               <div class="deckAccessMeta">${(d.cardCount||0)} cards</div>
             </div>
-            <div class="deckAccessToggle"><span class="toggleLabel">Owned</span></div>
+            <div class="deckAccessToggle"><span class="toggleLabel" style="color:#4ade80;">Owned</span></div>
           `;
           ownedEl.appendChild(row);
         });
@@ -740,26 +826,9 @@ async function loadEditUserDeckAccess(userId){
               <div class="deckAccessMeta">${(d.cardCount||0)} cards</div>
             </div>
             <div class="deckAccessToggle">
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-                <input type="checkbox" ${isOn ? 'checked' : ''} />
-                <span class="toggleLabel">${isOn ? 'Granted' : 'Not granted'}</span>
-              </label>
+              <span class="toggleLabel" style="color:${isOn ? '#4ade80' : '#f87171'}">${isOn ? 'Granted' : 'Not granted'}</span>
             </div>
           `;
-          const cb = row.querySelector('input[type="checkbox"]');
-          const lbl = row.querySelector('.toggleLabel');
-          if(cb){
-            cb.addEventListener('change', async ()=>{
-              try{
-                await jpost('/api/admin/user/deck_access', { user_id: userId, deck_id: d.id, enabled: cb.checked });
-                if(lbl) lbl.textContent = cb.checked ? 'Granted' : 'Not granted';
-                setEditUserDeckAccessStatus(cb.checked ? 'Access granted' : 'Access revoked', 'success');
-              }catch(e){
-                cb.checked = !cb.checked;
-                setEditUserDeckAccessStatus('Failed: ' + e.message, 'error');
-              }
-            });
-          }
           adminEl.appendChild(row);
         });
       }
@@ -774,63 +843,113 @@ async function loadEditUserDeckAccess(userId){
     let currentLogType = 'all';
     
     async function loadLogs(type) {
-      currentLogType = type || 'all';
+      currentLogType = type || 'server';
       const container = document.getElementById('logContainer');
       container.innerHTML = '<div class="log-line">Loading logs...</div>';
       
       // Update active button
-      document.querySelectorAll('#tab-logs .quick-actions .btn').forEach(btn => {
+      document.querySelectorAll('#tab-logs .quick-actions .btn-sm').forEach(btn => {
         btn.classList.remove('btn-primary');
         btn.classList.add('btn-secondary');
       });
+      const btnId = {server:'logBtnServer',error:'logBtnError',user:'logBtnUser'}[type];
+      if(btnId) { document.getElementById(btnId)?.classList.remove('btn-secondary'); document.getElementById(btnId)?.classList.add('btn-primary'); }
       
       try {
-        const response = await jget(`/api/admin/logs?type=${type}&limit=100`);
+        const response = await jget(`/api/admin/logs?type=${type}&limit=200`);
         const logs = response.logs || [];
+        const fsize = response.fileSize || 0;
+        const sizeEl = document.getElementById('logFileSize');
+        if(sizeEl) sizeEl.textContent = fsize > 0 ? `(${(fsize/1024).toFixed(1)} KB)` : '(empty)';
         
         if (logs.length === 0) {
-          container.innerHTML = '<div class="log-line">No logs available. Activity will appear here as users interact with the app.</div>';
+          container.innerHTML = '<div class="log-line">No logs available. Activity will appear here as the server runs and users interact.</div>';
           return;
         }
         
         container.innerHTML = logs.map(log => {
-          const time = new Date(log.timestamp).toLocaleString();
+          const time = log.timestamp ? new Date(log.timestamp).toLocaleString() : '';
           const levelClass = log.level === 'error' ? 'error' : (log.level === 'warn' ? 'warn' : 'info');
           const levelIcon = log.level === 'error' ? '❌' : (log.level === 'warn' ? '⚠️' : 'ℹ️');
-          const userBadge = log.user ? `<span style="color:#60a5fa;margin-left:6px;">[${log.user}]</span>` : '';
-          return `<div class="log-line ${levelClass}"><span class="log-time">${time}</span>${levelIcon} ${log.message}${userBadge}</div>`;
+          const userBadge = log.user ? `<span style="color:#60a5fa;margin-left:6px;">[${escapeHtml(log.user)}]</span>` : '';
+          return `<div class="log-line ${levelClass}"><span class="log-time">${time}</span>${levelIcon} ${escapeHtml(log.message)}${userBadge}</div>`;
         }).join('');
       } catch (e) {
-        container.innerHTML = `<div class="log-line error">Failed to load logs: ${e.message}</div>`;
+        container.innerHTML = `<div class="log-line error">Failed to load logs: ${escapeHtml(e.message)}</div>`;
       }
     }
     
-    function downloadLogs() {
-      const container = document.getElementById('logContainer');
-      const text = container.innerText;
-      const blob = new Blob([text], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `study-flashcards-logs-${new Date().toISOString().split('T')[0]}.txt`;
-      a.click();
-      URL.revokeObjectURL(url);
+    async function downloadLogFile() {
+      try {
+        const resp = await fetch(`/api/admin/logs/download?type=${currentLogType}`, { credentials: 'include' });
+        if(resp.status === 204){
+          alert('Log file is empty. Nothing to download.');
+          return;
+        }
+        if(!resp.ok) throw new Error('Download failed');
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const names = {server:'server',error:'error',user:'user_activity'};
+        a.download = `${names[currentLogType]||'server'}.log`;
+        a.click();
+        URL.revokeObjectURL(url);
+      } catch(e) {
+        alert('Download failed: ' + e.message);
+      }
     }
     
     async function clearLogs() {
-      if (!confirm('Clear all logs? This cannot be undone.')) return;
+      const labels = {server:'App Logs', error:'Error Logs', user:'User Activity'};
+      if (!confirm(`Clear ${labels[currentLogType]||'logs'}? User Activity logs are saved before clearing.`)) return;
       try {
         await jpost(`/api/admin/logs/clear?type=${currentLogType}`, {});
         await loadLogs(currentLogType);
-        alert('Logs cleared');
       } catch (e) {
         alert('Error: ' + e.message);
+      }
+    }
+    
+    // ========== Expandable stat tiles ==========
+    function toggleStatExpand(card) {
+      const wasExpanded = card.classList.contains('expanded');
+      // Collapse all others
+      document.querySelectorAll('.stat-card.expanded').forEach(c => c.classList.remove('expanded'));
+      if(!wasExpanded) {
+        card.classList.add('expanded');
+        populateStatDetail(card);
+      }
+    }
+    
+    function populateStatDetail(card) {
+      if(!statsData) return;
+      const panel = card.querySelector('.stat-expand-panel');
+      if(!panel) return;
+      const id = panel.id;
+      
+      if(id === 'statUsersDetail') {
+        const users = statsData.users.list || [];
+        panel.innerHTML = users.map(u => `<div class="stat-expand-item"><span class="stat-expand-name">${escapeHtml(u.username)}${u.is_admin?' 👑':''}</span><span class="stat-expand-val">${u.progress_pct}% learned</span></div>`).join('') || '<div style="color:#666;">No users</div>';
+      } else if(id === 'statCardsDetail') {
+        const groups = statsData.cards.group_list || [];
+        panel.innerHTML = `<div class="stat-expand-item"><span class="stat-expand-name">Total cards</span><span class="stat-expand-val">${statsData.cards.total}</span></div>` + groups.slice(0,15).map(g => `<div class="stat-expand-item"><span class="stat-expand-name">${escapeHtml(g||'(ungrouped)')}</span></div>`).join('') + (groups.length > 15 ? `<div style="color:#666;font-size:11px;">...and ${groups.length-15} more groups</div>` : '');
+      } else if(id === 'statDecksDetail') {
+        const decks = statsData.decks.list || [];
+        panel.innerHTML = decks.map(d => `<div class="stat-expand-item"><span class="stat-expand-name">${escapeHtml(d.name)}${d.isBuiltIn?' 📌':''}</span><span class="stat-expand-val">${d.cardCount} cards</span></div>`).join('') || '<div style="color:#666;">No decks</div>';
+      } else if(id === 'statBreakdownsDetail') {
+        panel.innerHTML = `<div class="stat-expand-item"><span class="stat-expand-name">Total breakdowns</span><span class="stat-expand-val">${statsData.breakdowns.total}</span></div><div class="stat-expand-item"><span class="stat-expand-name">With content</span><span class="stat-expand-val">${statsData.breakdowns.with_content}</span></div><div class="stat-expand-item"><span class="stat-expand-name">Empty</span><span class="stat-expand-val">${statsData.breakdowns.total - statsData.breakdowns.with_content}</span></div>`;
+      } else if(id === 'statLearnedDetail' || id === 'statUnsureDetail' || id === 'statActiveDetail') {
+        const users = statsData.users.list || [];
+        const key = id === 'statLearnedDetail' ? 'learned' : (id === 'statUnsureDetail' ? 'unsure' : 'active');
+        panel.innerHTML = users.filter(u => u[key] > 0).map(u => `<div class="stat-expand-item"><span class="stat-expand-name">${escapeHtml(u.username)}</span><span class="stat-expand-val">${u[key]}</span></div>`).join('') || '<div style="color:#666;">None</div>';
       }
     }
     
     // ============ DECK MANAGEMENT ============
     
     let deckConfig = null;
+    let deckAccess = {};
     let allDecks = [];
     let allUsers = [];
     
@@ -842,7 +961,7 @@ async function loadEditUserDeckAccess(userId){
         
         // Update checkboxes
         document.getElementById('cfgNewUsersGetBuiltIn').checked = deckConfig.newUsersGetBuiltInDecks !== false;
-        document.getElementById('cfgAllowNonAdminEdits').checked = deckConfig.allowNonAdminDeckEdits !== false;
+        document.getElementById('cfgAllowNonAdminEdits').checked = deckConfig.allowNonAdminDeckEdits === true;
         
         // Update built-in decks list
         renderBuiltInDecks(deckConfig.builtInDecks || ['kenpo']);
@@ -858,6 +977,7 @@ async function loadEditUserDeckAccess(userId){
         // Populate user selects
         allUsers = statsData?.users?.list || [];
         populateUserSelect();
+        populateOwnershipSelects();
         
       } catch (e) {
         console.error('Failed to load deck config:', e);
@@ -895,6 +1015,7 @@ async function loadEditUserDeckAccess(userId){
           </div>
         `;
       }).join('');
+    }
     
     function populateAddBuiltInSelect(builtInIds){
       const sel = document.getElementById('addBuiltInDeckSelect');
@@ -903,7 +1024,6 @@ async function loadEditUserDeckAccess(userId){
       const options = (allDecks || []).filter(d => !builtSet.has(d.id)).map(d => `<option value="${d.id}">${d.name || d.id}</option>`).join('');
       sel.innerHTML = `<option value="">Add built-in deck...</option>` + options;
     }
-}
     
     
     async function addBuiltInDeck(){
@@ -1004,49 +1124,40 @@ async function removeBuiltInDeck(deckId) {
     }
     
     
-    function updateUserDeckAccessUI(){
+    async function onUserDeckSelectChange(){
       const userId = document.getElementById('userAccessSelect')?.value;
       const deckId = document.getElementById('userDeckSelect')?.value;
-
-      const unlockBtn = document.querySelector('button[onclick="unlockDeckForUser()"]');
-      const lockBtn = document.querySelector('button[onclick="lockDeckForUser()"]');
-      const disBuiltBtn = document.querySelector('button[onclick="disableBuiltInForUser()"]');
-      const enBuiltBtn = document.querySelector('button[onclick="enableBuiltInForUser()"]');
-      const statusEl = document.getElementById('userAccessStatus');
-
+      const statusLine = document.getElementById('userDeckStatusLine');
+      
       if(!userId || !deckId){
-        if(statusEl) statusEl.textContent = '';
-        if(unlockBtn) unlockBtn.disabled = true;
-        if(lockBtn) lockBtn.disabled = true;
-        if(disBuiltBtn) disBuiltBtn.disabled = true;
-        if(enBuiltBtn) enBuiltBtn.disabled = true;
+        if(statusLine) statusLine.innerHTML = '';
         return;
       }
-
-      const builtInIds = deckConfig.builtInDecks || [];
-      const isBuiltIn = builtInIds.includes(deckId);
-      const userDisabled = (deckAccess.userBuiltInDisabled || []).includes(userId);
-      const unlocked = ((deckAccess.userUnlocks || {})[userId] || []).includes(deckId);
-
-      if(isBuiltIn){
-        if(statusEl) statusEl.innerHTML = userDisabled
-          ? '<span style="color:#f87171;">Built-in access DISABLED for this user</span>'
-          : '<span style="color:#4ade80;">Built-in access ENABLED for this user</span>';
-        if(unlockBtn) unlockBtn.disabled = true;
-        if(lockBtn) lockBtn.disabled = true;
-        if(disBuiltBtn) disBuiltBtn.disabled = userDisabled;
-        if(enBuiltBtn) enBuiltBtn.disabled = !userDisabled;
-      } else {
-        if(statusEl) statusEl.innerHTML = unlocked
-          ? '<span style="color:#4ade80;">Unlocked for this user</span>'
-          : '<span style="color:#f87171;">Locked for this user</span>';
-        if(unlockBtn) unlockBtn.disabled = unlocked;
-        if(lockBtn) lockBtn.disabled = !unlocked;
-        if(disBuiltBtn) disBuiltBtn.disabled = !userDisabled;
-        if(enBuiltBtn) enBuiltBtn.disabled = userDisabled;
+      
+      try{
+        const s = await jget(`/api/admin/user-deck-status?userId=${encodeURIComponent(userId)}&deckId=${encodeURIComponent(deckId)}`);
+        let parts = [];
+        if(s.isOwned){
+          parts.push('<span style="color:#4ade80;">✓ Owned by this user</span>');
+        }
+        if(s.isBuiltIn && !s.builtInDisabled){
+          parts.push('<span style="color:#4ade80;">Access: Granted (built-in)</span>');
+        } else if(s.isUnlocked){
+          parts.push('<span style="color:#4ade80;">Access: Granted</span>');
+        } else {
+          parts.push('<span style="color:#f87171;">Access: Not granted</span>');
+        }
+        if(statusLine) statusLine.innerHTML = parts.join(' &nbsp;|&nbsp; ');
+      }catch(e){
+        if(statusLine) statusLine.innerHTML = '<span style="color:#f87171;">Failed to load status</span>';
       }
     }
-async function unlockDeckForUser() {
+    
+    function updateUserDeckAccessUI(){
+      onUserDeckSelectChange();
+    }
+
+    async function allowDeckForUser() {
       const userId = document.getElementById('userAccessSelect').value;
       const deckId = document.getElementById('userDeckSelect').value;
       
@@ -1057,13 +1168,14 @@ async function unlockDeckForUser() {
       
       try {
         await jpost('/api/admin/user-deck-access', { userId, deckId, action: 'unlock' });
-        document.getElementById('userAccessStatus').innerHTML = '<span style="color:#4ade80;">✓ Deck unlocked for user</span>';
+        document.getElementById('userAccessStatus').innerHTML = '<span style="color:#4ade80;">✓ Access granted</span>';
+        await onUserDeckSelectChange();
       } catch (e) {
         alert('Error: ' + e.message);
       }
     }
     
-    async function lockDeckForUser() {
+    async function denyDeckForUser() {
       const userId = document.getElementById('userAccessSelect').value;
       const deckId = document.getElementById('userDeckSelect').value;
       
@@ -1074,39 +1186,65 @@ async function unlockDeckForUser() {
       
       try {
         await jpost('/api/admin/user-deck-access', { userId, deckId, action: 'lock' });
-        document.getElementById('userAccessStatus').innerHTML = '<span style="color:#f87171;">✓ Deck locked for user</span>';
+        document.getElementById('userAccessStatus').innerHTML = '<span style="color:#f87171;">✓ Access denied</span>';
+        await onUserDeckSelectChange();
       } catch (e) {
         alert('Error: ' + e.message);
       }
     }
+
+    // ============ DECK OWNERSHIP ============
     
-    async function disableBuiltInForUser() {
-      const userId = document.getElementById('userAccessSelect').value;
-      if (!userId) {
-        alert('Please select a user');
-        return;
-      }
+    function populateOwnershipSelects(){
+      const deckSel = document.getElementById('ownershipDeckSelect');
+      const userSel = document.getElementById('ownershipNewOwnerSelect');
+      if(!deckSel || !userSel) return;
       
-      try {
-        await jpost('/api/admin/user-deck-access', { userId, action: 'disableBuiltIn' });
-        document.getElementById('userAccessStatus').innerHTML = '<span style="color:#fbbf24;">✓ Built-in decks disabled for user</span>';
-      } catch (e) {
-        alert('Error: ' + e.message);
-      }
+      const deckOptions = allDecks.filter(d => !d.isBuiltIn).map(d => {
+        const owner = allUsers.find(u => u.user_id === d.ownerId);
+        const ownerName = owner ? owner.username : (d.ownerId || '?');
+        return `<option value="${d.id}">${d.name} (owner: ${ownerName})</option>`;
+      }).join('');
+      deckSel.innerHTML = '<option value="">Select deck...</option>' + deckOptions;
+      
+      const userOptions = allUsers.map(u => `<option value="${u.user_id}">${u.username}${u.is_admin ? ' 👑' : ''}</option>`).join('');
+      userSel.innerHTML = '<option value="">Transfer to user...</option>' + userOptions;
+      
+      deckSel.onchange = function(){
+        const did = deckSel.value;
+        const ownerEl = document.getElementById('ownershipCurrentOwner');
+        if(!did){ if(ownerEl) ownerEl.innerHTML = ''; return; }
+        const deck = allDecks.find(d => d.id === did);
+        if(deck && deck.ownerId){
+          const owner = allUsers.find(u => u.user_id === deck.ownerId);
+          if(ownerEl) ownerEl.innerHTML = `Current owner: <strong>${owner ? owner.username : 'Unknown'}</strong>`;
+        } else {
+          if(ownerEl) ownerEl.innerHTML = '<span style="color:#9ca3af;">No owner assigned</span>';
+        }
+      };
     }
     
-    async function enableBuiltInForUser() {
-      const userId = document.getElementById('userAccessSelect').value;
-      if (!userId) {
-        alert('Please select a user');
+    async function transferDeckOwnership(){
+      const deckId = document.getElementById('ownershipDeckSelect').value;
+      const newOwnerId = document.getElementById('ownershipNewOwnerSelect').value;
+      const statusEl = document.getElementById('ownershipStatus');
+      
+      if(!deckId || !newOwnerId){
+        alert('Please select both a deck and a new owner');
         return;
       }
       
-      try {
-        await jpost('/api/admin/user-deck-access', { userId, action: 'enableBuiltIn' });
-        document.getElementById('userAccessStatus').innerHTML = '<span style="color:#4ade80;">✓ Built-in decks enabled for user</span>';
-      } catch (e) {
-        alert('Error: ' + e.message);
+      const deck = allDecks.find(d => d.id === deckId);
+      const newOwner = allUsers.find(u => u.user_id === newOwnerId);
+      if(!confirm(`Transfer "${deck?.name || deckId}" to ${newOwner?.username || newOwnerId}? This will move all deck cards to the new owner.`)) return;
+      
+      try{
+        const res = await jpost('/api/admin/deck-ownership', { deckId, newOwnerId });
+        if(statusEl) statusEl.innerHTML = `<span style="color:#4ade80;">✓ ${res.message || 'Ownership transferred'}</span>`;
+        await loadStats();
+        await loadDeckConfig();
+      }catch(e){
+        if(statusEl) statusEl.innerHTML = `<span style="color:#f87171;">Error: ${e.message}</span>`;
       }
     }
     

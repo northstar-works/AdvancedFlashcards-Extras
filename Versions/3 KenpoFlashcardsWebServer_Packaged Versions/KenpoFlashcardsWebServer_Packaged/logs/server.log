@@ -1,0 +1,144 @@
+2026-02-01 13:39:02,041 | INFO | advanced_flashcards | [READY] Advanced Flashcards WebApp started successfully. Open: http://127.0.0.1:8010 • http://192.168.0.129:8010
+2026-02-01 13:39:02,062 | INFO | werkzeug | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8010
+ * Running on http://192.168.0.129:8010
+2026-02-01 13:39:02,062 | INFO | werkzeug | [33mPress CTRL+C to quit[0m
+2026-02-01 13:39:12,457 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET / ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:12,479 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:12] "GET / HTTP/1.1" 200 -
+2026-02-01 13:39:12,577 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /styles.css ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:12,585 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /app.js ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:12,594 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:12] "GET /styles.css HTTP/1.1" 200 -
+2026-02-01 13:39:12,639 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:12] "GET /app.js HTTP/1.1" 200 -
+2026-02-01 13:39:12,768 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/me ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:12,772 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:12] "GET /api/me HTTP/1.1" 200 -
+2026-02-01 13:39:12,772 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/ai/status ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:12,784 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/me ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:12,786 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:12] "GET /api/me HTTP/1.1" 200 -
+2026-02-01 13:39:12,794 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:12] "GET /api/ai/status HTTP/1.1" 200 -
+2026-02-01 13:39:12,804 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/me ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:12,804 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/me ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:12,805 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/me ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:12,807 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:12] "GET /api/me HTTP/1.1" 200 -
+2026-02-01 13:39:12,808 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:12] "GET /api/me HTTP/1.1" 200 -
+2026-02-01 13:39:12,809 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:12] "GET /api/me HTTP/1.1" 200 -
+2026-02-01 13:39:13,761 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/settings ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:13,791 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:13] "GET /api/settings?scope=all HTTP/1.1" 200 -
+2026-02-01 13:39:13,808 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/settings ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:13,813 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:13] "GET /api/settings?scope=all HTTP/1.1" 200 -
+2026-02-01 13:39:13,832 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/settings ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:13,832 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/settings ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:13,833 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/settings ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:13,840 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:13] "GET /api/settings?scope=all HTTP/1.1" 200 -
+2026-02-01 13:39:13,843 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:13] "GET /api/settings?scope=all HTTP/1.1" 200 -
+2026-02-01 13:39:13,844 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:13] "GET /api/settings?scope=all HTTP/1.1" 200 -
+2026-02-01 13:39:13,854 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /favicon.ico ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:13,862 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/decks ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:13,873 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:13] "GET /favicon.ico HTTP/1.1" 200 -
+2026-02-01 13:39:13,923 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:13] "GET /api/decks HTTP/1.1" 200 -
+2026-02-01 13:39:13,936 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/decks ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:13,945 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:13] "GET /api/decks HTTP/1.1" 200 -
+2026-02-01 13:39:13,960 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/decks ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:13,968 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:13] "GET /api/decks HTTP/1.1" 200 -
+2026-02-01 13:39:13,983 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/decks ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:13,983 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/decks ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:13,993 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:13] "GET /api/decks HTTP/1.1" 200 -
+2026-02-01 13:39:13,994 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:13] "GET /api/decks HTTP/1.1" 200 -
+2026-02-01 13:39:14,378 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/breakdowns/ids ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,378 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /res/decklogos/advanced_flashcards_logo.png ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,390 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /res/decklogos/advanced_flashcards_logo.png HTTP/1.1" 200 -
+2026-02-01 13:39:14,391 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/breakdowns/ids HTTP/1.1" 200 -
+2026-02-01 13:39:14,423 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/breakdowns/ids ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,425 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/breakdowns/ids HTTP/1.1" 200 -
+2026-02-01 13:39:14,433 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/groups ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,436 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/groups?deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:14,439 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/breakdowns/ids ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,442 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/breakdowns/ids HTTP/1.1" 200 -
+2026-02-01 13:39:14,455 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/breakdowns/ids ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,456 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/breakdowns/ids ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,458 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/breakdowns/ids HTTP/1.1" 200 -
+2026-02-01 13:39:14,459 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/breakdowns/ids HTTP/1.1" 200 -
+2026-02-01 13:39:14,466 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/groups ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,467 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/health ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,470 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/groups?deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:14,482 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/groups ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,483 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/health HTTP/1.1" 200 -
+2026-02-01 13:39:14,485 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/groups?deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:14,502 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/groups ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,505 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/groups?deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:14,514 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/health ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,518 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/ai ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,521 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/health HTTP/1.1" 200 -
+2026-02-01 13:39:14,521 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/groups ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,525 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/ai HTTP/1.1" 200 -
+2026-02-01 13:39:14,527 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/groups?deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:14,533 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/health ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,536 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/health HTTP/1.1" 200 -
+2026-02-01 13:39:14,547 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/health ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,550 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/health HTTP/1.1" 200 -
+2026-02-01 13:39:14,563 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/ai ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,563 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/health ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,563 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/counts ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,566 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/health HTTP/1.1" 200 -
+2026-02-01 13:39:14,568 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/ai HTTP/1.1" 200 -
+2026-02-01 13:39:14,575 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/counts?&deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:14,580 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/ai ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,583 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/ai HTTP/1.1" 200 -
+2026-02-01 13:39:14,596 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/ai ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,599 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/ai HTTP/1.1" 200 -
+2026-02-01 13:39:14,607 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/ai ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,607 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/counts ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,610 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/ai HTTP/1.1" 200 -
+2026-02-01 13:39:14,614 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/counts?&deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:14,626 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/counts ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,631 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/counts?&deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:14,644 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/counts ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,645 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/counts ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,653 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/counts?&deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:14,653 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/counts?&deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:14,657 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/counts ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,657 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/settings ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,663 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/settings?scope=all HTTP/1.1" 200 -
+2026-02-01 13:39:14,666 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/counts?&deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:14,677 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/counts ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,683 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/counts?&deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:14,698 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/counts ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,702 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/cards ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,706 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/counts?&deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:14,709 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/cards?status=active&deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:14,721 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/counts ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,726 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/cards ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,732 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/breakdown ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,735 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/breakdown?id=b47d70c8fc894d2e HTTP/1.1" 200 -
+2026-02-01 13:39:14,738 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/counts?&deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:14,741 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/cards?status=active&deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:14,751 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/counts ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,753 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/cards ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,760 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/counts?&deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:14,763 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/cards?status=active&deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:14,780 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/cards ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,786 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/cards?status=active&deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:14,798 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/cards ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:14,803 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:14] "GET /api/cards?status=active&deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:17,043 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/counts ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:17,048 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:17] "GET /api/counts?&deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:17,081 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/custom_set ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:17,085 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:17] "GET /api/custom_set HTTP/1.1" 200 -
+2026-02-01 13:39:24,928 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/cards ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:24,934 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:24] "GET /api/cards?deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:24,952 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/custom_set ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:24,955 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:24] "GET /api/custom_set HTTP/1.1" 200 -
+2026-02-01 13:39:26,984 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/cards ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:26,990 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:26] "GET /api/cards?deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:27,006 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/custom_set ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:27,010 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:27] "GET /api/custom_set HTTP/1.1" 200 -
+2026-02-01 13:39:28,984 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/cards ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:28,990 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:28] "GET /api/cards?deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:29,011 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/custom_set ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:29,015 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:29] "GET /api/custom_set HTTP/1.1" 200 -
+2026-02-01 13:39:41,595 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/cards ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:41,600 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:41] "GET /api/cards?deck_id=deck_7bb3a7af HTTP/1.1" 200 -
+2026-02-01 13:39:41,618 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri GET /api/custom_set ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:41,620 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:41] "GET /api/custom_set HTTP/1.1" 200 -
+2026-02-01 13:39:44,921 | INFO | advanced_flashcards | [REQ] ip=47.188.42.192 user=Sidscri POST /api/settings ua=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.
+2026-02-01 13:39:44,926 | INFO | werkzeug | 47.188.42.192 - - [01/Feb/2026 13:39:44] "POST /api/settings HTTP/1.1" 200 -
