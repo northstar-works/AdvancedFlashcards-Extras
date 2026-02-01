@@ -1,7 +1,0 @@
-{
-  "name": "Advanced Flashcards WebAppServer",
-  "version": "8.5.2",
-  "build": 55,
-  "released": "2026-02-01",
-  "notes": "8.5.2 (build 55): File-based logging with rotation (server/error/user_activity logs persist across restarts); expandable admin stat tiles; Custom Set tab switching fix; AI generation no longer assumes foreign language context; deck-specific Short Answers mode; add-card deck pre-selects active deck; custom set counts reflect custom status; random card input layout fix."
-}
