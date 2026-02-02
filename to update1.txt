@@ -1,9 +1,27 @@
 
+ip##
+Add a setting button>"Show these errors in ui log(what ever these log types are)" toggle default to off.  Change Custom setting icon to something a little different to not get confused for the main "more" settings icon. 
+
+Only in mobile device>portrait> In "Custom set settings">Manage Cards>"custom set" and "Available Cards" I want those sections to expand when clicked(unexpanded by default). One can be expanded at a time.  In windows browser and mobile device> landscape>Available Cards list is very bad needs to be fixed to show Checkbox name, cards term, in custom status.  Only on mobile devices>both orientations has the "custom set setting" page to big (Seems zoomed in look) not fitting well on the screen. 
+
+The custom available cards list is showing all cards from across study decks, which also has USA state capitals custom deck showing basic spanish... custom cards as well.  It needs to go back to where each study deck has its own custom decks.  Only cards from active study deck should be available in "manage cards">"Available Cards".  No "manage cards">"In Custom Set" cards are listed in this list, even though there are 10 or so state cards in custom and wrongfully spanish words as well.
+
+When I click on the custom deck study(star) page icon next to "All" button, it appears to be marking and un marking shown cards in the study deck. That icons action should only goes to the custom study deck page.
+
+On all devices, when "custom set setting" page opens setting is blank when I go to another section, then back to settings everthing appears that needs to be addressed.
+
+When main screen loads or browser refreshes it hangs as pictured for a few seconds then loads deck, might be something slowing down it loading.
+
+version bump to 8.5.3.3
+##
+
 
 This admin system app information section works on webserver project version. but does not here. On an exe installed version built from packaged I want in also want in the "version" field its Web Server Version 8.5.1 (build 54) its code coming from webserver project and the local EXE version from webserver packaged that is currently showing 6.0.0 (build 18). need to see how we can add Web Server Version in the build to be shown here and to fix the Released not showing up on this exe local version either.  Same needs to be applied to the version area of User:**** drop down. 
 
 App Version: 6.0.0 (build 18)
 WebAppServer: 8.5.1 (build 54)
+
+
 
 
 ###Exe build###
@@ -18,12 +36,19 @@ I need to make sure kenpo.json is being mapped from the correct place.  what is 
 
 ###Android App#
 
+$$ip
+I want a detailed well formatted summary of this conversation chronicled by version then subject of fix, add, change, if same subject was further address again through out the chat, I want it all added, but cited, to the final result of that specific fix, repair, change, add , citing what version that specific fix was applied in.  Meaning, if you added a feature that mostly worked, but there were a few bugs worked out, I want the last version that it worked to house the cited fix subject. listing any important directions, non coding steps to be made.  wiring, etc. Create in word if you could grab from the other chat from yesterday and today that would be awesome. If not I would end up doing the same with the other 2 or 3 chats as well as this one, then get you to combine any way, but doing it in one shot would make more sense. scanning the current project. Add a section with confirmed changes in chat, but not actually implemented in .zip. citing in what version it was suppose to be implemented.
+
 Make sure any synced data that android app users uses for live syncing is now mapped to C:\Users\Sidscri\AppData\Local\Advanced Flashcards WebApp Server\data\ That is the true live location since going "live" on .exe build project. Make sure all api are directed towards localuser or program files or programdata, might need to relocate read and write files that might be in program files to programdata or localuserapp. Would like a server status in android app admin like the server has to check server running on local machine.
 
+Also, I need to make sure kenpo.json is being mapped from the correct place.  what is the connection with kenpo_words.json for android app, WebServer, packaging.  I need to figure out if its a single source of truth or co-synced source of truth for that file.  What happens to the files data down the process.
 
+Make sure any synced data that android app users uses for live syncing is now mapped to C:\Users\Sidscri\AppData\Local\Advanced Flashcards WebApp Server\data\ That is the true live location since going "live" on .exe build project. Make sure all api are directed towards localuser or its local machine installed location.
+
+You might need to complete in steps if usage constraints does not allow to finish.
 $$
-ip
-I want kenpo and spanish to be owned by sidscri, only kenpo to have built-in flagged, spanish will just be as it is a user created deck that no other user can access, unless I give it to them as an admin. Where did the the edit decks button go on spanish, guess it didnt show since I couldnt make me the owner.  Same goes for built-in settings and user deck access, no decks are showing up in drop downs.  &&Fix1.png, fix2.png&&
+
+
 
 ##Package##
 Old icons are still showing up in desktop shortcut(in properties the new are in change icon) and showing in task manager processes &&fix.3.png&&
@@ -50,11 +75,8 @@ ip##
 
 4.) In "Built-In Deck Management", there isnt a way to add built-in decks by default, there is a "Remove Built-In" button on kenpo (which is great), but how to re-add kenpo if "Remove Built-In" button is pressed on kenpo.##
 
-###Android App#
 
-I need to make sure kenpo.json is being mapped from the correct place.  what is the connection with kenpo_words.json for android app, WebServer, packaging.  I need to figure out if its a single source of truth or co-synced source of truth for that file.  What happens to the files data down the process.
 
-Make sure any synced data that android app users uses for live syncing is now mapped to C:\Users\Sidscri\AppData\Local\Advanced Flashcards WebApp Server\data\ That is the true live location since going "live" on .exe build project. Make sure all api are directed towards localuser. Would like a status in admin
 
 
 
@@ -143,3 +165,21 @@ I want the ai to be able to smartly keep definitions to one word if possible whe
 "The central and most important part of an object, movement, or group, forming the basis for its activity and growth."  But want it to smartly keep one word definition if thats all it needs. I want an option in a new deck specific setting button like custom deck button, to be able to make that deck only short answers. like cat, dog, Washington D.C, Slow down, Lake Tawakini, prime midian, etc. incases definitions keep making to long. 
 
 I am wanting to see what I can bring feature wise, from web server project 2 the Android App. Of course, there are some features that shouldn't even be in and and or the app that the Windows version Has, I get that. But I also just wanna make sure that while I am adding and fixing the web, version, I am not forgetting to implement that on the Android app. Like, when I add a deck window on the, web server. I would like to be able to see that deck on the app. Then I log in. And it thinks and now that deck is now showing up. And, alternative alternatively, it goes around I want you to analyze both of them, And please produce a document listing the differences. And also going through and finding out Steps in being able to Make the Android app Feature wise, look like the web server app. I love the design of the Android app. So much. I do not want to change that. At all. I just wanna make sure that the same features that are on the web will be on Android without breaking the Android. And, also, Syncing. Making sure that The Android. Changes will reflect on the web server or the web server on the Android. I know we already have Sync web sync feature or the breakdown sync feature. Anything that has, you know, already built into Ben. I just wanna yes. So just for you to make a list. Of breaking down what the Android app does not have that the web server does have and I want for you to analyze and see okay, what can work on Android or what should not We put on the Android app And then also, I Give me on how you would implement it. I'm doing that. Thank you and if you feel confident enough, go ahead and Do it. And give me, please, a an updated project that implements all these changes. If you feel confident enough in doing that, which I think you do. That will be great. I would love to also have a tool that allows me to Update. The Android app. Whenever there are any updates on going forward. Now that once we get this Android app going per perfectly where everything is primarily up to date, Any changes when I do on the the, web app feature wise, will happen on The Android app.
+
+### ❌ 1. Custom Set Random Number Field — Too Wide (Overlaps Text)
+**Problem:** The random card count input (`.csRandomInput`) is supposed to be 52px wide, but the global CSS rule `input{min-width:280px}` overrides it, making it 280px — way too wide, overlapping the label text and button.  
+**Root cause:** `.csRandomInput` is missing `min-width: auto !important` or `min-width: unset` to override the global input minimum.  
+**What to say to reimplement:**
+> "In styles.css, the Custom Set random number input (.csRandomInput) is broken because the global `input{min-width:280px}` rule overrides its width:52px. Add `min-width: auto !important;` to the `.csRandomInput` rule so it stays at 52px wide."
+
+### ❌ 2. "Add Random" Button Should Say "Add Random Card"
+**Problem:** The button in Custom Set Settings > Settings tab says "🎲 Add Random" but should say "🎲 Add Random Card" for clarity.  
+**Root cause:** The button text in `index.html` was never updated.  
+**What to say to reimplement:**
+> "In index.html, find the button with onclick='pickRandomCardsToCustom()' that says '🎲 Add Random' and change its text to '🎲 Add Random Card'."
+
+I want kenpo and spanish to be owned by sidscri, only kenpo to have built-in flagged, spanish will just be as it is a user created deck that no other user can access, unless I give it to them as an admin. Where did the the edit decks button go on spanish, guess it didnt show since I couldnt make me the owner.  Same goes for built-in settings and user deck access, no decks are showing up in drop downs.  &&Fix1.png, fix2.png
+
+
+
+
