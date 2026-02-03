@@ -3,7 +3,7 @@ REM ============================================================
 REM  WebServer → Android Sync Tool
 REM  Syncs version metadata and generates feature parity report
 REM ============================================================
-setlocal
+setlocal enabledelayedexpansion
 
 REM Get the directory where this script is located (tools folder)
 set TOOLS_DIR=%~dp0
@@ -17,10 +17,9 @@ REM Check if Python is available
 where python >nul 2>&1
 if %errorlevel% neq 0 (
     echo.
-    echo ERROR: Python not found in PATH
-    echo Please install Python 3.8+ and add it to your PATH
-    pause
-    exit /b 1
+    echo  ERROR: Python not found in PATH
+    echo  Please install Python 3.8+ and add it to your PATH
+    goto :fail
 )
 
 REM Parse arguments
@@ -75,54 +74,95 @@ REM Use defaults if not specified
 if "%WEBSERVER_FOLDER%"=="" set WEBSERVER_FOLDER=%DEFAULT_WEBSERVER%
 if "%ANDROID_FOLDER%"=="" set ANDROID_FOLDER=%DEFAULT_ANDROID%
 
-REM Validate
-if not exist "%WEBSERVER_FOLDER%" (
+REM ── Resolve relative paths to absolute before validation ──
+REM This prevents issues with ".." paths and working directory mismatches
+
+pushd "%WEBSERVER_FOLDER%" 2>nul
+if %errorlevel% neq 0 (
     echo.
-    echo ERROR: WebServer folder not found: %WEBSERVER_FOLDER%
+    echo  ERROR: WebServer folder not found: %WEBSERVER_FOLDER%
     echo.
-    goto show_help
+    echo  Expected location: %WEBSERVER_FOLDER%
+    echo  The tools folder should be a sibling of KenpoFlashcardsWebServer:
+    echo.
+    echo    sidscri-apps\
+    echo      KenpoFlashcardsWebServer\
+    echo      KenpoFlashcardsProject-v2\
+    echo      tools\               ^<-- sync_android.bat goes here
+    echo.
+    goto :fail
 )
+set WEBSERVER_FOLDER=!CD!
+popd
+
+pushd "%ANDROID_FOLDER%" 2>nul
+if %errorlevel% neq 0 (
+    echo.
+    echo  ERROR: Android folder not found: %ANDROID_FOLDER%
+    echo.
+    echo  Expected location: %ANDROID_FOLDER%
+    echo  The tools folder should be a sibling of KenpoFlashcardsProject-v2:
+    echo.
+    echo    sidscri-apps\
+    echo      KenpoFlashcardsWebServer\
+    echo      KenpoFlashcardsProject-v2\
+    echo      tools\               ^<-- sync_android.bat goes here
+    echo.
+    goto :fail
+)
+set ANDROID_FOLDER=!CD!
+popd
+
+REM ── Validate required files ──
 if not exist "%WEBSERVER_FOLDER%\version.json" (
     echo.
-    echo ERROR: Not a valid WebServer folder (missing version.json)
-    pause
-    exit /b 1
-)
-if not exist "%ANDROID_FOLDER%" (
-    echo.
-    echo ERROR: Android folder not found: %ANDROID_FOLDER%
-    echo.
-    goto show_help
+    echo  ERROR: Not a valid WebServer folder (missing version.json)
+    echo  Looked in: %WEBSERVER_FOLDER%
+    goto :fail
 )
 if not exist "%ANDROID_FOLDER%\app\build.gradle" (
     echo.
-    echo ERROR: Not a valid Android project (missing app\build.gradle)
-    pause
-    exit /b 1
+    echo  ERROR: Not a valid Android project (missing app\build.gradle)
+    echo  Looked in: %ANDROID_FOLDER%
+    goto :fail
 )
 
-REM Run
+REM ── Run ──
 echo.
 echo ============================================================
 echo  Starting WebServer to Android Sync...
 echo ============================================================
 echo.
+echo  Tools:     %TOOLS_DIR%
 echo  WebServer: %WEBSERVER_FOLDER%
 echo  Android:   %ANDROID_FOLDER%
 echo  Backups:   %TOOLS_DIR%\sync_backups\
 echo.
-python "%TOOLS_DIR%\sync_webserver_to_android.py" "%WEBSERVER_FOLDER%" "%ANDROID_FOLDER%" %DRY_RUN% %LEVEL%
+
+set PY_SCRIPT=%TOOLS_DIR%\sync_webserver_to_android.py
+python "%PY_SCRIPT%" "%WEBSERVER_FOLDER%" "%ANDROID_FOLDER%" %DRY_RUN% %LEVEL%
 
 if %errorlevel% neq 0 (
     echo.
-    echo Sync failed with error code %errorlevel%
-    pause
-    exit /b %errorlevel%
+    echo ============================================================
+    echo  Sync FAILED  (Python exit code: %errorlevel%)
+    echo ============================================================
+    echo.
+    echo  Check the error messages above. Common issues:
+    echo    - Python exception / missing module
+    echo    - WebServer CHANGELOG.md format unexpected
+    echo    - Android build.gradle format unexpected
+    echo.
 )
 
 echo.
 pause
 exit /b 0
+
+:fail
+echo.
+pause
+exit /b 1
 
 :show_help
 echo.
