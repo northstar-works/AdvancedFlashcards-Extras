@@ -5,25 +5,34 @@
 
 Flask-based web application providing sync API and web UI for Advanced Flashcards WebApp.
 
-**Current Version:** v8.5.3 (build 56)  
+
+**Current Version:** v8.6.0 (build 57)  
 **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
 
 
-## ✅ Recent FAC (v8.5.3 build 56)
+## ✅ Recent FAC (v8.6.0 build 57)
 
 ### Fixed
-- Custom Set now correctly shows **custom/starred cards** (cards marked custom were missing).
+- Custom Sets **and Saved Sets** are now **deck-scoped** (no cross-deck mixing when switching decks).
+- Custom Set now shows the correct custom/starred cards, and membership/status updates apply immediately.
+- Custom Set counts line now shows real Unlearned/Unsure/Learned numbers (was showing 0/0/0).
+- Custom Set Settings tab loads correctly on first open (was blank until tab switch).
+- Custom Set Settings converted to full-page scrollable view — no more modal overflow/clipping on mobile.
+- Manage Cards panes collapsible in **both portrait and landscape** (collapsed by default). Landscape phones now correctly detected via dual media queries.
 - Custom Set random card count input no longer expands to 280px on mobile (fixed global `input{min-width:280px}` override).
-- Manage Cards list panels are taller so you can actually see the card lists.
 - Saving a Breakdown now **closes** the breakdown window/modal.
+- Admin confirmations auto-clear; error confirmations use ✖ instead of ✓.
+
+### Added
+- Settings → Display: **Show UI error log** toggle (default OFF). When enabled, JS/UI errors appear in an on-screen log panel.
 
 ### Changed
+- Faster initial load after login: settings + decks fetched in parallel; counts + cards in parallel during refresh.
 - Portrait Study controls stay on **one line**: Prev / Speak / Custom / Next (edge-to-edge), with Next staying aligned to the right.
 - Breakdown button moved beside the **Search** icon in the header (portrait).
 - Portrait alignment tightened: reduced left padding for card area and replaced the portrait hint line with **"Custom > Status"**.
-
-
+- Custom Set study status shows "Studying: Unlearned/Unsure/Learned" instead of "Studying: Custom Set".
 
 ---
 
@@ -286,7 +295,7 @@ Upload PDF, TXT, or MD files. AI reads the content and generates flashcards from
 
 ### Packaged Install Marker
 - Packaged installs include `data/install_type.txt` containing `packaged`.
-- When present, the UI shows **Web Server Version: v8.5.3 (build 56)** in the User menu, About, and Admin > System.
+- When present, the UI shows **Web Server Version: v8.6.0 (build 57)** in the User menu, About, and Admin > System.
 
 **Note:** API keys are now stored encrypted in `data/api_keys.enc`. You no longer need to set `OPENAI_API_KEY` in the batch file - keys are loaded from the encrypted file on startup.
 
@@ -371,7 +380,7 @@ Should return JSON with `version`, `term_to_id`, `cards`
 ```
 http://localhost:8009/api/version
 ```
-Should return `{"version": "8.5.3", "build": 56, ...}`
+Should return `{"version": "8.6.0", "build": 57, ...}`
 
 ### 3. Test Admin Users Endpoint
 ```
@@ -431,7 +440,16 @@ Interactive page with tabbed sections:
 
 ---
 
-## 🆕 Recent Updates (8.4.0 → 8.5.3)
+## 🆕 Recent Updates (8.4.0 → 8.6.0)
+
+### v8.6.0 (build 57)
+- **Custom Set overhaul:** Settings converted from modal to full-page scrollable view. Manage Cards panes collapsible in both portrait and landscape (landscape phones now correctly detected). Counts fix (was 0/0/0). Settings tab load fix. Study label shows "Studying: Unlearned/Unsure/Learned" instead of "Custom Set".
+- **Custom Set deck-scoped:** Custom Sets and Saved Sets no longer leak across decks when switching.
+- **Custom Set bug fixes:** starred cards now appear correctly, random count input no longer overflows, card lists taller, breakdown save closes modal, responsive layout on narrow screens.
+- **Admin confirmations auto-clear:** messages disappear after a few seconds; error confirmations use ✖ instead of ✓.
+- **Faster load:** settings + decks fetched in parallel; counts + cards in parallel during refresh.
+- **Portrait study row stabilized:** Prev / Speak / Custom / Next forced onto one edge-to-edge row. Breakdown button moved to header. Tighter alignment with "Custom > Status" hint.
+- **UI error log toggle:** Settings → Display option to show JS/UI errors on-screen.
 
 ### v8.5.3 (build 56)
 - **Admin deck access cleanup:** Allow/Deny buttons no longer reset user/deck dropdowns, enabling bulk access changes. Removed Disable/Enable Built-In buttons (simplified). Status line now always shows "Access: Granted" or "Access: Not granted" clearly.
@@ -487,6 +505,7 @@ Interactive page with tabbed sections:
 
 | Version | Build | Key Changes |
 |---------|-------|-------------|
+| **8.6.0** | 57 | Custom Set overhaul (full-page settings, collapsible panes portrait+landscape, counts fix, settings tab fix, study label filter mode, deck-scoped, landscape accordion fix), parallel load optimization, portrait study row stabilized, breakdown relocated, admin confirmation auto-clear, UI error log toggle |
 | **8.5.3** | 56 | Admin deck access cleanup (dropdowns persist, removed built-in toggles, clear status), ownership blank fix, non-admin editing off by default, portrait card taller/bigger, inline status+card counter, landscape compact controls, card face scrollable |
 | **8.5.2** | 55 | File-based logging (server/error/user_activity persist, rotation on restart), expandable admin stat tiles, Custom Set tab switching fix, AI context-aware generation, deck Short Answers mode, add-card pre-selects active deck, custom set counts line, random input layout fix |
 | **8.5.1** | 54 | Controls rearranged, search icon all screens, portrait/landscape layout fixes; Admin: fixed Edit User deck access API/card counts, Allow/Deny buttons, access status indicators, deck ownership transfer, wider modal |

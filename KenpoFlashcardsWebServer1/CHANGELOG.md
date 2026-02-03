@@ -16,6 +16,38 @@ The format is simple and practical:
 
 ---
 
+## 8.6.0 (build 57) — 2026-02-02
+
+### Added
+- Settings → Display: **Show UI error log** toggle (default OFF). When enabled, JS/UI errors appear in an on-screen log panel.
+- **Custom Set Settings full-page view:** Custom Set Settings converted from a modal overlay to a scrollable full-page view (same pattern as Edit Decks), eliminating mobile overflow/clipping issues.
+- **Manage Cards collapsible panes:** In Custom Set → Manage Cards, both "In Custom Set" and "Available Cards" panes are collapsible (collapsed by default) on mobile in portrait **and** landscape. Accordion detection uses dual media queries to correctly detect landscape phones (where screen width exceeds 720px but height is under 500px).
+
+### Changed
+- Faster initial load after login: settings + decks now load in parallel; counts + cards load in parallel during refresh (reduced sequential network calls from 6 to 4).
+- **Portrait Study action row stabilized:** Prev / Speak / Custom / Next are forced onto a single edge-to-edge row in portrait, with Next staying aligned to the right of Custom (no wrapping).
+- **Breakdown button relocated (portrait):** breakdown action moved to the header next to the search icon to reduce control crowding on mobile.
+- **Portrait alignment tweaks:** reduced card-area side padding to the left edge in portrait and aligned the status hint line to the left edge. Replaced the "Only Admin (...)" hint line with a compact **"Custom > Status"** hint in portrait.
+- **Confirmation visuals standardized:** **✓** for success, **✖** for error. Admin confirmations auto-clear after a few seconds.
+- **Custom Set study label shows filter mode:** status bar now shows "Studying: Unlearned/Unsure/Learned" instead of "Studying: Custom Set" when studying a Custom Set.
+
+### Fixed
+- Custom Sets and Saved Sets are now **deck-scoped** (no cross-deck leakage when switching decks).
+- Custom Set Study view uses only the active deck's Custom Set (star tab no longer affects other deck lists).
+- **Custom-marked cards now appear in Custom Set:** starred/custom cards are correctly aggregated and shown inside Custom Set, including across decks the user can access.
+- **Custom Set random count input overlap fixed:** `.csRandomInput` now overrides the global `input{min-width:280px}` rule using `min-width: auto !important;` so it stays at 52px.
+- **Manage Cards lists taller:** increased `.csCardList` height to show more cards (desktop and portrait).
+- **Breakdown save closes modal:** saving a breakdown now closes the breakdown window/modal instead of leaving it open.
+- **Custom Set → Manage Cards responsive layout:** prevented overflow/misalignment on smaller screens by overriding global input min-width and stacking the two panes on narrow widths.
+- **Admin confirmations auto-clear:** "Access granted/denied" and "Deck transferred" messages now disappear after a few seconds and do not persist when changing the selected user/deck.
+- **Correct icons for errors:** "Access denied" (and other error confirmations) now use **✖** instead of **✓**.
+- **Custom Set counts showing 0/0/0:** backend API now returns `counts` object with `active/unsure/learned/total` breakdown so the counts line displays real numbers.
+- **Settings tab empty on first open:** Custom Set Settings tab was blank when opening because `hidden` class was not removed (only `active` was added). Now properly removes both.
+- **Custom Set modal overflow on mobile:** converted from modal overlay (which used `display:grid; place-items:center` causing clipping) to a full-page scrollable view inside `<main>`, eliminating horizontal/vertical overflow.
+- **Landscape accordion not triggering:** `max-width: 720px` media query missed landscape phones (where width is the long edge, ~800px+). Now uses `(max-width: 720px) OR (orientation: landscape AND max-height: 500px)`. Added matching CSS landscape rules for pane stacking and card list height capping.
+
+---
+
 ## 8.5.3 (build 56) — 2026-02-01
 
 ### Changed
@@ -27,18 +59,9 @@ The format is simple and practical:
 - **Status line inline with Card counter:** "All (flat) • Studying: X" text now appears on the same line as "Card 1 / 10" in portrait and landscape, replacing the separate header status line on mobile.
 - **Landscape controls compact:** group dropdown, All Cards, and search icon reduced to 11px font with 4px padding for minimal space usage.
 
-- **Portrait Study action row stabilized:** Prev / Speak / Custom / Next are forced onto a single edge-to-edge row in portrait, with Next staying aligned to the right of Custom (no wrapping).
-- **Breakdown button relocated (portrait):** breakdown action moved to the header next to the search icon to reduce control crowding on mobile.
-- **Portrait alignment tweaks:** reduced card-area side padding to the left edge in portrait and aligned the status hint line to the left edge. Replaced the "Only Admin (...)" hint line with a compact **"Custom > Status"** hint in portrait.
-
 ### Fixed
 - **Breakdown text overflow in portrait:** card faces now have `overflow-y: auto`, so long term breakdowns scroll instead of clipping or overlapping control buttons.
 - **Built-in status showing incorrectly:** previously showed "✓ Built-in active" even when the deck wasn't built-in or was disabled for the user. Removed entirely in favor of the simplified access status.
-
-- **Custom-marked cards now appear in Custom Set:** starred/custom cards are correctly aggregated and shown inside Custom Set, including across decks the user can access.
-- **Custom Set random count input overlap fixed:** `.csRandomInput` now overrides the global `input{min-width:280px}` rule using `min-width: auto !important;` so it stays at 52px.
-- **Manage Cards lists taller:** increased `.csCardList` height to show more cards (desktop and portrait).
-- **Breakdown save closes modal:** saving a breakdown now closes the breakdown window/modal instead of leaving it open.
 
 ---
 

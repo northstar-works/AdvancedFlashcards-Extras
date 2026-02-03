@@ -1,15 +1,17 @@
-START Sun 02/01/2026 13:13:45.46
+START Mon 02/02/2026 13:16:24.99
 BASE=C:\Users\Sidscri\Documents\GitHub\sidscri-apps
-SRC=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged_Synced
-VERJSON=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged_Synced\version.json
-PROJ_ZIP=KenpoFlashcardsWebServer_Packaged
+SRC=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged
+VERJSON=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged\version.json
 SEVENZIP=C:\Program Files\7-Zip\7z.exe
-VER=5.1.1
-BUILD=19
-WSVER=8.5.3
-WSBUILD=56
-WSSUFFIX=-ws8.5.3_b56
-ZIPPATH=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged-v5.1.1 v19-ws8.5.3_b56.zip
+RAW_VER=5.1.1
+RAW_BUILD=19
+SYNCLOGDIR=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\logs\Sync
+SYNCLOGPAT=v5.1.1*.log
+Using Sync log: C:\Users\Sidscri\Documents\GitHub\sidscri-apps\logs\Sync\v5.1.1_b19_20260201_131341.log
+WSVER_FROM_LOG= =
+WSBUILD_FROM_LOG= =
+WSSUFFIX=
+ZIPPATH=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged-v5.1.1 v19.zip
 STAGE=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\_zip_stage
 
 ROBOCOPY_EXIT_CODE=1
@@ -19,15 +21,15 @@ Running 7z (from stage)...
 7-Zip 25.01 (x64) : Copyright (c) 1999-2025 Igor Pavlov : 2025-08-03
 
 Scanning the drive:
-39 folders, 110 files, 3194095 bytes (3120 KiB)
+40 folders, 114 files, 3267770 bytes (3192 KiB)
 
-Creating archive: C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged-v5.1.1 v19-ws8.5.3_b56.zip
+Creating archive: C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged-v5.1.1 v19.zip
 
-Add new data to archive: 39 folders, 110 files, 3194095 bytes (3120 KiB)
+Add new data to archive: 40 folders, 114 files, 3267770 bytes (3192 KiB)
 
 
-Files read from disk: 110
-Archive size: 2464499 bytes (2407 KiB)
+Files read from disk: 114
+Archive size: 2474014 bytes (2417 KiB)
 Everything is Ok
 7Z_EXIT_CODE=0
 SUCCESS

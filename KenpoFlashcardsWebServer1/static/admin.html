@@ -1124,12 +1124,42 @@ async function removeBuiltInDeck(deckId) {
     }
     
     
-    async function onUserDeckSelectChange(){
+    
+    // ---- Inline status helpers (auto-clear + proper icons) ----
+    const __inlineStatusTimers = new Map();
+    function setInlineStatus(elOrId, kind, message, ttlMs=2500){
+      const el = (typeof elOrId === 'string') ? document.getElementById(elOrId) : elOrId;
+      if(!el) return;
+      // clear prior timer
+      if(__inlineStatusTimers.has(el)){
+        clearTimeout(__inlineStatusTimers.get(el));
+        __inlineStatusTimers.delete(el);
+      }
+      const icon = (kind === 'error') ? '✖' : (kind === 'success' ? '✓' : 'ℹ');
+      const color = (kind === 'error') ? '#f87171' : (kind === 'success' ? '#4ade80' : '#93c5fd');
+      el.innerHTML = `<span style="color:${color}; font-weight:600;">${icon}</span> <span style="color:${color};">${message}</span>`;
+      if(ttlMs && ttlMs > 0){
+        const t = setTimeout(()=>{ el.innerHTML = ''; }, ttlMs);
+        __inlineStatusTimers.set(el, t);
+      }
+    }
+    function clearInlineStatus(elOrId){
+      const el = (typeof elOrId === 'string') ? document.getElementById(elOrId) : elOrId;
+      if(!el) return;
+      if(__inlineStatusTimers.has(el)){
+        clearTimeout(__inlineStatusTimers.get(el));
+        __inlineStatusTimers.delete(el);
+      }
+      el.innerHTML = '';
+    }
+
+async function onUserDeckSelectChange(){
       const userId = document.getElementById('userAccessSelect')?.value;
       const deckId = document.getElementById('userDeckSelect')?.value;
       const statusLine = document.getElementById('userDeckStatusLine');
       
-      if(!userId || !deckId){
+            clearInlineStatus('userAccessStatus');
+if(!userId || !deckId){
         if(statusLine) statusLine.innerHTML = '';
         return;
       }
@@ -1168,7 +1198,7 @@ async function removeBuiltInDeck(deckId) {
       
       try {
         await jpost('/api/admin/user-deck-access', { userId, deckId, action: 'unlock' });
-        document.getElementById('userAccessStatus').innerHTML = '<span style="color:#4ade80;">✓ Access granted</span>';
+        setInlineStatus('userAccessStatus','success','Access granted');
         await onUserDeckSelectChange();
       } catch (e) {
         alert('Error: ' + e.message);
@@ -1186,7 +1216,7 @@ async function removeBuiltInDeck(deckId) {
       
       try {
         await jpost('/api/admin/user-deck-access', { userId, deckId, action: 'lock' });
-        document.getElementById('userAccessStatus').innerHTML = '<span style="color:#f87171;">✓ Access denied</span>';
+        setInlineStatus('userAccessStatus','error','Access denied');
         await onUserDeckSelectChange();
       } catch (e) {
         alert('Error: ' + e.message);
@@ -1240,11 +1270,11 @@ async function removeBuiltInDeck(deckId) {
       
       try{
         const res = await jpost('/api/admin/deck-ownership', { deckId, newOwnerId });
-        if(statusEl) statusEl.innerHTML = `<span style="color:#4ade80;">✓ ${res.message || 'Ownership transferred'}</span>`;
+        if(statusEl) setInlineStatus(statusEl,'success', (res.message || 'Ownership transferred'), 3000);
         await loadStats();
         await loadDeckConfig();
       }catch(e){
-        if(statusEl) statusEl.innerHTML = `<span style="color:#f87171;">Error: ${e.message}</span>`;
+        if(statusEl) setInlineStatus(statusEl,'error', ('Error: ' + e.message), 5000);
       }
     }
     

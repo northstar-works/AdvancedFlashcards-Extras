@@ -1565,14 +1565,17 @@ button.danger{background:#321313;border-color:#6e2222}
 .breakdownIndicator.has-breakdown:hover { box-shadow: 0 0 12px rgba(59, 130, 246, 0.5); }
 
 
-/* Custom Set Settings Modal */
-.csModalFixed { width: 700px; max-width: 95vw; min-height: 500px; }
+/* Custom Set Settings — Full Page View */
+.csPage { padding: 16px; max-width: 800px; margin: 0 auto; }
+.csPageHeader { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.csPageHeader h2 { margin: 0; font-size: 20px; white-space: nowrap; }
+.csPageHeader .appBtn { margin-left: auto; flex-shrink: 0; }
 .csCurrentSetName { font-size: 12px; color: #888; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 4px; margin-right: auto; margin-left: 12px; }
 .customSetTabs { display: flex; gap: 4px; margin-bottom: 16px; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 8px; }
 .csTab { padding: 8px 16px; border-radius: 6px; cursor: pointer; background: transparent; border: none; color: #888; font-size: 13px; transition: all 0.2s; flex: 1; }
 .csTab:hover { background: rgba(255,255,255,0.05); color: #ccc; }
 .csTab.active { background: linear-gradient(135deg, #1f6feb 0%, #1d4ed8 100%); color: #fff; }
-.csTabBody { min-height: 350px; }
+.csTabBody { min-height: 200px; }
 .csTabContent { display: none; }
 .csTabContent.active { display: block; animation: fadeIn 0.2s ease; }
 
@@ -1581,16 +1584,31 @@ button.danger{background:#321313;border-color:#6e2222}
 .csRandomPickRow button { white-space: nowrap; font-size: 12px; }
 .csRandomInput { width: 52px; text-align: center; padding: 6px 2px; font-size: 13px;  min-width: auto !important; }
 
-/* Manage Cards Tab - Split View */
-.csManageSplit { display: flex; gap: 12px; margin-bottom: 12px; }
-.csManagePane { flex: 1; background: rgba(0,0,0,0.15); border-radius: 10px; padding: 12px; border: 1px solid rgba(255,255,255,0.05); }
+/* Manage Cards Tab */
+/*
+  The Manage Cards panes are intentionally stacked vertically across ALL viewports
+  (desktop + mobile). Each pane is an accordion section (only one expanded at a time).
+*/
+.csManageSplit { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
+.csManagePane {
+  /* Slightly narrower with bigger side gutters (matches mobile "Edit Decks" feel) */
+  width: auto;
+  flex: 0 0 auto;
+  margin: 0 10px;
+  background: rgba(0,0,0,0.15);
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,0.05);
+  min-width: 0;
+}
 .csPaneHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .csPaneTitle { font-weight: 600; color: #fff; font-size: 13px; }
 .csPaneCount { font-size: 11px; color: #888; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 10px; }
 .csPaneSearch { margin-bottom: 8px; }
-.csSearchInput { width: 100%; padding: 6px 10px; font-size: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; }
+.csSearchInput { width: 100%; padding: 6px 10px; font-size: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff;   min-width: 0 !important;
+}
 .csSearchInput:focus { outline: none; border-color: #1f6feb; }
-.csCardList { height: 300px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 6px; margin-bottom: 8px; }
+.csCardList { height: clamp(320px, 52vh, 520px); overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 6px; margin-bottom: 10px; }
 .csCardItem { display: flex; align-items: center; gap: 8px; padding: 6px 8px; background: rgba(255,255,255,0.03); border-radius: 5px; margin-bottom: 4px; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: all 0.15s; }
 .csCardItem:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.1); }
 .csCardItem.selected { background: rgba(31, 111, 235, 0.2); border-color: rgba(31, 111, 235, 0.4); }
@@ -1601,13 +1619,15 @@ button.danger{background:#321313;border-color:#6e2222}
 .csCardItem .cardStatus { font-size: 9px; padding: 2px 5px; border-radius: 3px; flex-shrink: 0; }
 .csCardItem .cardStatus.learned { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
 .csCardItem .cardStatus.unsure { background: rgba(234, 179, 8, 0.2); color: #fbbf24; }
-.csPaneActions { display: flex; gap: 6px; justify-content: space-between; }
-.csBulkBar { display: flex; gap: 8px; justify-content: center; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); }
+.csPaneActions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-start; }
+.csPaneActions .pushRight { margin-left: auto; }
+/* .csBulkBar removed: bulk buttons now live inside the In-Custom-Set action row */
 .csEmptyState { text-align: center; color: #666; padding: 30px 10px; font-size: 12px; }
 
 /* Saved Sets Tab */
 .csSaveRow { display: flex; gap: 8px; margin-top: 12px; }
-.csSaveInput { flex: 1; padding: 8px 12px; }
+.csSaveInput { flex: 1; padding: 8px 12px;   min-width: 0 !important;
+}
 .csSavedList { max-height: 200px; overflow-y: auto; }
 .csSavedItem { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: rgba(0,0,0,0.2); border-radius: 8px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.05); }
 .csSavedItem.active { border-color: #1f6feb; background: rgba(31, 111, 235, 0.1); }
@@ -1878,11 +1898,10 @@ button.danger{background:#321313;border-color:#6e2222}
   }
   .deckActiveLabel { font-size: 11px; flex: 1; text-align: center; }
   
-  /* Edit Decks modal */
-  .csModalFixed { width: 98vw; max-width: 98vw; min-height: auto; }
+  /* Custom Set manage panes on mobile */
   .csManageSplit { flex-direction: column; }
-  .csManagePane { min-height: 150px; }
-  .csCardList { height: 220px; }
+  .csManagePane { min-height: 100px; }
+  .csCardList { height: 200px; }
   
   /* Custom Set modal */
   .customSetTabs { flex-wrap: wrap; }
@@ -2004,3 +2023,122 @@ button.danger{background:#321313;border-color:#6e2222}
   background: rgba(255,255,255,0.12); 
   color: #fff; 
 }
+
+
+
+/* Custom Set Settings - Responsive (prevents Manage Cards overflow/misalignment) */
+@media (max-width: 820px){
+  .csManageSplit{ flex-direction: column; }
+  .csManagePane{ width: 100%; }
+}
+
+
+/* ===== UI Error Log Panel ===== */
+.uiLogPanel{
+  position:fixed;
+  right:12px;
+  bottom:12px;
+  width:min(520px, 96vw);
+  max-height:40vh;
+  background:rgba(20,24,30,0.95);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.55);
+  z-index:9999;
+  display:flex;
+  flex-direction:column;
+}
+.uiLogPanel.hidden{ display:none; }
+.uiLogHeader{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 12px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.uiLogTitle{ font-weight:700; opacity:0.95; }
+.uiLogActions{ display:flex; gap:8px; }
+.uiLogBody{
+  padding:10px 12px;
+  overflow:auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size:12px;
+  line-height:1.35;
+  white-space:pre-wrap;
+}
+.uiLogLine{ margin:0 0 8px 0; opacity:0.95; }
+.uiLogLine .tag{ opacity:0.7; margin-right:6px; }
+
+
+
+/* ===== Custom Set Manage Cards: Collapsible panes (mobile portrait) ===== */
+.csPaneHeaderToggle{ cursor:pointer; user-select:none; }
+.csPaneChevron{ margin-left:auto; opacity:0.7; }
+.csManagePane.collapsed .csPaneBody{ display:none; }
+.csManagePane.collapsed .csPaneChevron{ transform:rotate(-90deg); display:inline-block; }
+.csManagePane .csPaneHeader{ display:flex; gap:10px; align-items:center; }
+
+/* Improve card rows in Manage Cards (works well on desktop + landscape) */
+.csCardItem{
+  display:grid;
+  grid-template-columns: 26px 1fr auto;
+  gap:10px;
+  align-items:center;
+}
+.csCardItem input[type="checkbox"]{
+  width:18px;
+  height:18px;
+}
+.csCardItem .cardInfo{ min-width:0; }
+.csCardItem .cardTerm{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.csCardItem .cardMeaning{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  opacity:0.85;
+}
+.csCardItem .cardStatus{
+  min-width:28px;
+  text-align:center;
+  padding:3px 8px;
+  border-radius:999px;
+  font-size:12px;
+  opacity:0.92;
+}
+
+/* Mobile sizing for Custom Set full-page view */
+@media (max-width: 720px){
+  .csPage{
+    padding:10px;
+  }
+  .csPageHeader h2{ font-size:18px; }
+  .csTabBody{
+    overflow:visible;
+  }
+  .csManageSplit{
+    flex-direction:column;
+    gap:10px;
+  }
+  .csCardList{
+    height:auto;
+    max-height:35vh;
+  }
+}
+
+/* Mobile: start with panes collapsed (portrait + landscape) */
+@media (max-width: 720px){
+  .csManagePane{ width:100%; }
+}
+@media (orientation: landscape) and (max-height: 500px){
+  .csManagePane{ width:100%; }
+  .csManageSplit{ flex-direction:column; gap:10px; }
+  .csCardList{ height:auto; max-height:30vh; }
+}
+
+
+/* Custom Set Manage Cards – tighter remove button */
+.csBtnRemove{ padding-left: 12px; padding-right: 12px; }

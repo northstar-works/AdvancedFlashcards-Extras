@@ -1757,194 +1757,389 @@ def api_counts():
 
 # ============ CUSTOM SET API ============
 
+def _settings_all_view(settings_obj: Any) -> Dict[str, Any]:
+    """Return the 'all' settings dict from either new schema (settings['all']) or legacy flat schema."""
+    if isinstance(settings_obj, dict) and isinstance(settings_obj.get("all"), dict):
+        return settings_obj.get("all") or {}
+    return settings_obj if isinstance(settings_obj, dict) else {}
+
+
+def _ensure_custom_sets_deck_scoped(uid: str, progress: Dict[str, Any], settings_obj: Any) -> bool:
+    """Migrate legacy global custom_set/custom_set_status into deck-scoped structures.
+
+    New keys live inside settings['all'] (or legacy root):
+      - custom_sets: { deck_id: [card_id, ...] }
+      - custom_set_statuses: { deck_id: {card_id: status} }
+
+    Returns True if a migration occurred.
+    """
+    try:
+        # Normalize settings object to newest schema for storage.
+        settings_obj = _migrate_settings(settings_obj or _default_settings())
+        settings_all = _settings_all_view(settings_obj)
+
+        if isinstance(settings_all.get("custom_sets"), dict) and isinstance(settings_all.get("custom_set_statuses"), dict):
+            progress["__settings__"] = settings_obj
+            return False
+
+        legacy_ids = settings_all.get("custom_set") or []
+        legacy_status = settings_all.get("custom_set_status") or {}
+        if not legacy_ids and not legacy_status:
+            # Ensure keys exist so future code doesn't fall back to legacy/global behavior.
+            settings_all.setdefault("custom_sets", {})
+            settings_all.setdefault("custom_set_statuses", {})
+            progress["__settings__"] = settings_obj
+            return True
+
+        # Build a card-id -> deck-id map across accessible decks to bucketize correctly.
+        id_to_deck: Dict[str, str] = {}
+
+        # Kenpo built-in + kenpo user cards
+        try:
+            cards, status = load_cards_cached()
+            if status == "ok":
+                for c in cards:
+                    cid = str(c.get("id", ""))
+                    if cid:
+                        id_to_deck[cid] = "kenpo"
+        except Exception:
+            pass
+
+        try:
+            _migrate_user_deck_cards(uid)
+            user_cards = _load_user_cards(uid) or []
+            for c in user_cards:
+                cid = str(c.get("id", ""))
+                if not cid:
+                    continue
+                deck_id = str(c.get("deckId", "kenpo") or "kenpo")
+                id_to_deck.setdefault(cid, deck_id)
+        except Exception:
+            pass
+
+        # Deck-owned cards (shared/owned)
+        try:
+            decks = _load_decks(user_id=uid) or []
+            for d in decks:
+                did = d.get("id")
+                if not did:
+                    continue
+                if did == "kenpo":
+                    continue
+                # Only include decks user can access.
+                if not _user_can_access_deck(uid, did):
+                    continue
+                try:
+                    deck_cards = _load_deck_cards(did) or []
+                    for c in deck_cards:
+                        cid = str(c.get("id", ""))
+                        if cid:
+                            id_to_deck.setdefault(cid, did)
+                except Exception:
+                    continue
+        except Exception:
+            pass
+
+        fallback_deck = _get_active_deck_id(settings_obj, "kenpo")
+        custom_sets: Dict[str, List[str]] = {}
+        custom_statuses: Dict[str, Dict[str, str]] = {}
+
+        for raw_id in legacy_ids:
+            cid = str(raw_id)
+            if not cid:
+                continue
+            did = id_to_deck.get(cid) or fallback_deck
+            custom_sets.setdefault(did, []).append(cid)
+
+        for raw_id, st in (legacy_status or {}).items():
+            cid = str(raw_id)
+            if not cid:
+                continue
+            did = id_to_deck.get(cid) or fallback_deck
+            custom_statuses.setdefault(did, {})[cid] = str(st)
+
+        settings_all["custom_sets"] = custom_sets
+        settings_all["custom_set_statuses"] = custom_statuses
+
+        progress["__settings__"] = settings_obj
+        save_progress(uid, progress)
+        return True
+    except Exception:
+        return False
+
+
+def _load_cards_for_deck(uid: str, deck_id: str) -> List[Dict[str, Any]]:
+    """Return all cards for a specific deck, respecting access rules."""
+    deck_id = str(deck_id or "kenpo")
+    if deck_id == "kenpo":
+        cards, status = load_cards_cached()
+        if status != "ok":
+            return []
+        all_cards = list(cards)
+        _migrate_user_deck_cards(uid)
+        user_cards = _load_user_cards(uid) or []
+        kenpo_user_cards = [c for c in user_cards if str(c.get("deckId", "kenpo") or "kenpo") == "kenpo"]
+        return all_cards + kenpo_user_cards
+
+    _migrate_user_deck_cards(uid)
+    if not _user_can_access_deck(uid, deck_id):
+        return []
+
+    deck = _get_deck_by_id(deck_id)
+    owner_id = _deck_owner_id(deck)
+    if not owner_id:
+        # Legacy deck: cards were still per-user
+        user_cards = _load_user_cards(uid) or []
+        return [c for c in user_cards if c.get("deckId") == deck_id]
+
+    return _load_deck_cards(deck_id) or []
+
+
 @app.get("/api/custom_set")
 def api_custom_set_get():
-    """Get custom set cards with their status."""
+    """Get custom set cards + their custom-set status for the active deck."""
     uid, _ = require_user()
     if not uid:
         return jsonify({"error": "login_required"}), 401
-    
-    # Build a unified card lookup across ALL decks the user can access.
-    # (Previously this used only the built-in kenpo_words.json cache, which caused custom cards
-    # from other decks to never appear in the Custom Set tab.)
+
+    deck_id = (request.args.get("deck_id") or "").strip()
+
     progress = load_progress(uid)
-    settings = progress.get("__settings__", _default_settings())
-    custom_set_ids = settings.get("custom_set", [])
-    custom_set_status = settings.get("custom_set_status", {})
+    settings_obj = progress.get("__settings__", _default_settings())
+    settings_obj = _migrate_settings(settings_obj)
+    settings_all = _settings_all_view(settings_obj)
 
-    cards_by_id: Dict[str, Any] = {}
+    active_deck_id = deck_id or _get_active_deck_id(settings_obj, "kenpo")
 
-    # 1) Built-in Kenpo cards
-    cards, status = load_cards_cached()
-    if status == "ok":
-        for c in cards:
-            if isinstance(c, dict) and c.get("id"):
-                cards_by_id[str(c["id"])] = c
+    # One-time migration from legacy global list → deck scoped maps
+    _ensure_custom_sets_deck_scoped(uid, progress, settings_obj)
 
-    # Ensure any legacy/per-user cards are migrated & included
-    _migrate_user_deck_cards(uid)
-    for c in _load_user_cards(uid):
-        if isinstance(c, dict) and c.get("id"):
-            cards_by_id[str(c["id"])] = c
+    # Re-load after migration
+    progress = load_progress(uid)
+    settings_obj = _migrate_settings(progress.get("__settings__", _default_settings()))
+    settings_all = _settings_all_view(settings_obj)
 
-    # 2) Deck-scoped cards for every deck the user can see (owned/shared/unlocked)
-    try:
-        for d in _load_decks(user_id=uid, include_all=False):
-            did = str(d.get("id") or "").strip()
-            if not did or did == "kenpo":
-                continue
-            deck = _get_deck_by_id(did)
-            owner_id = _deck_owner_id(deck)
-            if owner_id:
-                for c in _load_deck_cards(did):
-                    if isinstance(c, dict) and c.get("id"):
-                        cards_by_id[str(c["id"])] = c
-    except Exception:
-        pass
+    custom_sets = settings_all.get("custom_sets") or {}
+    custom_statuses = settings_all.get("custom_set_statuses") or {}
 
-    
-    out = []
-    for cid in custom_set_ids:
-        card = cards_by_id.get(cid)
-        if card:
-            cc = dict(card)
-            cc["custom_status"] = custom_set_status.get(cid, "active")
-            cc["main_status"] = card_status(progress, cid)
-            out.append(cc)
-    
+    deck_custom_ids = [str(x) for x in (custom_sets.get(active_deck_id) or [])]
+    deck_status_map = custom_statuses.get(active_deck_id) or {}
+
+    all_cards = _load_cards_for_deck(uid, active_deck_id)
+    card_map = {str(c.get("id")): c for c in all_cards if c.get("id") is not None}
+
+    out_cards: List[Dict[str, Any]] = []
+    for cid in deck_custom_ids:
+        c = card_map.get(str(cid))
+        if not c:
+            continue
+        cc = dict(c)
+        cc["custom_status"] = str(deck_status_map.get(cid, "active"))
+        cc["main_status"] = card_status(progress, cid)
+        out_cards.append(cc)
+
+    # Build counts breakdown from custom_status values
+    cs_active = sum(1 for c in out_cards if c.get("custom_status") == "active")
+    cs_unsure = sum(1 for c in out_cards if c.get("custom_status") == "unsure")
+    cs_learned = sum(1 for c in out_cards if c.get("custom_status") == "learned")
+
     return jsonify({
-        "cards": out,
+        "deck_id": active_deck_id,
+        "count": len(out_cards),
+        "cards": out_cards,
         "counts": {
-            "total": len(out),
-            "active": sum(1 for c in out if c.get("custom_status") == "active"),
-            "unsure": sum(1 for c in out if c.get("custom_status") == "unsure"),
-            "learned": sum(1 for c in out if c.get("custom_status") == "learned"),
-        }
+            "total": len(out_cards),
+            "active": cs_active,
+            "unsure": cs_unsure,
+            "learned": cs_learned,
+        },
     })
 
 
 @app.post("/api/custom_set/add")
 def api_custom_set_add():
-    """Add a card to custom set."""
     uid, _ = require_user()
     if not uid:
         return jsonify({"error": "login_required"}), 401
-    
+
     data = request.get_json(force=True) or {}
-    cid = data.get("id")
+    cid = str(data.get("id") or "").strip()
+    deck_id = str((data.get("deck_id") or request.args.get("deck_id") or "").strip())
+
     if not cid:
         return jsonify({"error": "id required"}), 400
-    
+
     progress = load_progress(uid)
-    settings = progress.setdefault("__settings__", _default_settings())
-    custom_set = settings.setdefault("custom_set", [])
-    
-    if cid not in custom_set:
-        custom_set.append(cid)
-        save_progress(uid, progress)
-    
-    return jsonify({"ok": True, "in_custom_set": True})
+    settings_obj = _migrate_settings(progress.get("__settings__", _default_settings()))
+    settings_all = _settings_all_view(settings_obj)
+
+    active_deck_id = deck_id or _get_active_deck_id(settings_obj, "kenpo")
+
+    _ensure_custom_sets_deck_scoped(uid, progress, settings_obj)
+    progress = load_progress(uid)
+    settings_obj = _migrate_settings(progress.get("__settings__", _default_settings()))
+    settings_all = _settings_all_view(settings_obj)
+
+    settings_all.setdefault("custom_sets", {})
+    settings_all.setdefault("custom_set_statuses", {})
+
+    deck_list = settings_all["custom_sets"].setdefault(active_deck_id, [])
+    if cid not in deck_list:
+        deck_list.append(cid)
+
+    # default status
+    settings_all["custom_set_statuses"].setdefault(active_deck_id, {})
+    settings_all["custom_set_statuses"][active_deck_id].setdefault(cid, "active")
+
+    progress["__settings__"] = settings_obj
+    save_progress(uid, progress)
+    return jsonify({"ok": True})
 
 
 @app.post("/api/custom_set/remove")
 def api_custom_set_remove():
-    """Remove a card from custom set."""
     uid, _ = require_user()
     if not uid:
         return jsonify({"error": "login_required"}), 401
-    
+
     data = request.get_json(force=True) or {}
-    cid = data.get("id")
+    cid = str(data.get("id") or "").strip()
+    deck_id = str((data.get("deck_id") or request.args.get("deck_id") or "").strip())
     if not cid:
         return jsonify({"error": "id required"}), 400
-    
+
     progress = load_progress(uid)
-    settings = progress.setdefault("__settings__", _default_settings())
-    custom_set = settings.setdefault("custom_set", [])
-    custom_set_status = settings.setdefault("custom_set_status", {})
-    
-    if cid in custom_set:
-        custom_set.remove(cid)
-        custom_set_status.pop(cid, None)
-        save_progress(uid, progress)
-    
-    return jsonify({"ok": True, "in_custom_set": False})
+    settings_obj = _migrate_settings(progress.get("__settings__", _default_settings()))
+    settings_all = _settings_all_view(settings_obj)
+    active_deck_id = deck_id or _get_active_deck_id(settings_obj, "kenpo")
+
+    _ensure_custom_sets_deck_scoped(uid, progress, settings_obj)
+    progress = load_progress(uid)
+    settings_obj = _migrate_settings(progress.get("__settings__", _default_settings()))
+    settings_all = _settings_all_view(settings_obj)
+
+    custom_sets = settings_all.get("custom_sets") or {}
+    deck_list = custom_sets.get(active_deck_id) or []
+
+    if cid in deck_list:
+        deck_list = [x for x in deck_list if str(x) != cid]
+        custom_sets[active_deck_id] = deck_list
+        settings_all["custom_sets"] = custom_sets
+
+    custom_statuses = settings_all.get("custom_set_statuses") or {}
+    if active_deck_id in custom_statuses and cid in (custom_statuses.get(active_deck_id) or {}):
+        custom_statuses[active_deck_id].pop(cid, None)
+        settings_all["custom_set_statuses"] = custom_statuses
+
+    progress["__settings__"] = settings_obj
+    save_progress(uid, progress)
+    return jsonify({"ok": True})
 
 
 @app.post("/api/custom_set/toggle")
 def api_custom_set_toggle():
-    """Toggle a card in/out of custom set."""
     uid, _ = require_user()
     if not uid:
         return jsonify({"error": "login_required"}), 401
-    
+
     data = request.get_json(force=True) or {}
-    cid = data.get("id")
+    cid = str(data.get("id") or "").strip()
+    deck_id = str((data.get("deck_id") or request.args.get("deck_id") or "").strip())
     if not cid:
         return jsonify({"error": "id required"}), 400
-    
+
     progress = load_progress(uid)
-    settings = progress.setdefault("__settings__", _default_settings())
-    custom_set = settings.setdefault("custom_set", [])
-    custom_set_status = settings.setdefault("custom_set_status", {})
-    
-    if cid in custom_set:
-        custom_set.remove(cid)
-        custom_set_status.pop(cid, None)
+    settings_obj = _migrate_settings(progress.get("__settings__", _default_settings()))
+    settings_all = _settings_all_view(settings_obj)
+    active_deck_id = deck_id or _get_active_deck_id(settings_obj, "kenpo")
+
+    _ensure_custom_sets_deck_scoped(uid, progress, settings_obj)
+    progress = load_progress(uid)
+    settings_obj = _migrate_settings(progress.get("__settings__", _default_settings()))
+    settings_all = _settings_all_view(settings_obj)
+
+    settings_all.setdefault("custom_sets", {})
+    settings_all.setdefault("custom_set_statuses", {})
+
+    deck_list = settings_all["custom_sets"].setdefault(active_deck_id, [])
+
+    if cid in deck_list:
+        deck_list[:] = [x for x in deck_list if str(x) != cid]
+        settings_all["custom_set_statuses"].setdefault(active_deck_id, {})
+        settings_all["custom_set_statuses"][active_deck_id].pop(cid, None)
         in_set = False
     else:
-        custom_set.append(cid)
+        deck_list.append(cid)
+        settings_all["custom_set_statuses"].setdefault(active_deck_id, {})
+        settings_all["custom_set_statuses"][active_deck_id].setdefault(cid, "active")
         in_set = True
-    
+
+    progress["__settings__"] = settings_obj
     save_progress(uid, progress)
     return jsonify({"ok": True, "in_custom_set": in_set})
 
 
 @app.post("/api/custom_set/set_status")
 def api_custom_set_set_status():
-    """Set custom set internal status for a card."""
     uid, _ = require_user()
     if not uid:
         return jsonify({"error": "login_required"}), 401
-    
+
     data = request.get_json(force=True) or {}
-    cid = data.get("id")
-    status = data.get("status")
-    reflect_main = data.get("reflect_main", False)
-    
+    cid = str(data.get("id") or "").strip()
+    status = str(data.get("status") or "").strip()
+    deck_id = str((data.get("deck_id") or request.args.get("deck_id") or "").strip())
+
     if not cid or status not in ("active", "unsure", "learned"):
-        return jsonify({"error": "id and valid status required"}), 400
-    
+        return jsonify({"error": "id and status required"}), 400
+
     progress = load_progress(uid)
-    settings = progress.setdefault("__settings__", _default_settings())
-    custom_set_status = settings.setdefault("custom_set_status", {})
-    
-    custom_set_status[cid] = status
-    
-    # Optionally reflect status change in main deck
-    if reflect_main:
-        set_card_status(progress, cid, status)
-    
+    settings_obj = _migrate_settings(progress.get("__settings__", _default_settings()))
+    active_deck_id = deck_id or _get_active_deck_id(settings_obj, "kenpo")
+
+    _ensure_custom_sets_deck_scoped(uid, progress, settings_obj)
+    progress = load_progress(uid)
+    settings_obj = _migrate_settings(progress.get("__settings__", _default_settings()))
+    settings_all = _settings_all_view(settings_obj)
+
+    settings_all.setdefault("custom_set_statuses", {})
+    settings_all["custom_set_statuses"].setdefault(active_deck_id, {})
+    settings_all["custom_set_statuses"][active_deck_id][cid] = status
+
+    progress["__settings__"] = settings_obj
     save_progress(uid, progress)
     return jsonify({"ok": True})
 
 
 @app.post("/api/custom_set/clear")
 def api_custom_set_clear():
-    """Clear entire custom set."""
     uid, _ = require_user()
     if not uid:
         return jsonify({"error": "login_required"}), 401
-    
+
+    data = request.get_json(force=True) or {}
+    deck_id = str((data.get("deck_id") or request.args.get("deck_id") or "").strip())
+
     progress = load_progress(uid)
-    settings = progress.setdefault("__settings__", _default_settings())
-    settings["custom_set"] = []
-    settings["custom_set_status"] = {}
+    settings_obj = _migrate_settings(progress.get("__settings__", _default_settings()))
+    active_deck_id = deck_id or _get_active_deck_id(settings_obj, "kenpo")
+
+    _ensure_custom_sets_deck_scoped(uid, progress, settings_obj)
+    progress = load_progress(uid)
+    settings_obj = _migrate_settings(progress.get("__settings__", _default_settings()))
+    settings_all = _settings_all_view(settings_obj)
+
+    custom_sets = settings_all.get("custom_sets") or {}
+    custom_sets[active_deck_id] = []
+    settings_all["custom_sets"] = custom_sets
+
+    custom_statuses = settings_all.get("custom_set_statuses") or {}
+    custom_statuses[active_deck_id] = {}
+    settings_all["custom_set_statuses"] = custom_statuses
+
+    progress["__settings__"] = settings_obj
     save_progress(uid, progress)
-    
     return jsonify({"ok": True})
-
-
 # ============ ADMIN STATS API ============
 
 @app.get("/api/admin/stats")
@@ -2891,8 +3086,20 @@ def api_cards():
         else:
             all_cards = _load_deck_cards(active_deck_id)
     
-    # Get custom set IDs for this user
-    custom_set_ids = set(settings.get("custom_set", []))
+    # Get custom set IDs for this user (active deck only)
+    try:
+        _ensure_custom_sets_deck_scoped(uid, progress, settings)
+    except Exception:
+        pass
+    try:
+        settings_obj = _migrate_settings(progress.get("__settings__", settings))
+        settings_all = _settings_all_view(settings_obj)
+        custom_sets = settings_all.get("custom_sets") or {}
+        legacy_list = settings_all.get("custom_set") or []
+        deck_list = custom_sets.get(active_deck_id) or legacy_list
+        custom_set_ids = set(str(x) for x in (deck_list or []))
+    except Exception:
+        custom_set_ids = set()
     
     out: List[Dict[str, Any]] = []
     for c in all_cards:
@@ -2910,7 +3117,7 @@ def api_cards():
 
         cc = dict(c)
         cc["status"] = s
-        cc["in_custom_set"] = c["id"] in custom_set_ids
+        cc["in_custom_set"] = str(c["id"]) in custom_set_ids
         out.append(cc)
 
     return jsonify(out)

@@ -1,7 +1,0 @@
-{
-  "name": "Advanced Flashcards WebAppServer",
-  "version": "8.5.3.2",
-  "build": 56,
-  "released": "2026-02-01",
-  "notes": "8.5.3 (build 56): Admin deck access cleanup (dropdowns persist on Allow/Deny, removed built-in toggle buttons, fixed status display, fixed ownership blank state); non-admin built-in editing off by default; portrait card taller with bigger text; status line inline with Card counter; landscape compact controls; card face scrollable for long breakdowns."
-}

@@ -30,13 +30,39 @@
       "speak_definition_on_flip": true,
       "activeDeckId": "deck_22e1482a",
       "randomize_custom_set": false,
-      "reflect_status_in_main": false
+      "reflect_status_in_main": false,
+      "custom_sets": {
+        "deck_22e1482a": [
+          "58de16ba89164650",
+          "9355733ab12549cd",
+          "c3e7f5355d924674",
+          "ba8e41184dba4e71",
+          "1c31d7a14a184609",
+          "a23897b375914c8b",
+          "b9ba8fddb2844bc8",
+          "dbf9145dff5c4d2d",
+          "d1561c1337bb4b45",
+          "be04575b9c4647c4"
+        ]
+      },
+      "custom_set_statuses": {
+        "deck_22e1482a": {
+          "58de16ba89164650": "unsure",
+          "9355733ab12549cd": "active",
+          "c3e7f5355d924674": "active",
+          "ba8e41184dba4e71": "active",
+          "1c31d7a14a184609": "active",
+          "a23897b375914c8b": "active",
+          "b9ba8fddb2844bc8": "active",
+          "dbf9145dff5c4d2d": "active",
+          "d1561c1337bb4b45": "active",
+          "be04575b9c4647c4": "active"
+        }
+      }
     },
     "groups": {},
     "custom_set": [
-      "90cdf9c575a3487d",
       "60b0c9bc5c064055",
-      "7e6f0807e1d042a4",
       "5304286fe3324f42",
       "fab7617725c04127",
       "825dd4c77699406c",
@@ -55,7 +81,8 @@
       "0ec934eee27c4ccf",
       "ab00cd415aa5456a",
       "d5228e5abd98413d",
-      "796f77882ce842c1"
+      "796f77882ce842c1",
+      "dbf9145dff5c4d2d"
     ],
     "custom_set_status": {},
     "activeDeckId": "deck_7bb3a7af"
