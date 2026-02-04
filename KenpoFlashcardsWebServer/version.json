@@ -1,7 +1,8 @@
 {
   "name": "Advanced Flashcards WebAppServer",
-  "version": "8.6.0.4",
-  "build": 57,
-  "released": "2026-02-02",
-  "notes": "8.5.3 (build 56): Deck-scoped Custom Sets + Saved Sets; responsive Manage Cards modal (mobile-friendly) with collapsible panes; optional UI error log toggle; faster login load."
+  "version": "8.6.4",
+  "build": 59,
+  "released": "2026-02-04",
+  "is_packaged": false,
+  "notes": "8.6.2 (build 59): Admin Deck Editor: edit/remove deck cards + bulk cleanup for 'Capital of ...' definitions."
 }

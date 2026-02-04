@@ -15,6 +15,7 @@ from flask import Flask, jsonify, request, send_from_directory, session, send_fi
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import logging
+from werkzeug.exceptions import HTTPException
 # APPDATA_SAFE_PATHS_PATCH_v1
 
 # =========================================================
@@ -160,6 +161,11 @@ HELPER_PATH = os.path.join(DATA_DIR, "helper.json")
 # helper.json cache (term<->id mapping)
 _helper_cache = {}
 _helper_cache_mtime = -1.0
+
+# kenpo_words.json cards cache
+_cards_cache = []
+_cards_cache_mtime = -1.0
+
 _ID16_RE = re.compile(r"^[0-9a-f]{16}$", re.I)
 
 # Optional AI provider (server-side) for breakdown auto-fill.
@@ -755,70 +761,235 @@ def _make_session_permanent():
 # Version + request audit log
 # ----------------------------
 VERSION_FILE = os.path.join(app.root_path, "version.json")
-_VERSION_CACHE = None
-_VERSION_MTIME = 0.0
+WEBAPPSERVER_VERSION_FILE = os.path.join(app.root_path, "webappserver_version.json")
+WEBAPP_VERSION_FILE = os.path.join(app.root_path, "webapp_version.json")  # legacy fallback name
+
+
+# Cache (simple, mtime-based) so /api/version is cheap.
+_version_cache = {
+    "ts": 0.0,
+    "mtime": 0.0,
+    "v": None,
+    "web_mtime": 0.0,
+}
+
+def _read_json(path, default=None):
+    """Read a JSON file into a dict (robust against minor file issues).
+
+    - Handles UTF-8 BOM.
+    - Attempts to recover from trailing commas.
+    - If JSON parsing fails, falls back to extracting common fields with regex.
+    """
+    default = default or {}
+    try:
+        # Read as bytes so we can strip BOM reliably
+        with open(path, "rb") as f:
+            raw = f.read()
+        text = raw.decode("utf-8-sig", errors="ignore")
+        try:
+            data = json.loads(text)
+        except Exception:
+            # Try removing trailing commas like: {"a":1,}
+            text2 = re.sub(r",\s*([}\]])", r"\1", text)
+            data = json.loads(text2)
+        return data if isinstance(data, dict) else dict(default)
+    except Exception:
+        # Very loose recovery for simple version files
+        try:
+            txt = ""
+            try:
+                with open(path, "r", encoding="utf-8", errors="ignore") as f:
+                    txt = f.read()
+            except Exception:
+                return dict(default)
+            out = dict(default)
+            for k in ["name", "version", "build", "released", "is_packaged"]:
+                m = re.search(r'"' + re.escape(k) + r'"\s*:\s*(".*?"|\d+|true|false)', txt, re.IGNORECASE | re.DOTALL)
+                if not m:
+                    continue
+                v = m.group(1).strip()
+                if v.lower() in ("true", "false"):
+                    out[k] = (v.lower() == "true")
+                elif v.startswith('"') and v.endswith('"'):
+                    out[k] = v[1:-1]
+                else:
+                    try:
+                        out[k] = int(v)
+                    except Exception:
+                        out[k] = v
+            return out
+        except Exception:
+            return dict(default)
+
+def _safe_mtime(path):
+    try:
+        return float(os.path.getmtime(path))
+    except Exception:
+        return 0.0
 
 def get_version():
-    """Load version.json with a tiny mtime-based cache."""
-    global _VERSION_CACHE, _VERSION_MTIME
-    try:
-        st = os.stat(VERSION_FILE)
-        if _VERSION_CACHE is None or st.st_mtime != _VERSION_MTIME:
-            with open(VERSION_FILE, "r", encoding="utf-8") as f:
-                _VERSION_CACHE = json.load(f)
-            _VERSION_MTIME = st.st_mtime
-    except Exception:
-        return {"name": "KenpoFlashcardsWebServer", "version": "unknown", "build": "unknown"}
-    return _VERSION_CACHE or {"name": "KenpoFlashcardsWebServer", "version": "unknown", "build": "unknown"}
+    """Return version info used by /api/version and the Admin UI.
 
-# Optional allowlist: set env var KENPO_ALLOWED_IPS="1.2.3.4,5.6.7.8"
-ALLOWED_IPS = {ip.strip() for ip in os.environ.get("KENPO_ALLOWED_IPS", "").split(",") if ip.strip()}
+    Rules:
+    - If version.json has is_packaged=true: treat version.json as the *Application* version (Packaged EXE),
+      and also try to read the embedded WebAppServer version from webappserver_version.json (preferred) or
+      webapp_version.json (legacy).
+    - Otherwise (stand-alone WebAppServer): treat version.json as the WebAppServer version only.
+    """
+    def _pick_existing(paths):
+        for p in paths:
+            try:
+                if p and os.path.exists(p):
+                    return p
+            except Exception:
+                continue
+        return ""
 
-@app.before_request
-def _access_log_and_optional_allowlist():
-    ip = (request.headers.get("X-Forwarded-For") or request.remote_addr or "").split(",")[0].strip()
-    ua = (request.headers.get("User-Agent") or "").strip()
-    uid = session.get("user_id")
-    uname = (_get_user(uid) or {}).get("username") if uid else "-"
-    if ALLOWED_IPS and ip not in ALLOWED_IPS:
-        print(f"[BLOCK] ip={ip} user={uname} {request.method} {request.path} ua={ua[:120]}")
-        logger.warning(f"[BLOCK] ip={ip} user={uname} {request.method} {request.path} ua={ua[:120]}")
-        return ("Forbidden", 403)
-    print(f"[REQ] ip={ip} user={uname} {request.method} {request.path} ua={ua[:120]}")
-    logger.info(f"[REQ] ip={ip} user={uname} {request.method} {request.path} ua={ua[:120]}")
+    # Some launches run from different working dirs; try a few candidates.
+    version_path = _pick_existing([
+        VERSION_FILE,
+        os.path.join(os.getcwd(), "version.json"),
+    ])
+    web_path = _pick_existing([
+        WEBAPPSERVER_VERSION_FILE,
+        WEBAPP_VERSION_FILE,
+        os.path.join(os.getcwd(), "webappserver_version.json"),
+        os.path.join(os.getcwd(), "webapp_version.json"),
+    ])
 
-    # If an admin has forced a password reset, require the user to change password before continuing.
-    # Allow only the login/logout/version/whoami endpoints and the password change endpoint.
-    if uid:
-        u = _get_user(uid) or {}
-        if u.get("password_reset_required") and request.path.startswith("/api/"):
-            allowed = {"/api/login", "/api/logout", "/api/version", "/api/whoami", "/api/me", "/api/user/change_password"}
-            if request.path not in allowed:
-                return jsonify({"error": "password_reset_required"}), 403
+    now = time.time()
+    v_mtime = _safe_mtime(version_path) if version_path else 0.0
+    web_mtime = _safe_mtime(web_path) if web_path else 0.0
 
-_cards_cache: List[Dict[str, Any]] = []
-_cards_cache_mtime: float = -1.0
+    # Refresh cache at most once per second, or when either file changes
+    if (
+        _version_cache.get("v") is not None
+        and (now - _version_cache.get("ts", 0.0)) < 1.0
+        and _version_cache.get("mtime", 0.0) == v_mtime
+        and _version_cache.get("web_mtime", 0.0) == web_mtime
+    ):
+        return dict(_version_cache["v"])
 
+    base = _read_json(version_path, default={}) if version_path else {}
+    is_packaged = bool(base.get("is_packaged", False))
 
-def _now() -> str:
-    return time.strftime("%Y-%m-%d %H:%M:%S")
+    def _norm_release(d):
+        return str(d.get("released") or d.get("release_date") or d.get("date") or "").strip()
 
+    def _s(x, fallback=""):
+        try:
+            return str(x).strip()
+        except Exception:
+            return fallback
 
-def _stable_id(group: str, subgroup: str, term: str, meaning: str, pron: str) -> str:
-    base = f"{group}||{subgroup}||{term}||{meaning}||{pron}".encode("utf-8")
-    return hashlib.sha1(base).hexdigest()[:16]
+    def _fmt(ver, build):
+        ver_s = _s(ver, "unknown") or "unknown"
+        b_s = _s(build, "")
+        return f"{ver_s} (build {b_s})" if b_s else ver_s
 
+    if is_packaged:
+        # App (EXE) version from version.json
+        app_name = _s(base.get("name") or base.get("application") or "Packaged EXE", "Packaged EXE")
+        app_version = _s(base.get("version"), "unknown") or "unknown"
+        app_build = _s(base.get("build"), "")
+        app_released = _norm_release(base) or "-"
 
-def _load_json_file(path: str) -> Any:
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+        # WebAppServer (embedded) version from webappserver_version.json or legacy webapp_version.json
+        web = _read_json(web_path, default={}) if web_path else {}
+        web_name = _s(web.get("name") or "WebAppServer", "WebAppServer")
+        web_version = _s(web.get("version"), "unknown") or "unknown"
+        web_build = _s(web.get("build"), "")
+        web_released = _norm_release(web) or "-"
 
+        v = {
+            "is_packaged": True,
+            "mode": "packaged",
+
+            # App (EXE) fields
+            "app_name": app_name,
+            "app_version": app_version,
+            "app_build": app_build,
+            "app_released": app_released,
+
+            # WebAppServer fields
+            "web_name": web_name,
+            "web_version": web_version,
+            "web_build": web_build,
+            "web_released": web_released,
+
+            # Backward compat
+            "name": app_name,
+            "version": app_version,
+            "build": app_build,
+            "released": app_released,
+
+            # UI helpers
+            "display_name": app_name,
+            "display_version": f"App: {_fmt(app_version, app_build)}<br>Web: {_fmt(web_version, web_build)}",
+            "display_released": web_released,
+        }
+    else:
+        # Stand-alone WebAppServer: version.json is the web server version
+        web_name = _s(base.get("name") or "WebAppServer", "WebAppServer")
+        web_version = _s(base.get("version"), "unknown") or "unknown"
+        web_build = _s(base.get("build"), "")
+        web_released = _norm_release(base) or "-"
+
+        v = {
+            "is_packaged": False,
+            "mode": "webappserver",
+
+            # WebAppServer fields
+            "web_name": web_name,
+            "web_version": web_version,
+            "web_build": web_build,
+            "web_released": web_released,
+
+            # Backward compat
+            "name": web_name,
+            "version": web_version,
+            "build": web_build,
+            "released": web_released,
+
+            # UI helpers
+            "display_name": web_name,
+            "display_version": _fmt(web_version, web_build),
+            "display_released": web_released,
+        }
+
+    _version_cache["ts"] = now
+    _version_cache["mtime"] = v_mtime
+    _version_cache["web_mtime"] = web_mtime
+    _version_cache["v"] = dict(v)
+    return dict(v)
 
 def _get_first(d: Dict[str, Any], keys: List[str]) -> Any:
     for k in keys:
         if k in d and d[k] is not None:
             return d[k]
     return None
+
+
+def _now() -> str:
+    """Local timestamp string used in JSON log records."""
+    return time.strftime("%Y-%m-%d %H:%M:%S")
+
+
+def _stable_id(group: str, subgroup: str, term: str, meaning: str, pron: str) -> str:
+    """Deterministic short id for cards to keep references stable across runs."""
+    base = f"{group}||{subgroup}||{term}||{meaning}||{pron}".encode("utf-8")
+    return hashlib.sha1(base).hexdigest()[:16]
+
+
+def _load_json_file(path: str) -> Any:
+    """Load JSON from disk. Returns {} on any error (missing/invalid)."""
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
 
 
 def _normalize_cards(raw: Any) -> List[Dict[str, Any]]:
@@ -2322,17 +2493,32 @@ MAX_LOG_ENTRIES = 500
 # ---- File-based logging ----
 def _ensure_log_dir():
     os.makedirs(LOG_DIR, exist_ok=True)
-
 def _rotate_log_file(fpath):
-    """Rename current log to .prev (keeps 1 previous)."""
+    """Rotate current log to .prev (keeps 1 previous).
+
+    Windows can fail renaming if another process has the file open (WinError 32).
+    In that case we fall back to copy-then-truncate so the server can still start.
+    """
     if os.path.exists(fpath) and os.path.getsize(fpath) > 0:
         prev = fpath + ".prev"
         try:
             if os.path.exists(prev):
                 os.remove(prev)
-            os.rename(fpath, prev)
+            os.replace(fpath, prev)
         except Exception as e:
-            print(f"[LOG] rotate failed {fpath}: {e}")
+            try:
+                import shutil
+                if os.path.exists(prev):
+                    os.remove(prev)
+                shutil.copy2(fpath, prev)
+                # Best-effort truncate original
+                try:
+                    with open(fpath, "w", encoding="utf-8"):
+                        pass
+                except Exception:
+                    pass
+            except Exception as e2:
+                print(f"[LOG] rotate failed {fpath}: {e2} (original: {e})")
 
 def _init_log_files():
     """On server start: rotate server/error logs; keep user_activity continuous."""
@@ -2610,6 +2796,134 @@ def api_admin_update_deck_config():
     
     return jsonify({"success": True, "config": config})
 
+
+
+
+
+# ============ ADMIN DECK CARD EDITOR ============
+
+@app.get("/api/admin/deck-cards")
+def api_admin_get_deck_cards():
+    # Get deck cards for editing (admin only).
+    uid = current_user_id()
+    if not uid:
+        return jsonify({"error": "login_required"}), 401
+
+    user = _get_user(uid)
+    username = user.get("username", "") if user else ""
+    if not _is_admin_user(username):
+        return jsonify({"error": "admin_required"}), 403
+
+    deck_id = request.args.get("deck_id", "").strip()
+    if not deck_id:
+        return jsonify({"error": "missing_deck_id"}), 400
+
+    cards = _load_deck_cards(deck_id)
+    return jsonify({"ok": True, "deck_id": deck_id, "cards": cards})
+
+
+@app.post("/api/admin/deck-card/update")
+def api_admin_update_deck_card():
+    # Update a single deck card (admin only).
+    uid = current_user_id()
+    if not uid:
+        return jsonify({"error": "login_required"}), 401
+
+    user = _get_user(uid)
+    username = user.get("username", "") if user else ""
+    if not _is_admin_user(username):
+        return jsonify({"error": "admin_required"}), 403
+
+    data = request.get_json() or {}
+    deck_id = str(data.get("deck_id", "")).strip()
+    card_id = str(data.get("card_id", "")).strip()
+    if not deck_id or not card_id:
+        return jsonify({"error": "missing_fields"}), 400
+
+    cards = _load_deck_cards(deck_id)
+    now_ts = int(time.time())
+    updated = False
+
+    for c in cards:
+        if str(c.get("id", "")) == card_id:
+            c["term"] = str(data.get("term", "") or "")
+            c["meaning"] = str(data.get("meaning", "") or "")
+            c["pron"] = str(data.get("pron", "") or "")
+            c["group"] = str(data.get("group", "") or "")
+            c["subgroup"] = str(data.get("subgroup", "") or "")
+            c["updatedAt"] = now_ts
+            updated = True
+            break
+
+    if not updated:
+        return jsonify({"error": "card_not_found"}), 404
+
+    _save_deck_cards(deck_id, cards)
+    return jsonify({"ok": True})
+
+
+@app.post("/api/admin/deck-card/delete")
+def api_admin_delete_deck_card():
+    # Delete a single deck card (admin only).
+    uid = current_user_id()
+    if not uid:
+        return jsonify({"error": "login_required"}), 401
+
+    user = _get_user(uid)
+    username = user.get("username", "") if user else ""
+    if not _is_admin_user(username):
+        return jsonify({"error": "admin_required"}), 403
+
+    data = request.get_json() or {}
+    deck_id = str(data.get("deck_id", "")).strip()
+    card_id = str(data.get("card_id", "")).strip()
+    if not deck_id or not card_id:
+        return jsonify({"error": "missing_fields"}), 400
+
+    cards = _load_deck_cards(deck_id)
+    before = len(cards)
+    cards = [c for c in cards if str(c.get("id", "")) != card_id]
+
+    if len(cards) == before:
+        return jsonify({"error": "card_not_found"}), 404
+
+    _save_deck_cards(deck_id, cards)
+    return jsonify({"ok": True, "deleted": 1})
+
+
+@app.post("/api/admin/deck-cards/bulk-strip-capital")
+def api_admin_bulk_strip_capital():
+    # Bulk clean-up: 'The Capital of Texas' -> 'Texas' (admin only).
+    uid = current_user_id()
+    if not uid:
+        return jsonify({"error": "login_required"}), 401
+
+    user = _get_user(uid)
+    username = user.get("username", "") if user else ""
+    if not _is_admin_user(username):
+        return jsonify({"error": "admin_required"}), 403
+
+    data = request.get_json() or {}
+    deck_id = str(data.get("deck_id", "")).strip()
+    if not deck_id:
+        return jsonify({"error": "missing_deck_id"}), 400
+
+    cards = _load_deck_cards(deck_id)
+    changed = 0
+    now_ts = int(time.time())
+
+    for c in cards:
+        before = str(c.get("meaning", "") or "")
+        after = re.sub(r"^\s*(?:the\s+)?capital\s+of\s+", "", before, flags=re.IGNORECASE).strip()
+        if before.strip() != after.strip():
+            c["meaning"] = after
+            c["updatedAt"] = now_ts
+            changed += 1
+
+    if changed:
+        _save_deck_cards(deck_id, cards)
+
+    return jsonify({"ok": True, "changed": changed})
 
 
 

@@ -1,0 +1,17 @@
+============================================================ 
+ KenpoFlashcards Web Server - Sync Tool            
+============================================================ 
+REPO_ROOT=C:\Users\Sidscri\Documents\GitHub\sidscri-apps                                        
+WS_DIR=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer                                              
+PK_DIR=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged                                              
+OUTPUT_MODE=synced                                    
+DRY=                                                    
+EXTRA_ARGS=                                      
+                                                            
+[INFO] Creating fresh output folder from base Packaged: C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged -> C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged_Synced
+Traceback (most recent call last):
+  File "C:\Users\Sidscri\Documents\GitHub\sidscri-apps\Tools\SyncTool-WebServerToPackaged\sync_webserver_to_packaged.py", line 1354, in <module>
+    main()
+  File "C:\Users\Sidscri\Documents\GitHub\sidscri-apps\Tools\SyncTool-WebServerToPackaged\sync_webserver_to_packaged.py", line 1348, in main
+    success = syncer.run()
+AttributeError: 'WebServerSyncer' object has no attribute 'run'

@@ -1,0 +1,48 @@
+
+-------------------------------------------------------------------------------
+   ROBOCOPY     ::     Robust File Copy for Windows                              
+-------------------------------------------------------------------------------
+
+  Started : Tuesday, February 3, 2026 3:49:50 PM
+   Source : C:\Users\Sidscri\Documents\GitHub\sidscri-apps\Tools\SyncTool-WebServerToPackaged\
+     Dest : C:\Users\Sidscri\Documents\GitHub\sidscri-apps\Tools\SyncTool-WebServerToPackaged\_zip_staging\SyncTool-WebServerToPackaged-v3.0.3_b13\
+
+    Files : *.*
+	    
+Exc Files : *.log
+	    *.zip
+	    
+ Exc Dirs : C:\Users\Sidscri\Documents\GitHub\sidscri-apps\Tools\SyncTool-WebServerToPackaged\output
+	    C:\Users\Sidscri\Documents\GitHub\sidscri-apps\Tools\SyncTool-WebServerToPackaged\logs
+	    C:\Users\Sidscri\Documents\GitHub\sidscri-apps\Tools\SyncTool-WebServerToPackaged\__pycache__
+	    C:\Users\Sidscri\Documents\GitHub\sidscri-apps\Tools\SyncTool-WebServerToPackaged\sync_backups
+	    C:\Users\Sidscri\Documents\GitHub\sidscri-apps\Tools\SyncTool-WebServerToPackaged\.git
+	    C:\Users\Sidscri\Documents\GitHub\sidscri-apps\Tools\SyncTool-WebServerToPackaged\_zip_staging
+	    
+  Options : *.* /S /E /DCOPY:DA /COPY:DAT /PURGE /MIR /R:1000000 /W:30 
+
+------------------------------------------------------------------------------
+
+	                   8	C:\Users\Sidscri\Documents\GitHub\sidscri-apps\Tools\SyncTool-WebServerToPackaged\
+	    New File  		     450	CHANGELOG.md 75%  100%  
+	    New File  		    3816	make1_zip_SyncTool-WebServerToPackaged-Zip.bat100%  
+	    New File  		     117	make_zip.bat 44%  100%  
+	    New File  		    2049	README.md 93%  100%  
+	    New File  		    7753	README_SYNC_TOOL.md 98%  100%  
+	    New File  		    4494	sync_webserver.bat 96%  100%  
+	    New File  		   53830	sync_webserver_to_packaged.py 99%  100%  
+	    New File  		     401	version.json 73%  100%  
+
+------------------------------------------------------------------------------
+
+               Total    Copied   Skipped  Mismatch    FAILED    Extras
+    Dirs :         2         0         2         0         0         0
+   Files :         8         8         0         0         0         0
+   Bytes :    71.2 k    71.2 k         0         0         0         0
+   Times :   0:00:00   0:00:00                       0:00:00   0:00:00
+
+
+   Speed :             4860666 Bytes/sec.
+   Speed :             278.129 MegaBytes/min.
+   Ended : Tuesday, February 3, 2026 3:49:50 PM
+

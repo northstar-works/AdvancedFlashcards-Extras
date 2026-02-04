@@ -16,6 +16,38 @@ The format is simple and practical:
 
 ---
 
+## 8.6.2 (build 59) — 2026-02-04
+
+### Added
+- **Admin Deck Editor:** Admin → Decks now includes a Deck Editor to load cards for a selected deck and edit term/definition/pron/group/subgroup.
+- **Remove cards:** Admins can remove a card from a deck directly from the Deck Editor.
+- **Bulk cleanup tool:** one-click bulk action to convert definitions like "(The) Capital of Texas" → "Texas" (useful for State Capitals decks).
+
+### Fixed
+- None.
+
+---
+
+---
+
+## 8.6.1 (build 58) — 2026-02-02
+
+### Added
+- **Packaged support version metadata:** add `webappserver_version.json` (web server core version file).
+- **Version API upgrade:** `/api/version` now returns `is_packaged` plus `app_*` and `web_*` fields (packaged shows both; stand-alone shows web only).
+- **Admin/System version display:** App Information shows a single **Web Server** version line for stand-alone and dual **App + Web** versions when `is_packaged: true`.
+- **User dropdown version display:** mirrors stand-alone vs packaged behavior (single vs dual version lines).
+
+### Changed
+- Stand-alone mode hides the **Application** line entirely when `version.json` is missing `is_packaged` or it is `false`.
+- Version file lookup prefers `webappserver_version.json` and falls back to legacy filenames where present.
+
+### Fixed
+- Restored helpers/globals required by Kenpo card caching and health endpoints after the packaged-support refactor (prevents 500s on `/api/health`, `/api/sync/helper`, and `/api/groups?deck_id=kenpo`).
+- Logging startup is more resilient on Windows when log files are locked (rotation no longer prevents launch).
+
+---
+
 ## 8.6.0 (build 57) — 2026-02-02
 
 ### Added
@@ -37,6 +69,13 @@ The format is simple and practical:
 - **Custom-marked cards now appear in Custom Set:** starred/custom cards are correctly aggregated and shown inside Custom Set, including across decks the user can access.
 - **Custom Set random count input overlap fixed:** `.csRandomInput` now overrides the global `input{min-width:280px}` rule using `min-width: auto !important;` so it stays at 52px.
 - **Manage Cards lists taller:** increased `.csCardList` height to show more cards (desktop and portrait).
+- **Manage Cards action buttons relocated:** "Select All", "Set Learned", "Set Unsure", "Clear All", and "Remove" now live inside each expanded accordion pane (instead of a global bottom action bar).
+- **Buttons compact + responsive:** removed the "Mark In-" prefix, reduced button sizing/text to match the tab typography, and made the layout adapt per screen size (portrait uses a 2-row wrap; landscape keeps actions on one row with Remove pinned right).
+- **Checkbox position standardized:** selection checkboxes are placed to the **left of the term** across all orientations/devices; status badges (e.g., **U**) remain on the far right.
+- **Safe text wrapping:** long terms/definitions wrap before controls and rows expand in height as needed (no overlap with checkbox/badge).
+- **Landscape list viewport increased:** expanded list height so ~5 cards are visible at a time while scrolling.
+- **Landscape pane width refined:** accordion pane width reduced (approx. 85% of available width) for a cleaner, less edge-to-edge look.
+- **Custom Set Settings Back button resized:** reduced to ~50% size on mobile to better match the page scale.
 - **Breakdown save closes modal:** saving a breakdown now closes the breakdown window/modal instead of leaving it open.
 - **Custom Set → Manage Cards responsive layout:** prevented overflow/misalignment on smaller screens by overriding global input min-width and stacking the two panes on narrow widths.
 - **Admin confirmations auto-clear:** "Access granted/denied" and "Deck transferred" messages now disappear after a few seconds and do not persist when changing the selected user/deck.

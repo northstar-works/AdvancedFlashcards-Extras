@@ -1,0 +1,9 @@
+[START] Tue 02/03/2026 15:49:48.87 
+TOOL_DIR=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\Tools\SyncTool-WebServerToPackaged
+REPO_ROOT=C:\Users\Sidscri\Documents\GitHub\sidscri-apps
+VERSION_JSON=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\Tools\SyncTool-WebServerToPackaged\version.json
+OUTDIR=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\logs\zips
+[INFO] Staging to: C:\Users\Sidscri\Documents\GitHub\sidscri-apps\Tools\SyncTool-WebServerToPackaged\_zip_staging\SyncTool-WebServerToPackaged-v3.0.3_b13
+[INFO] Creating : C:\Users\Sidscri\Documents\GitHub\sidscri-apps\logs\zips\SyncTool-WebServerToPackaged-v3.0.3_b13.zip
+[OK] Wrote: C:\Users\Sidscri\Documents\GitHub\sidscri-apps\logs\zips\SyncTool-WebServerToPackaged-v3.0.3_b13.zip
+[DONE] C:\Users\Sidscri\Documents\GitHub\sidscri-apps\logs\zips\SyncTool-WebServerToPackaged-v3.0.3_b13.zip

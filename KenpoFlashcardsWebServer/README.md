@@ -6,12 +6,22 @@
 Flask-based web application providing sync API and web UI for Advanced Flashcards WebApp.
 
 
-**Current Version:** v8.6.0 (build 57)  
+**Current Version:** v8.6.1 (build 58)  
 **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
 
 
-## ✅ Recent FAC (v8.6.0 build 57)
+## ✅ Recent FAC (v8.6.1 build 58)
+
+### Added
+- **Packaged support version metadata:** add `webappserver_version.json` (web server core version file).
+- **Version API upgrade:** `/api/version` now returns `is_packaged` plus `app_*` and `web_*` fields (packaged shows both; stand-alone shows web only).
+- **Admin/System version display:** App Information shows **one Web Server version line** for stand-alone; **two lines (App + Web)** when `is_packaged: true`.
+- **User dropdown version display:** mirrors stand-alone vs packaged behavior (single vs dual version lines).
+
+### Changed
+- Stand-alone mode hides the **Application** line entirely (shows Web Server only) when `version.json` is missing `is_packaged` or it is `false`.
+- Version lookup is more resilient (prefers `webappserver_version.json`, falls back to legacy filenames).
 
 ### Fixed
 - Custom Sets **and Saved Sets** are now **deck-scoped** (no cross-deck mixing when switching decks).
@@ -20,6 +30,12 @@ Flask-based web application providing sync API and web UI for Advanced Flashcard
 - Custom Set Settings tab loads correctly on first open (was blank until tab switch).
 - Custom Set Settings converted to full-page scrollable view — no more modal overflow/clipping on mobile.
 - Manage Cards panes collapsible in **both portrait and landscape** (collapsed by default). Landscape phones now correctly detected via dual media queries.
+- Manage Cards action buttons moved **into each expanded accordion pane** (Select All, Set Learned, Set Unsure, Clear All, Remove) instead of a global bottom action bar.
+- Action buttons are now **compact + responsive** (removed "Mark In-" wording; smaller typography to match the tab labels; layout wraps intelligently on narrow screens). Remove is pinned to the right edge when space allows.
+- Selection checkbox is now **to the left of the term** across devices; status badges (e.g., **U**) remain on the far right.
+- Long term/definition text now **wraps safely** and the row expands in height when needed (no overlap with controls).
+- Mobile landscape: accordion pane width refined (≈85% width) and list height increased to show ~5 cards while scrolling.
+- Custom Set Settings: **Back** button reduced to ~50% size to better match mobile scale.
 - Custom Set random card count input no longer expands to 280px on mobile (fixed global `input{min-width:280px}` override).
 - Saving a Breakdown now **closes** the breakdown window/modal.
 - Admin confirmations auto-clear; error confirmations use ✖ instead of ✓.
@@ -440,7 +456,16 @@ Interactive page with tabbed sections:
 
 ---
 
-## 🆕 Recent Updates (8.4.0 → 8.6.0)
+## 🆕 Recent Updates (8.4.0 → 8.6.1)
+
+### v8.6.2 (build 59)
+- **Admin Deck Editor:** edit or remove deck cards from Admin → Decks.
+- **Bulk definition cleanup:** convert "(The) Capital of Texas" → "Texas" for State Capitals style decks.
+
+### v8.6.1 (build 58)
+- **Packaged support versioning:** stand-alone shows Web Server version only; packaged shows **App + Web** versions.
+- **Version API:** `/api/version` includes `is_packaged` plus `app_*` and `web_*` fields.
+- **Admin/System + user dropdown:** version display matches packaged vs stand-alone.
 
 ### v8.6.0 (build 57)
 - **Custom Set overhaul:** Settings converted from modal to full-page scrollable view. Manage Cards panes collapsible in both portrait and landscape (landscape phones now correctly detected). Counts fix (was 0/0/0). Settings tab load fix. Study label shows "Studying: Unlearned/Unsure/Learned" instead of "Custom Set".
@@ -505,6 +530,7 @@ Interactive page with tabbed sections:
 
 | Version | Build | Key Changes |
 |---------|-------|-------------|
+| **8.6.1** | 58 | Packaged support versioning (webappserver_version.json), enhanced `/api/version` (is_packaged + app/web fields), Admin/System + user dropdown single vs dual version display; plus 8.6.0 feature set |
 | **8.6.0** | 57 | Custom Set overhaul (full-page settings, collapsible panes portrait+landscape, counts fix, settings tab fix, study label filter mode, deck-scoped, landscape accordion fix), parallel load optimization, portrait study row stabilized, breakdown relocated, admin confirmation auto-clear, UI error log toggle |
 | **8.5.3** | 56 | Admin deck access cleanup (dropdowns persist, removed built-in toggles, clear status), ownership blank fix, non-admin editing off by default, portrait card taller/bigger, inline status+card counter, landscape compact controls, card face scrollable |
 | **8.5.2** | 55 | File-based logging (server/error/user_activity persist, rotation on restart), expandable admin stat tiles, Custom Set tab switching fix, AI context-aware generation, deck Short Answers mode, add-card pre-selects active deck, custom set counts line, random input layout fix |

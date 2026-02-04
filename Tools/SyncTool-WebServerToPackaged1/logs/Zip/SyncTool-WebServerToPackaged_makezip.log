@@ -1,0 +1,28 @@
+START Tue 02/03/2026 16:30:58.72
+BASE=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\Tools\SyncTool-WebServerToPackaged
+VERJSON=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\Tools\SyncTool-WebServerToPackaged\version.json
+SEVENZIP=C:\Program Files\7-Zip\7z.exe
+RAW_VER=3.0.4
+RAW_BUILD=14
+ROOTNAME=SyncTool-WebServerToPackaged-v3.0.4_b14
+ZIPPATH=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\Tools\SyncTool-WebServerToPackaged\SyncTool-WebServerToPackaged-v3.0.4_b14.zip
+STAGE=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\Tools\SyncTool-WebServerToPackaged\_zip_stage
+
+ROBOCOPY_EXIT_CODE=1
+Running 7z (from stage)...
+
+7-Zip 25.01 (x64) : Copyright (c) 1999-2025 Igor Pavlov : 2025-08-03
+
+Scanning the drive:
+1 folder, 7 files, 74019 bytes (73 KiB)
+
+Creating archive: C:\Users\Sidscri\Documents\GitHub\sidscri-apps\Tools\SyncTool-WebServerToPackaged\SyncTool-WebServerToPackaged-v3.0.4_b14.zip
+
+Add new data to archive: 1 folder, 7 files, 74019 bytes (73 KiB)
+
+
+Files read from disk: 7
+Archive size: 22398 bytes (22 KiB)
+Everything is Ok
+7Z_EXIT_CODE=0
+SUCCESS

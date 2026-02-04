@@ -1,4 +1,30 @@
+After attempting to fix star custom marker on active card turning off and back on. It didnt fix it, but it added back the 
+the “multiple actions / flashing counts”
 
+ip##
+Every time I click Custom Deck Star Icon, need to fix the star custom marker on active card turns off and back on, but the card thankfully still stays in custom deck, which is good.  
+
+I want "health check" in "quick actions" to be the default information shown. Version isnt showing in "User:****" drop down. 
+
+Edit Decks needs a way to remove cards or to manually/ai bulk redo terms and or definitions.  In states deck, Term="Austin" Definition="The Capital of Texas" I whould like to be able to use either method to change the definiton to only have "Texas". ##
+ 
+I want when users types specific instructions on how he want their terms/definitions to specifically be resulted, it will follow those instruction, this over rides any "short definition only" setting if on. 
+
+I want a setting in ai page, when on, it will show small button(s) with a drop down that has term and or Definition field so you have the option to show ai specifically the way you want the cards to look on that specific study deck, or card when editing cards. off as default
+
+Another setting when on; When using ai and keywords and or name/description are/is filled I want there to be an example showing before performing search. On as default
+
+ip##
+Need to fix the custom deck star button again. When I click on it, it acts like it has multiple actions. From "Unlearned" status page I clicked the star icon button, it changed to the custom deck, but the custom status count was "Unlearned: 30 | Unsure: 10 | Learned: 49" when deck count is "Card 1 / 1", I clicked the same Star icon button again and it says :Unlearned: 1 | Unsure: 0 | Learned: 0 as intended. When I click it, i do see a flash of the other "Unlearned: 30 | Unsure: 10 | Learned: 49" and after a few clicks it even stays "Unlearned: 30 | Unsure: 10 | Learned: 49" on the screen, meanwhile the custom card mark star icon turns off then on while the status does its glitch.##
+
+ip##
+This admin system app information section works on webserver project version. but does not here. On an exe installed version built from packaged I want in also want in the "version" field its Web Server Version 8.5.1 (build 54) its code coming from webserver project and the local EXE version from webserver packaged that is currently showing 6.0.0 (build 18). need to see how we can add Web Server Version in the build to be shown here and to fix the Released not showing up on this exe local version either.  Same needs to be applied to the version area of User:**** drop down.
+
+App Version: 6.0.0 (build 18)
+WebAppServer: 8.5.1 (build 54)
+
+Why are there always two processes running of the same name.
+##
 
 
 ###Exe build###
@@ -12,14 +38,11 @@ Need to do a package/android app anaylisis to check android app live pull from/p
 I need to make sure kenpo.json is being mapped from the correct place.  what is the connection with kenpo_words.json for android app, WebServer, packaging.  I need to figure out if its a single source of truth or co-synced source of truth for that file.  What happens to the files data down the process.
 
 ###Android App#
-This admin system app information section works on webserver project version. but does not here. On an exe installed version built from packaged I want in also want in the "version" field its Web Server Version 8.5.1 (build 54) its code coming from webserver project and the local EXE version from webserver packaged that is currently showing 6.0.0 (build 18). need to see how we can add Web Server Version in the build to be shown here and to fix the Released not showing up on this exe local version either.  Same needs to be applied to the version area of User:**** drop down.
 
-App Version: 6.0.0 (build 18)
-WebAppServer: 8.5.1 (build 54)
 
 
 ##Package##
-Why are there always two processes running of the same name.
+
 
 
 ##tool##

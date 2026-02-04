@@ -157,18 +157,33 @@ function setAuthView(view){
   $("registerBox").classList.toggle("hidden", view !== "register");
 }
 
-async function loadVersionIntoMenu(){
-  try{
-    const v = await jget("/api/version");
-    const el = $("userMenuVersion");
-    if(el) el.textContent = `Version: ${v.version} (build ${v.build})`;
-    const adminLink = $("userMenuAdmin");
-    if(adminLink){
-      adminLink.style.display = isAdminUser() ? "block" : "none";
+async function loadVersionIntoMenu() {
+  try {
+    const v = await jget('/api/version');
+    const el = document.getElementById('userMenuVersion');
+    if (!el || !v) return;
+
+    // New API (preferred)
+    const isPackaged = (v.is_packaged === true) || (v.mode === 'packaged');
+    const appName  = v.app_name || v.app || v.application || v.name;
+    const appVer   = v.app_version || v.app_ver || v.appVersion;
+    const appBuild = (v.app_build !== undefined) ? v.app_build : v.appBuild;
+
+    const webName  = v.web_name || v.web || v.webapp || 'Web Server';
+    const webVer   = v.web_version || v.web_ver || v.webVersion || v.version;
+    const webBuild = (v.web_build !== undefined) ? v.web_build : (v.webBuild !== undefined ? v.webBuild : v.build);
+
+    // Render
+    if (isPackaged && appVer && webVer) {
+      const ab = (appBuild !== undefined && appBuild !== null && String(appBuild).trim() !== "") ? ` (build ${appBuild})` : "";
+      const wb = (webBuild !== undefined && webBuild !== null && String(webBuild).trim() !== "") ? ` (build ${webBuild})` : "";
+      el.innerHTML = `${escapeHtml(appName || "Application")}: ${escapeHtml(appVer)}${escapeHtml(ab)}<br>${escapeHtml(webName || "Web Server")}: ${escapeHtml(webVer)}${escapeHtml(wb)}`;
+    } else {
+      const wb = (webBuild !== undefined && webBuild !== null && String(webBuild).trim() !== "") ? ` (build ${webBuild})` : "";
+      el.textContent = `${webName || "Web Server"}: ${webVer || "unknown"}${wb}`;
     }
-  }catch(e){
-    const el = $("userMenuVersion");
-    if(el) el.textContent = "Version: unavailable";
+  } catch (e) {
+    // ignore
   }
 }
 
@@ -1315,7 +1330,7 @@ async function loadCustomSetForStudy(){
       if(customRandomLimit > 0){
         statusMsg = `🎲 Random ${Math.min(customRandomLimit, deck.length)} of ${counts.total || 0} cards`;
       }
-      setStatus(statusMsg);
+      // Status line is set by refresh() to keep labels consistent.
     }
   } catch(e){
     console.error("Failed to load custom set:", e);

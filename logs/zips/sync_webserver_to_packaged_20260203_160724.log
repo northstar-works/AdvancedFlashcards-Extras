@@ -1,0 +1,14 @@
+============================================================ 
+ KenpoFlashcards Web Server - Sync Tool            
+============================================================ 
+REPO_ROOT=C:\Users\Sidscri\Documents\GitHub\sidscri-apps                                        
+WS_DIR=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer                                              
+PK_DIR=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged                                              
+MODE=--synced                                                  
+DRY=                                                    
+EXTRA_ARGS=                                      
+                                                            
+usage: sync_webserver_to_packaged.py [-h] [--dry-run] [--level {1,2,3}]
+                                     [--output {inplace,synced}]
+                                     source destination
+sync_webserver_to_packaged.py: error: unrecognized arguments: --synced

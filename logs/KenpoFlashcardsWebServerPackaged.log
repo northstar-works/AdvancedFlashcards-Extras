@@ -1,4 +1,4 @@
-START Mon 02/02/2026 13:16:24.99
+START Tue 02/03/2026 14:10:32.48
 BASE=C:\Users\Sidscri\Documents\GitHub\sidscri-apps
 SRC=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged
 VERJSON=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged\version.json
@@ -21,15 +21,15 @@ Running 7z (from stage)...
 7-Zip 25.01 (x64) : Copyright (c) 1999-2025 Igor Pavlov : 2025-08-03
 
 Scanning the drive:
-40 folders, 114 files, 3267770 bytes (3192 KiB)
+40 folders, 114 files, 3274423 bytes (3198 KiB)
 
 Creating archive: C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged-v5.1.1 v19.zip
 
-Add new data to archive: 40 folders, 114 files, 3267770 bytes (3192 KiB)
+Add new data to archive: 40 folders, 114 files, 3274423 bytes (3198 KiB)
 
 
 Files read from disk: 114
-Archive size: 2474014 bytes (2417 KiB)
+Archive size: 2480141 bytes (2423 KiB)
 Everything is Ok
 7Z_EXIT_CODE=0
 SUCCESS

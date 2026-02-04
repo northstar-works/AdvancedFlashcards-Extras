@@ -231,6 +231,31 @@
     .ovTable{ width:100%; border-collapse:collapse; }
     .ovTable th,.ovTable td{ text-align:left; padding:8px 10px; border-bottom:1px solid rgba(255,255,255,.08); font-size:13px; }
     .ovSearch{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.12); background:rgba(0,0,0,.25); color:#fff; margin:10px 0 12px; }
+    /* App Information cards (Admin > System) */
+    .appInfoGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    .appInfoItem {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+    .appInfoLabel {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: #9ca3af;
+      margin-bottom: 6px;
+    }
+    .appInfoValue {
+      font-size: 14px;
+      font-weight: 600;
+      color: #e5e7eb;
+      line-height: 1.3;
+      word-break: break-word;
+    }
 </style>
 </head>
 <body>
@@ -429,7 +454,70 @@
       </div>
       
       <!-- System Tab -->
-      <div class="tab-content" id="tab-system">
+      <div class="tab-content" 
+
+        <div class="section-card">
+          <div class="section-title"><span>📝</span> Deck Editor</div>
+          <p class="section-desc">Edit or remove cards from a deck (admin only). Includes a simple bulk tool to clean up "Capital of ..." definitions.</p>
+
+          <div class="user-access-form" style="margin-bottom:10px;">
+            <select id="deckEditSelect" class="form-select">
+              <option value="">Select deck...</option>
+            </select>
+            <input id="deckEditSearch" class="form-input" placeholder="Search term/definition..." style="max-width:320px;" oninput="filterDeckEditCards()" />
+            <button class="btn btn-primary btn-sm" onclick="loadDeckEditCards()">Load Cards</button>
+            <button class="btn btn-secondary btn-sm" onclick="bulkStripCapitalOf()">Bulk: Strip 'Capital of'</button>
+          </div>
+
+          <div id="deckEditStatus" style="color:#9ca3af;font-size:13px;margin:6px 0 10px 0;"></div>
+
+          <div class="built-in-list" id="deckEditCardsList" style="max-height:420px; overflow:auto;">
+            <div style="color:#9ca3af;font-size:13px;padding:8px;">Select a deck and click <b>Load Cards</b>.</div>
+          </div>
+        </div>
+
+        <!-- Deck Card Edit Modal -->
+        <div id="deckEditModal" class="modal" style="display:none;">
+          <div class="modal-content" style="max-width:720px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+              <div style="font-weight:700;">Edit Card</div>
+              <button class="btn btn-secondary btn-sm" onclick="closeDeckEditModal()">✖</button>
+            </div>
+
+            <div style="margin-top:12px; display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+              <div>
+                <label class="form-label">Term</label>
+                <input id="deckEditTerm" class="form-input" />
+              </div>
+              <div>
+                <label class="form-label">Pronunciation</label>
+                <input id="deckEditPron" class="form-input" />
+              </div>
+              <div style="grid-column:1 / span 2;">
+                <label class="form-label">Definition</label>
+                <textarea id="deckEditMeaning" class="form-input" rows="3" style="width:100%; min-height:70px;"></textarea>
+              </div>
+              <div>
+                <label class="form-label">Group</label>
+                <input id="deckEditGroup" class="form-input" />
+              </div>
+              <div>
+                <label class="form-label">Subgroup</label>
+                <input id="deckEditSubgroup" class="form-input" />
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:14px;">
+              <button class="btn btn-danger btn-sm" onclick="deleteDeckEditCard()">🗑 Remove</button>
+              <button class="btn btn-primary btn-sm" onclick="saveDeckEditCard()">💾 Save</button>
+            </div>
+
+            <div id="deckEditModalMsg" style="margin-top:10px; color:#9ca3af; font-size:13px;"></div>
+          </div>
+        </div>
+
+
+      id="tab-system">
         <div class="section-card">
           <div class="section-title"><span>🖥️</span> App Information</div>
           <div class="server-info" id="serverInfo">
@@ -523,7 +611,7 @@
     const APP_NAME = "Advanced Flashcards WebApp";
 
     let statsData = null;
-    
+    let __systemHealthLoaded = false;
     async function jget(url) {
       const r = await fetch(url, { credentials: 'include' });
       if (!r.ok) throw new Error(await r.text());
@@ -545,6 +633,11 @@
         document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
         // Auto-load logs when logs tab opened
         if(tab.dataset.tab === 'logs') loadLogs(currentLogType || 'server');
+        // Default Quick Action: Health Check when System tab opened
+        if(tab.dataset.tab === 'system' && !__systemHealthLoaded){
+          __systemHealthLoaded = true;
+          try { checkHealth(); } catch(e) { console.error('Health check failed:', e); }
+        }
       });
     });
     
@@ -661,25 +754,43 @@
         const v = await jget('/api/version');
         const w = await jget('/api/whoami');
         
-        document.getElementById('serverInfo').innerHTML = `
-          <div class="info-item">
-            <div class="info-label">Application</div>
-            <div class="info-value">${v.name}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Version</div>
-            <div class="info-value">${v.version} (build ${v.build})</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Released</div>
-            <div class="info-value">${v.released || '-'}</div>
-          </div>
-          <div class="info-item">
-            <div class="info-label">Your IP</div>
-            <div class="info-value">${w.ip}</div>
-          </div>
-        `;
-      } catch (e) {
+        
+        const appName = (v && (v.display_name || v.name)) ? (v.display_name || v.name) : '-';
+        const versionHtml = (v && v.display_version) ? v.display_version : ((v && v.version) ? `${v.version} (build ${v.build||''})` : '-');
+        const releasedHtml = (v && (v.display_released || v.released)) ? (v.display_released || v.released) : '-';
+        const ipText = (w && w.ip) ? w.ip : ((v && v.ip) ? v.ip : '-');
+document.getElementById('serverInfo').innerHTML = (() => {
+  const isPackaged = !!(v && v.is_packaged);
+  const ip = escapeHtml(ipText);
+  if (isPackaged) {
+    const appName2 = escapeHtml((v.app_name || v.display_name || v.name || 'Application'));
+    const appVer2 = escapeHtml((v.app_version ? `${v.app_version} (build ${v.app_build || ''})` : (v.version ? `${v.version} (build ${v.build || ''})` : 'unknown')));
+    const webVer2 = escapeHtml((v.web_version ? `${v.web_version} (build ${v.web_build || ''})` : 'unknown'));
+    const released2 = escapeHtml((v.app_released || v.released || '-'));
+    return `
+      <div class="appInfoGrid">
+        <div class="appInfoItem"><div class="appInfoLabel">APPLICATION</div><div class="appInfoValue">${appName2}</div></div>
+        <div class="appInfoItem"><div class="appInfoLabel">VERSION</div><div class="appInfoValue">App: ${appVer2}<br><span style="font-weight:500;color:#9ca3af;">Web: ${webVer2}</span></div></div>
+        <div class="appInfoItem"><div class="appInfoLabel">RELEASED</div><div class="appInfoValue">${released2}</div></div>
+        <div class="appInfoItem"><div class="appInfoLabel">YOUR IP</div><div class="appInfoValue">${ip}</div></div>
+      </div>
+    `;
+  }
+
+  // Stand-alone WebAppServer: show ONLY the web server version (no "Application" field)
+  const webName2 = escapeHtml((v.web_name || v.display_name || v.name || 'WebAppServer'));
+  const webVer2 = escapeHtml((v.web_version ? `${v.web_version} (build ${v.web_build || ''})` : (v.version ? `${v.version} (build ${v.build || ''})` : 'unknown')));
+  const released2 = escapeHtml((v.web_released || v.released || '-'));
+  return `
+    <div class="appInfoGrid">
+      <div class="appInfoItem"><div class="appInfoLabel">WEB SERVER</div><div class="appInfoValue">${webName2}</div></div>
+      <div class="appInfoItem"><div class="appInfoLabel">VERSION</div><div class="appInfoValue">${webVer2}</div></div>
+      <div class="appInfoItem"><div class="appInfoLabel">RELEASED</div><div class="appInfoValue">${released2}</div></div>
+      <div class="appInfoItem"><div class="appInfoLabel">YOUR IP</div><div class="appInfoValue">${ip}</div></div>
+    </div>
+  `;
+})();
+} catch (e) {
         document.getElementById('serverInfo').innerHTML = '<div class="info-item"><div class="info-value warn">Error loading app info</div></div>';
       }
     }
@@ -1059,11 +1170,192 @@ async function removeBuiltInDeck(deckId) {
     function populateDeckSelects() {
       const inviteSelect = document.getElementById('inviteDeckSelect');
       const userDeckSelect = document.getElementById('userDeckSelect');
+      const deckEditSelect = document.getElementById('deckEditSelect');
       
       const options = allDecks.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
       
       inviteSelect.innerHTML = '<option value="">Select deck...</option>' + options;
       userDeckSelect.innerHTML = '<option value="">Select deck...</option>' + options;
+      if (deckEditSelect) deckEditSelect.innerHTML = '<option value="">Select deck...</option>' + options;
+    }
+
+
+    // ============ DECK EDITOR (CARD EDIT/REMOVE) ============
+    let __deckEditCards = [];
+    let __deckEditDeckId = "";
+    let __deckEditActiveCardId = "";
+
+    function _escHtml(s) {
+      return String(s ?? "").replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    function _getDeckEditCardById(cardId) {
+      return (__deckEditCards || []).find(c => c.id === cardId) || null;
+    }
+
+    async function loadDeckEditCards() {
+      const deckId = document.getElementById('deckEditSelect')?.value || '';
+      if (!deckId) return;
+      __deckEditDeckId = deckId;
+      document.getElementById('deckEditStatus').textContent = 'Loading cards...';
+      document.getElementById('deckEditCardsList').innerHTML = '<div class="loading">Loading...</div>';
+      try {
+        const data = await jget('/api/admin/deck-cards?deck_id=' + encodeURIComponent(deckId));
+        visibleConfirm(`✓ Loaded ${Array.isArray(data.cards) ? data.cards.length : 0} cards`, false);
+        __deckEditCards = Array.isArray(data.cards) ? data.cards : [];
+        renderDeckEditCards(__deckEditCards);
+        document.getElementById('deckEditStatus').textContent = `Loaded ${__deckEditCards.length} cards.`;
+      } catch (e) {
+        console.error(e);
+        document.getElementById('deckEditStatus').textContent = 'Failed to load cards.';
+        document.getElementById('deckEditCardsList').innerHTML = '<div style="color:#fca5a5;padding:8px;">Failed to load cards. (Admin only)</div>';
+      }
+    }
+
+    function filterDeckEditCards() {
+      const q = (document.getElementById('deckEditSearch')?.value || '').toLowerCase().trim();
+      if (!q) return renderDeckEditCards(__deckEditCards);
+      const filtered = __deckEditCards.filter(c => 
+        (c.term||'').toLowerCase().includes(q) ||
+        (c.meaning||'').toLowerCase().includes(q) ||
+        (c.group||'').toLowerCase().includes(q) ||
+        (c.subgroup||'').toLowerCase().includes(q)
+      );
+      renderDeckEditCards(filtered);
+    }
+
+    function renderDeckEditCards(list) {
+      const el = document.getElementById('deckEditCardsList');
+      if (!el) return;
+      if (!list || list.length === 0) {
+        el.innerHTML = '<div style="color:#9ca3af;font-size:13px;padding:8px;">No cards found.</div>';
+        return;
+      }
+      const rows = list.slice(0, 800).map(c => {
+        const term = _escHtml(c.term || '');
+        const meaning = _escHtml(c.meaning || '');
+        const grp = _escHtml(c.group || '');
+        return `
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px; border-bottom:1px solid rgba(255,255,255,0.06);">
+            <div style="min-width:0;">
+              <div style="font-weight:700; color:#e5e7eb; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${term}</div>
+              <div style="color:#9ca3af; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${meaning}</div>
+              <div style="color:#6b7280; font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${grp}</div>
+            </div>
+            <div style="display:flex; gap:8px; flex-shrink:0;">
+              <button class="btn btn-secondary btn-sm deck-edit-btn" data-card-id="${_escHtml(c.id)}">Edit</button>
+            </div>
+          </div>`;
+      }).join('');
+      el.innerHTML = rows;
+      el.querySelectorAll('.deck-edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => openDeckEditModal(btn.getAttribute('data-card-id')));
+      });
+    }
+
+    function openDeckEditModal(cardId) {
+      const c = _getDeckEditCardById(cardId);
+      if (!c) return;
+      __deckEditActiveCardId = cardId;
+      document.getElementById('deckEditTerm').value = c.term || '';
+      document.getElementById('deckEditMeaning').value = c.meaning || '';
+      document.getElementById('deckEditPron').value = c.pron || '';
+      document.getElementById('deckEditGroup').value = c.group || '';
+      document.getElementById('deckEditSubgroup').value = c.subgroup || '';
+      document.getElementById('deckEditModalMsg').textContent = '';
+      document.getElementById('deckEditModal').style.display = 'block';
+    }
+
+    function closeDeckEditModal() {
+      document.getElementById('deckEditModal').style.display = 'none';
+      __deckEditActiveCardId = '';
+    }
+
+    async function saveDeckEditCard() {
+      if (!__deckEditDeckId || !__deckEditActiveCardId) return;
+      const payload = {
+        deck_id: __deckEditDeckId,
+        card_id: __deckEditActiveCardId,
+        term: document.getElementById('deckEditTerm').value || '',
+        meaning: document.getElementById('deckEditMeaning').value || '',
+        pron: document.getElementById('deckEditPron').value || '',
+        group: document.getElementById('deckEditGroup').value || '',
+        subgroup: document.getElementById('deckEditSubgroup').value || ''
+      };
+      try {
+        const r = await jpost('/api/admin/deck-card/update', payload);
+        if (r && r.ok) {
+          // update local copy
+          const c = _getDeckEditCardById(__deckEditActiveCardId);
+          if (c) {
+            Object.assign(c, payload, { id: c.id, deckId: c.deckId });
+          }
+          document.getElementById('deckEditModalMsg').textContent = '✓ Saved';
+          renderDeckEditCards(__deckEditCards);
+          document.getElementById('deckEditStatus').textContent = `Loaded ${__deckEditCards.length} cards.`;
+        } else {
+          document.getElementById('deckEditModalMsg').textContent = '✖ Save failed';
+        }
+      } catch (e) {
+        console.error(e);
+        document.getElementById('deckEditModalMsg').textContent = '✖ Save failed';
+      }
+    }
+
+    async function deleteDeckEditCard() {
+      if (!__deckEditDeckId || !__deckEditActiveCardId) return;
+      if (!confirm('Remove this card from the deck?')) return;
+      try {
+        const r = await jpost('/api/admin/deck-card/delete', { deck_id: __deckEditDeckId, card_id: __deckEditActiveCardId });
+        if (r && r.ok) {
+          __deckEditCards = __deckEditCards.filter(c => c.id !== __deckEditActiveCardId);
+          document.getElementById('deckEditModal').style.display = 'none';
+          __deckEditActiveCardId = '';
+          renderDeckEditCards(__deckEditCards);
+          document.getElementById('deckEditStatus').textContent = `Loaded ${__deckEditCards.length} cards.`;
+        } else {
+          document.getElementById('deckEditModalMsg').textContent = '✖ Remove failed';
+        }
+      } catch (e) {
+        console.error(e);
+        document.getElementById('deckEditModalMsg').textContent = '✖ Remove failed';
+      }
+    }
+
+    function _stripCapitalMeaning(s) {
+      return String(s||'').replace(/^\s*(?:the\s+)?capital\s+of\s+/i, '').trim();
+    }
+
+    async function bulkStripCapitalOf() {
+      if (!__deckEditDeckId) {
+        // try use select
+        __deckEditDeckId = document.getElementById('deckEditSelect')?.value || '';
+      }
+      if (!__deckEditDeckId) return;
+      if (!__deckEditCards || __deckEditCards.length === 0) {
+        await loadDeckEditCards();
+      }
+      const preview = (__deckEditCards||[]).map(c => ({ id: c.id, before: c.meaning||'', after: _stripCapitalMeaning(c.meaning||'') }))
+        .filter(x => x.before.trim() !== x.after.trim());
+      if (preview.length === 0) {
+        alert('No definitions matched "Capital of ...".');
+        return;
+      }
+      const sample = preview.slice(0, 10).map(x => `• ${x.before} → ${x.after}`).join('\n');
+      if (!confirm(`This will update ${preview.length} cards.\n\nSample:\n${sample}\n\nApply changes?`)) return;
+      try {
+        const r = await jpost('/api/admin/deck-cards/bulk-strip-capital', { deck_id: __deckEditDeckId });
+        if (r && r.ok) {
+          // reload
+          await loadDeckEditCards();
+          alert(`Updated ${r.changed || 0} cards.`);
+        } else {
+          alert('Bulk update failed.');
+        }
+      } catch (e) {
+        console.error(e);
+        alert('Bulk update failed.');
+      }
     }
     
     function populateUserSelect() {
