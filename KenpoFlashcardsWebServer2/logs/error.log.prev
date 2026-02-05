@@ -1,2 +1,0 @@
-2026-02-04 01:46:53,273 | ERROR | werkzeug | 205.210.31.227 - - [04/Feb/2026 01:46:53] code 400, message Bad request version ('À\x13À')
-2026-02-04 01:46:53,562 | ERROR | werkzeug | 205.210.31.227 - - [04/Feb/2026 01:46:53] code 400, message Bad request version ('À(À$À\x14À')

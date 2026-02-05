@@ -1,8 +1,0 @@
-{
-  "name": "Advanced Flashcards WebAppServer",
-  "version": "8.6.1.1",
-  "build": 58,
-  "released": "2026-02-03",
-  "is_packaged": false,
-  "notes": "8.6.1 (build 58): Packaged support: webappserver_version.json + enhanced /api/version fields; Admin/System and user dropdown show single web version for stand-alone and dual app+web versions when is_packaged=true."
-}

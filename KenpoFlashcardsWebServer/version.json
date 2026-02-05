@@ -1,8 +1,0 @@
-{
-  "name": "Advanced Flashcards WebAppServer",
-  "version": "8.6.4",
-  "build": 59,
-  "released": "2026-02-04",
-  "is_packaged": false,
-  "notes": "8.6.2 (build 59): Admin Deck Editor: edit/remove deck cards + bulk cleanup for 'Capital of ...' definitions."
-}

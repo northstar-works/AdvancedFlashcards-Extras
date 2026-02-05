@@ -1,0 +1,8 @@
+{
+  "name": "Advanced Flashcards WebAppServer",
+  "version": "8.6.2",
+  "build": 59,
+  "released": "2026-02-04",
+  "is_packaged": false,
+  "notes": "8.6.2 (build 59): Edit Decks now includes tabbed Edit Deck + Edit Cards management (search/filter/select, per-card edit/remove w/ soft-delete + restore, duplicate prompt, Deleted includes Edited history w/ clear). Added AI template bulk editor (multi-field, auto example preview, Preview All) and improved modal/mobile UI + stability fixes."
+}
