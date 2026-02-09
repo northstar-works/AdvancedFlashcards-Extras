@@ -1,4 +1,4 @@
-
+The upload image for deck logo/icon isnt working.  I would like to have the uploaded image to show along side the chosen file name in or near the upload box before saving.
 
 I want to be able to bulk add cards to existing decks using ai generator. in ai generator i want the option from dropdown to select a deck to.
 

@@ -1,0 +1,187 @@
+# .github/workflows/rpi-package.yml
+# GitHub Actions workflow for AdvancedFlashcardsWebServer_RPi
+# Triggers on pushes to the RPi project folder or manual dispatch.
+# Validates shell scripts, version.json, and builds a zip artifact.
+
+name: RPi Package — Validate & Build
+
+on:
+  push:
+    paths:
+      - 'AdvancedFlashcardsWebServer_RPi/**'
+    branches: [main]
+  pull_request:
+    paths:
+      - 'AdvancedFlashcardsWebServer_RPi/**'
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      create_release:
+        description: 'Create a GitHub release with the zip'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+env:
+  PROJECT_DIR: AdvancedFlashcardsWebServer_RPi
+
+jobs:
+  validate:
+    name: Validate Scripts & Version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      build: ${{ steps.version.outputs.build }}
+      zip_name: ${{ steps.version.outputs.zip_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Parse version.json
+        id: version
+        run: |
+          VER=$(python3 -c "import json; print(json.load(open('${{ env.PROJECT_DIR }}/version.json'))['version'])")
+          BUILD=$(python3 -c "import json; print(json.load(open('${{ env.PROJECT_DIR }}/version.json'))['build'])")
+          WS_VER=$(python3 -c "import json; print(json.load(open('${{ env.PROJECT_DIR }}/version.json')).get('based_on_webserver','?'))")
+          echo "version=${VER}" >> "$GITHUB_OUTPUT"
+          echo "build=${BUILD}" >> "$GITHUB_OUTPUT"
+          echo "zip_name=${{ env.PROJECT_DIR }}-v${VER}-b${BUILD}.zip" >> "$GITHUB_OUTPUT"
+          echo "## RPi Package v${VER} (build ${BUILD})" >> "$GITHUB_STEP_SUMMARY"
+          echo "Based on WebServer: v${WS_VER}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Install ShellCheck
+        run: sudo apt-get install -y shellcheck
+
+      - name: Validate shell scripts
+        run: |
+          echo "## ShellCheck Results" >> "$GITHUB_STEP_SUMMARY"
+          FAIL=0
+          for f in ${{ env.PROJECT_DIR }}/*.sh; do
+            echo "Checking: $f"
+            if shellcheck -x -S warning "$f"; then
+              echo "- ✅ $(basename $f)" >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "- ❌ $(basename $f)" >> "$GITHUB_STEP_SUMMARY"
+              FAIL=1
+            fi
+          done
+          if [ $FAIL -eq 1 ]; then
+            echo ""
+            echo "::warning::Some shell scripts have ShellCheck warnings. Review the output above."
+          fi
+
+      - name: Validate version.json schema
+        run: |
+          python3 << 'EOF'
+          import json, sys
+
+          with open("${{ env.PROJECT_DIR }}/version.json") as f:
+              data = json.load(f)
+
+          required = ["name", "version", "build", "released", "based_on_webserver"]
+          missing = [k for k in required if k not in data]
+          if missing:
+              print(f"❌ Missing keys: {missing}")
+              sys.exit(1)
+
+          assert isinstance(data["build"], int), "build must be integer"
+          parts = data["version"].split(".")
+          assert len(parts) == 3, "version must be semver (X.Y.Z)"
+
+          print(f"✅ version.json valid: v{data['version']} build {data['build']}")
+          EOF
+
+      - name: Check required files exist
+        run: |
+          REQUIRED=(
+            "setup_rpi.sh"
+            "af-rpi-sync.sh"
+            "af-rpi-update.sh"
+            "af-rpi-datasync.sh"
+            "af-rpi-datasync-to-rpi.bat"
+            "af-rpi-version-from-webserver.sh"
+            "START_AdvancedFlashcardsWebServer_RPi.sh"
+            "uninstall_rpi.sh"
+            "version.json"
+            "CHANGELOG.md"
+            "README.md"
+            "INSTALL_GUIDE.md"
+          )
+          FAIL=0
+          for f in "${REQUIRED[@]}"; do
+            if [ ! -f "${{ env.PROJECT_DIR }}/$f" ]; then
+              echo "::error::Missing required file: $f"
+              FAIL=1
+            fi
+          done
+          [ $FAIL -eq 0 ] || exit 1
+          echo "✅ All required files present"
+
+  build-zip:
+    name: Build ZIP Artifact
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build zip
+        run: |
+          ZIP_NAME="${{ needs.validate.outputs.zip_name }}"
+          cd "${{ env.PROJECT_DIR }}"
+          # Ensure shell scripts are executable
+          chmod +x *.sh
+          cd ..
+          zip -r "$ZIP_NAME" "${{ env.PROJECT_DIR }}/" \
+            -x "${{ env.PROJECT_DIR }}/.venv/*" \
+            -x "${{ env.PROJECT_DIR }}/__pycache__/*" \
+            -x "${{ env.PROJECT_DIR }}/.git/*" \
+            -x "*.pyc"
+          echo "Built: $ZIP_NAME ($(du -sh "$ZIP_NAME" | awk '{print $1}'))"
+          ls -la "$ZIP_NAME"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ needs.validate.outputs.zip_name }}
+          path: ${{ needs.validate.outputs.zip_name }}
+          retention-days: 30
+
+  release:
+    name: Create Release
+    needs: [validate, build-zip]
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.create_release == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.validate.outputs.zip_name }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: rpi-v${{ needs.validate.outputs.version }}-b${{ needs.validate.outputs.build }}
+          name: "RPi Package v${{ needs.validate.outputs.version }} (build ${{ needs.validate.outputs.build }})"
+          body: |
+            ## Advanced Flashcards WebServer — RPi Deployment Package
+
+            **Version:** ${{ needs.validate.outputs.version }} (build ${{ needs.validate.outputs.build }})
+
+            ### Installation
+            ```bash
+            git clone --depth 1 https://github.com/sidscri/sidscri-apps.git /tmp/sidscri-apps
+            cd /tmp/sidscri-apps/AdvancedFlashcardsWebServer_RPi
+            chmod +x *.sh
+            sudo ./setup_rpi.sh
+            ```
+
+            Or download the zip, extract, and run `sudo ./setup_rpi.sh`.
+          files: ${{ needs.validate.outputs.zip_name }}
+          draft: false
+          prerelease: false
