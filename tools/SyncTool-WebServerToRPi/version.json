@@ -1,7 +1,7 @@
 {
   "name": "SyncTool-WebServerToRPi",
-  "version": "1.1.0",
-  "build": 3,
+  "version": "1.2.0",
+  "build": 4,
   "released": "2026-02-17",
-  "notes": "v1.1.0: Interactive IP prompt when run with no args. Saved IP via rpi_config.txt. --save-ip flag. | build 3: accepts saved URL (http://x:8009), normalizes host, quotes ssh/scp, runs pip install -r."
+  "notes": "v1.2.0 b4: rpi_config.txt now stores ip/user/port/pass (key=value). Prompts for username and password on first run. sshpass support for saved passwords. Targets /app/ subdir. Fixes missing :normalize_rpi_input."
 }

@@ -1,24 +1,38 @@
 # SyncTool: WebServer → RPi
 
-Push Advanced Flashcards WebServer code and/or data from your Windows dev machine to a Raspberry Pi.
+Push Advanced Flashcards WebServer code and/or data from Windows to a Raspberry Pi.
 
 ## Quick Start
 
+Double-click `SyncTool-WebServerToRPi.bat` — it will prompt for:
+- **RPi IP address** (e.g. `192.168.0.205`)
+- **SSH username** (e.g. `sidscri`)
+- **SSH password** (optional — leave blank if using SSH keys)
+
+Settings are saved to `rpi_config.txt` and reused on future runs.
+
+## rpi_config.txt format
+
+```
+ip=192.168.0.205
+user=sidscri
+port=22
+pass=              ← blank = SSH prompts each time
+```
+
+Delete `rpi_config.txt` to reset all saved settings.
+
+## Command line usage
+
 ```batch
-REM Push code (default)
-SyncTool-WebServerToRPi.bat 192.168.1.50
-
-REM Push code + data
-SyncTool-WebServerToRPi.bat 192.168.1.50 --all
-
-REM Push data only
-SyncTool-WebServerToRPi.bat 192.168.1.50 --data
-
-REM Check RPi status
-SyncTool-WebServerToRPi.bat 192.168.1.50 --status
-
-REM Compare versions
-SyncTool-WebServerToRPi.bat 192.168.1.50 --version
+SyncTool-WebServerToRPi.bat                    (prompts, then saves)
+SyncTool-WebServerToRPi.bat 192.168.0.205
+SyncTool-WebServerToRPi.bat 192.168.0.205 --all
+SyncTool-WebServerToRPi.bat 192.168.0.205 --data
+SyncTool-WebServerToRPi.bat 192.168.0.205 --status
+SyncTool-WebServerToRPi.bat 192.168.0.205 --version
+SyncTool-WebServerToRPi.bat 192.168.0.205 --code --dry-run
+SyncTool-WebServerToRPi.bat --save             (re-prompt and re-save settings)
 ```
 
 ## Modes
@@ -29,57 +43,43 @@ SyncTool-WebServerToRPi.bat 192.168.1.50 --version
 | `--data` | Push data/ only. Creates RPi backup first. Asks for confirmation |
 | `--all` | Push code + data. Creates RPi backup first. Asks for confirmation |
 | `--status` | Show RPi service status, version, data size |
-| `--restart` | Just restart the RPi service |
-| `--version` | Compare local WebServer version vs RPi version |
+| `--restart` | Restart the RPi service |
+| `--version` | Compare local vs RPi version |
 
-## Options
+## About passwords
 
-| Option | Default | Description |
-|--------|---------|-------------|
-| `--dry-run` | — | Preview what would be synced, no changes |
-| `--user <u>` | `pi` | RPi SSH username |
-| `--port <p>` | `22` | RPi SSH port |
+Native Windows `ssh`/`scp` cannot accept passwords on the command line.
 
-## Prerequisites
+**Options (best to worst):**
+1. **SSH key auth** (recommended) — one-time setup, no passwords ever:
+   ```
+   ssh-keygen
+   ssh-copy-id sidscri@192.168.0.205
+   ```
+2. **sshpass** — if installed, the saved `pass=` is used automatically
+3. **Blank `pass=`** — SSH will prompt interactively each time (safe, works always)
 
-- RPi has been set up with `setup_rpi.sh` (Advanced Flashcards service running)
-- SSH enabled on the RPi
-- Windows 10+ (scp built in)
+## af-rpi-sync (Pi-side alternative)
+
+`af-rpi-sync` runs **on the Pi itself** and pulls from GitHub:
+```bash
+ssh sidscri@192.168.0.205
+af-rpi-sync             # pull from GitHub, rsync to /opt/advanced-flashcards/app/, restart
+af-rpi-sync --status    # show version and service state
+af-rpi-sync --dry-run   # preview changes
+```
+Use this when you've pushed code to GitHub and want the Pi to pull it.
+Use the SyncTool bat when you want to push directly from Windows without going via GitHub.
 
 ## Folder Structure
 
 ```
 sidscri-apps\
 ├── tools\
-│   └── SyncTool-WebServerToRPi\    ← This tool
+│   └── SyncTool-WebServerToRPi\   ← This tool
 │       ├── SyncTool-WebServerToRPi.bat
+│       ├── rpi_config.txt          (created after first run)
 │       ├── version.json
 │       └── README.md
-├── KenpoFlashcardsWebServer\       ← Source (auto-detected)
-└── AdvancedFlashcardsWebServer_RPi\ ← RPi deployment project
+└── KenpoFlashcardsWebServer\       ← Source (auto-detected)
 ```
-
-## What Gets Synced
-
-### Code mode (`--code`)
-Everything in `KenpoFlashcardsWebServer\` **except**:
-- `data/` (user accounts, progress, decks)
-- `logs/`
-- `.venv/`
-- `__pycache__/`
-- `.git`
-- `*.bat`, `*.pyc`, `.env.rpi`
-
-### Data mode (`--data`)
-Everything in `KenpoFlashcardsWebServer\data\`:
-- `profiles.json`, `breakdowns.json`, `decks.json`
-- `users/`, `user_cards/`, `deck_cards/`
-- `api_keys.enc`, `secret_key.txt`
-- `kenpo_words.json`, `helper.json`
-
-## Safety
-
-- **Data pushes always ask for confirmation**
-- **RPi backup created automatically** before data overwrites
-- **Service stopped** during sync, restarted after
-- **Code pushes never touch data/** on the RPi
