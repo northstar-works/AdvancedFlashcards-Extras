@@ -961,6 +961,7 @@ def get_version():
             "mode": "webappserver",
 
             # WebAppServer fields
+            "app_name": web_name,  # Android app expects this field
             "web_name": web_name,
             "web_version": web_version,
             "web_build": web_build,

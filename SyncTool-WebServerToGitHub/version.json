@@ -1,0 +1,7 @@
+{
+  "name": "SyncTool-WebServerToGitHub",
+  "version": "1.0.0",
+  "build": 1,
+  "released": "2026-02-17",
+  "notes": "v1.0.0: Initial release. Auto-detects WebServer and monorepo, syncs files, commits, and pushes to GitHub."
+}

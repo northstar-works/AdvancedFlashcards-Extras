@@ -2,84 +2,59 @@
 
 Push Advanced Flashcards WebServer code and/or data from Windows to a Raspberry Pi.
 
-## Quick Start
+## First-Time Setup
 
-Double-click `SyncTool-WebServerToRPi.bat` — it will prompt for:
-- **RPi IP address** (e.g. `192.168.0.205`)
-- **SSH username** (e.g. `sidscri`)
-- **SSH password** (optional — leave blank if using SSH keys)
+1. Double-click `SyncTool-WebServerToRPi.bat`
+2. Enter your RPi IP address (e.g. `192.168.0.205`)
+3. Enter SSH username (e.g. `sidscri`, default is `pi`)
+4. Enter SSH password (or press Enter to skip if using SSH keys)
+5. Choose `Y` to save settings to `rpi_config.txt`
 
-Settings are saved to `rpi_config.txt` and reused on future runs.
+Settings are saved for future runs — delete `rpi_config.txt` to reset.
 
-## rpi_config.txt format
-
-```
-ip=192.168.0.205
-user=sidscri
-port=22
-pass=              ← blank = SSH prompts each time
-```
-
-Delete `rpi_config.txt` to reset all saved settings.
-
-## Command line usage
+## Usage
 
 ```batch
-SyncTool-WebServerToRPi.bat                    (prompts, then saves)
-SyncTool-WebServerToRPi.bat 192.168.0.205
-SyncTool-WebServerToRPi.bat 192.168.0.205 --all
-SyncTool-WebServerToRPi.bat 192.168.0.205 --data
-SyncTool-WebServerToRPi.bat 192.168.0.205 --status
-SyncTool-WebServerToRPi.bat 192.168.0.205 --version
-SyncTool-WebServerToRPi.bat 192.168.0.205 --code --dry-run
-SyncTool-WebServerToRPi.bat --save             (re-prompt and re-save settings)
+SyncTool-WebServerToRPi.bat           (uses saved config)
+SyncTool-WebServerToRPi.bat --status  (check RPi service status)
+SyncTool-WebServerToRPi.bat --all     (push code + data)
 ```
 
 ## Modes
 
-| Mode | What It Does |
-|------|-------------|
-| `--code` | Push WebServer code (default). Excludes data/, logs/, .venv/ |
-| `--data` | Push data/ only. Creates RPi backup first. Asks for confirmation |
-| `--all` | Push code + data. Creates RPi backup first. Asks for confirmation |
-| `--status` | Show RPi service status, version, data size |
-| `--restart` | Restart the RPi service |
-| `--version` | Compare local vs RPi version |
+- `--code` — Push code only (default)
+- `--data` — Push data only (with confirmation)
+- `--all` — Push code + data (with confirmation)
+- `--status` — Show RPi service status
+- `--restart` — Restart RPi service
+- `--version` — Compare local vs RPi versions
 
-## About passwords
+## Config File Format
 
-Native Windows `ssh`/`scp` cannot accept passwords on the command line.
+`rpi_config.txt`:
+```
+ip=192.168.0.205
+user=sidscri
+port=22
+pass=
+```
 
-**Options (best to worst):**
-1. **SSH key auth** (recommended) — one-time setup, no passwords ever:
-   ```
-   ssh-keygen
-   ssh-copy-id sidscri@192.168.0.205
-   ```
-2. **sshpass** — if installed, the saved `pass=` is used automatically
-3. **Blank `pass=`** — SSH will prompt interactively each time (safe, works always)
+Leave `pass=` blank if using SSH keys.
 
-## af-rpi-sync (Pi-side alternative)
+## SSH Key Setup (Recommended)
 
-`af-rpi-sync` runs **on the Pi itself** and pulls from GitHub:
+To avoid password prompts:
 ```bash
-ssh sidscri@192.168.0.205
-af-rpi-sync             # pull from GitHub, rsync to /opt/advanced-flashcards/app/, restart
-af-rpi-sync --status    # show version and service state
-af-rpi-sync --dry-run   # preview changes
+ssh-keygen
+ssh-copy-id sidscri@192.168.0.205
 ```
-Use this when you've pushed code to GitHub and want the Pi to pull it.
-Use the SyncTool bat when you want to push directly from Windows without going via GitHub.
 
-## Folder Structure
+## Troubleshooting
 
-```
-sidscri-apps\
-├── tools\
-│   └── SyncTool-WebServerToRPi\   ← This tool
-│       ├── SyncTool-WebServerToRPi.bat
-│       ├── rpi_config.txt          (created after first run)
-│       ├── version.json
-│       └── README.md
-└── KenpoFlashcardsWebServer\       ← Source (auto-detected)
-```
+- **Window closes immediately**: Check that you're running from the correct folder
+- **Config file not created**: Make sure you answered `Y` when asked to save
+- **SSH prompts for password every time**: Either set up SSH keys or enter password when prompted to save it
+
+---
+
+**Tip**: Place this tool at `sidscri-apps\tools\SyncTool-WebServerToRPi\` so it can auto-detect the WebServer location.

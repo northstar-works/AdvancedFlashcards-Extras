@@ -1,0 +1,7 @@
+{
+  "name": "SyncTool-WebServerToRPi",
+  "version": "1.2.0",
+  "build": 4,
+  "released": "2026-02-17",
+  "notes": "v1.2.0 b4: rpi_config.txt now stores ip/user/port/pass (key=value). Prompts for username and password on first run. sshpass support for saved passwords. Targets /app/ subdir. Fixes missing :normalize_rpi_input."
+}

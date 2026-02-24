@@ -1,0 +1,4 @@
+ip=192.168.0.205
+user=sidscri
+port=22
+pass=0888220

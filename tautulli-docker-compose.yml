@@ -1,0 +1,35 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Tautulli — Plex Media Server Statistics & Monitoring
+#  Image: ghcr.io/tautulli/tautulli (official)
+#  Web UI: http://<host-ip>:8181
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  tautulli:
+    image: ghcr.io/tautulli/tautulli:latest
+    container_name: tautulli
+    restart: unless-stopped
+
+    ports:
+      - "8181:8181"
+
+    environment:
+      - PUID=1000        # Set to your host user ID  (run: id -u)
+      - PGID=1000        # Set to your host group ID (run: id -g)
+      - TZ=America/Chicago
+
+    volumes:
+      # Tautulli config & database
+      - /opt/appdata/tautulli:/config
+
+      # Optional: give Tautulli access to Plex logs for richer metadata
+      # Adjust path to wherever your Plex logs actually live
+      - /opt/appdata/plexmediaserver/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

@@ -1,0 +1,27 @@
+SyncTool Log - Tue 02/17/2026 14:03:13.56 
+================================================== 
+ 
+[START] Tool version 1.2.0 build 9 
+[PATH] SCRIPT_DIR: C:\Users\Sidscri\Documents\GitHub\sidscri-apps\tools\SyncTool-WebServerToRPi 
+[PATH] MONO_ROOT: C:\Users\Sidscri\Documents\GitHub\sidscri-apps 
+[PATH] CONFIG_FILE: C:\Users\Sidscri\Documents\GitHub\sidscri-apps\tools\SyncTool-WebServerToRPi\rpi_config.txt 
+[CONFIG] No config file found 
+[MODE] Selected mode: code 
+[PROMPT] Asking for IP 
+[INPUT] IP entered: 192.168.0.205 
+[PROMPT] Asking for username 
+[INPUT] Username entered: sidscri 
+[PROMPT] Asking for password 
+[INPUT] Password: PROVIDED 
+[SAVE] About to save config 
+[SAVE] Writing config file 
+[SAVE] SUCCESS - Config created 
+[NORMALIZE] Original IP: 192.168.0.205 
+[NORMALIZE] Final IP: 192.168.0.205 
+[SSH] Setting up SSH command 
+[SSH] sshpass not found - will prompt for password 
+[DISPATCH] Executing mode: code 
+[SYNC] Starting code sync 
+scp: remote setstat "/opt/advanced-flashcards/app/runtime": Permission denied
+scp: remote setstat "/opt/advanced-flashcards/app": Permission denied
+[END] Tool completed 
