@@ -1,0 +1,27 @@
+[NEW] Device 15:9C:A5:F0:8D:56 NIORFNIO
+[NEW] Device FC:58:FA:6D:13:EC Jacket H20 4
+
+ADAPTER="$(ls /var/lib/bluetooth | head -n 1)"
+sudo rm -rf "/var/lib/bluetooth/$ADAPTER/15:9C:A5:F0:8D:56"
+sudo systemctl restart bluetooth
+
+ADAPTER="$(ls /var/lib/bluetooth | head -n 1)"
+sudo rm -rf "/var/lib/bluetooth/$ADAPTER/FC:58:FA:6D:13:EC"
+sudo systemctl restart bluetooth
+
+bluetoothctl remove AA:BB:CC:DD:EE:FF
+bluetoothctl remove AA:BB:CC:DD:EE:FF
+
+controller internal: 2C:CF:67:3B:90:58
+
+nside bluetoothctl, run these exactly:
+
+power on
+agent on
+default-agent
+pairable on
+discoverable on
+scan on
+
+
+bluetoothctl info 15:9C:A5:F0:8D:56 | egrep "Name|Connected|Paired|Trusted|ServicesResolved"

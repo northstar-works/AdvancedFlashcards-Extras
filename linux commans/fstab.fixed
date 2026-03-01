@@ -1,0 +1,68 @@
+proc            /proc           proc    defaults          0       0
+PARTUUID=7079c268-01  /boot/firmware  vfat    defaults          0       2
+PARTUUID=7079c268-02  /               ext4    defaults,noatime  0       1
+
+# ============================================================
+# SMB/CIFS mounts for Windows shares (SIDSCRI-GRAB + SIDSCRI-SERVER)
+#
+# KEEP the PARTUUID lines above. They will NOT be “re-added” automatically:
+# they are what mounts your Pi boot + root partitions at startup.
+#
+# Prereq:
+#   sudo apt-get install -y cifs-utils
+#
+# One credentials file used by ALL mounts:
+#   sudo mkdir -p /etc/samba
+#   sudo nano /etc/samba/credentials_media
+#     username=YOUR_WINDOWS_USER
+#     password=YOUR_WINDOWS_PASSWORD
+#     domain=WORKGROUP
+#   sudo chmod 600 /etc/samba/credentials_media
+#
+# Create mountpoints once (exactly matches the lines below):
+#   sudo mkdir -p /mnt/lan
+#   sudo mkdir -p /mnt/lan/grab-{appdata,programdata,users,downloads,media,github,m,sidscri-apps,tempcomplete,c}
+#   sudo mkdir -p /mnt/lan/server-{users,c,d,e,f,i,j,m}
+#
+# Optional (recommended) permissions model:
+#   sudo groupadd -f media
+#   sudo usermod -aG media plex
+#   sudo usermod -aG media $USER
+#
+# Apply:
+#   sudo systemctl daemon-reload
+#   sudo mount -a
+# ============================================================
+
+# Common mount options:
+# - x-systemd.automount + idle-timeout prevents boot hangs and mounts on first access
+# - nofail keeps booting if a PC is offline
+# - uid/gid + forceuid/forcegid makes permissions consistent for Plex + your user
+# NOTE: If your Pi user isn't uid 1000, change uid=1000 accordingly.
+
+# ---- SIDSCRI-GRAB (192.168.0.129) ----
+# Share names (from your screenshot): AppData, ProgramData, Users, downloads, GitHub, M, media, sidscri-apps, TempComplete, C
+
+//192.168.0.129/ProgramData   /mnt/lan/grab-programdata   cifs  credentials=/etc/samba/credentials_media,vers=3.1.1,iocharset=utf8,uid=1000,gid=media,forceuid,forcegid,file_mode=0664,dir_mode=0775,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60  0  0
+//192.168.0.129/AppData       /mnt/lan/grab-appdata       cifs  credentials=/etc/samba/credentials_media,vers=3.1.1,iocharset=utf8,uid=1000,gid=media,forceuid,forcegid,file_mode=0664,dir_mode=0775,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60  0  0
+//192.168.0.129/Users         /mnt/lan/grab-users         cifs  credentials=/etc/samba/credentials_media,vers=3.1.1,iocharset=utf8,uid=1000,gid=media,forceuid,forcegid,file_mode=0664,dir_mode=0775,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60  0  0
+//192.168.0.129/downloads     /mnt/lan/grab-downloads     cifs  credentials=/etc/samba/credentials_media,vers=3.1.1,iocharset=utf8,uid=1000,gid=media,forceuid,forcegid,file_mode=0664,dir_mode=0775,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60  0  0
+//192.168.0.129/media         /mnt/lan/grab-media         cifs  credentials=/etc/samba/credentials_media,vers=3.1.1,iocharset=utf8,uid=1000,gid=media,forceuid,forcegid,file_mode=0664,dir_mode=0775,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60  0  0
+//192.168.0.129/M             /mnt/lan/grab-m             cifs  credentials=/etc/samba/credentials_media,vers=3.1.1,iocharset=utf8,uid=1000,gid=media,forceuid,forcegid,file_mode=0664,dir_mode=0775,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60  0  0
+//192.168.0.129/sidscri-apps  /mnt/lan/grab-sidscri-apps  cifs  credentials=/etc/samba/credentials_media,vers=3.1.1,iocharset=utf8,uid=1000,gid=media,forceuid,forcegid,file_mode=0664,dir_mode=0775,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60  0  0
+//192.168.0.129/TempComplete  /mnt/lan/grab-tempcomplete  cifs  credentials=/etc/samba/credentials_media,vers=3.1.1,iocharset=utf8,uid=1000,gid=media,forceuid,forcegid,file_mode=0664,dir_mode=0775,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60  0  0
+//192.168.0.129/ASA\040Servers  /mnt/lan/grab-asa-servers  cifs  credentials=/etc/samba/credentials_media,vers=3.1.1,iocharset=utf8,uid=1000,gid=media,forceuid,forcegid,file_mode=0664,dir_mode=0775,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60  0  0
+
+# ---- SIDSCRI-SERVER (192.168.0.10) ----
+# Share names (from your screenshot): C, D, E, F, I, J, M, Users
+
+//192.168.0.10/Users  /mnt/lan/server-users  cifs  credentials=/etc/samba/credentials_media,vers=3.1.1,iocharset=utf8,uid=1000,gid=media,forceuid,forcegid,file_mode=0664,dir_mode=0775,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60  0  0
+//192.168.0.10/ProgramData  /mnt/lan/server-programdata  cifs  credentials=/etc/samba/credentials_media,vers=3.1.1,iocharset=utf8,uid=1000,gid=media,forceuid,forcegid,file_mode=0664,dir_mode=0775,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60  0  0
+//192.168.0.10/1\040Ebooks\040and\040Audio\040Books  /mnt/lan/server-ebooks-and-audiobooks  cifs  credentials=/etc/samba/credentials_media,vers=3.1.1,iocharset=utf8,uid=1000,gid=media,forceuid,forcegid,file_mode=0664,dir_mode=0775,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60  0  0
+//192.168.0.10/Portable\040Apps\040on\040Server  /mnt/lan/server-portable-apps  cifs  credentials=/etc/samba/credentials_media,vers=3.1.1,iocharset=utf8,uid=1000,gid=media,forceuid,forcegid,file_mode=0664,dir_mode=0775,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60  0  0
+//192.168.0.10/D      /mnt/lan/server-d      cifs  credentials=/etc/samba/credentials_media,vers=3.1.1,iocharset=utf8,uid=1000,gid=media,forceuid,forcegid,file_mode=0664,dir_mode=0775,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60  0  0
+//192.168.0.10/E      /mnt/lan/server-e      cifs  credentials=/etc/samba/credentials_media,vers=3.1.1,iocharset=utf8,uid=1000,gid=media,forceuid,forcegid,file_mode=0664,dir_mode=0775,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60  0  0
+//192.168.0.10/F      /mnt/lan/server-f      cifs  credentials=/etc/samba/credentials_media,vers=3.1.1,iocharset=utf8,uid=1000,gid=media,forceuid,forcegid,file_mode=0664,dir_mode=0775,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60  0  0
+//192.168.0.10/I      /mnt/lan/server-i      cifs  credentials=/etc/samba/credentials_media,vers=3.1.1,iocharset=utf8,uid=1000,gid=media,forceuid,forcegid,file_mode=0664,dir_mode=0775,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60  0  0
+//192.168.0.10/J      /mnt/lan/server-j      cifs  credentials=/etc/samba/credentials_media,vers=3.1.1,iocharset=utf8,uid=1000,gid=media,forceuid,forcegid,file_mode=0664,dir_mode=0775,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60  0  0
+//192.168.0.10/M      /mnt/lan/server-m      cifs  credentials=/etc/samba/credentials_media,vers=3.1.1,iocharset=utf8,uid=1000,gid=media,forceuid,forcegid,file_mode=0664,dir_mode=0775,_netdev,nofail,x-systemd.automount,x-systemd.idle-timeout=60  0  0

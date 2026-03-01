@@ -1,0 +1,76 @@
+The fixed fstab (clean + Plex-friendly)
+
+I made you a corrected /etc/fstab that:
+
+keeps your proc + PARTUUID boot/root lines
+
+uses one consistent CIFS option set (uid=1000, gid=media, 0664/0775)
+
+uses lowercase share names for the server drive letters (/d /e /f /i /j /m) since that’s what your working mounts showed
+
+adds bind mounts under /mnt/plex so Plex only browses what you care about (no AppData/ProgramData clutter)
+
+✅ Download it here: fstab.cleaned
+
+What to do next (exact steps)
+1) Make sure these directories exist
+sudo mkdir -p /mnt/lan
+sudo mkdir -p /mnt/lan/grab-{programdata,appdata,users,downloads,media,m,sidscri-apps,tempcomplete,asa-servers}
+sudo mkdir -p /mnt/lan/server-{users,programdata,d,e,f,i,j,m,ebooks-and-audiobooks,portable-apps}
+
+sudo mkdir -p /mnt/plex
+sudo mkdir -p /mnt/plex/{grab-media,grab-m,server-d,server-e,server-f,server-i,server-j,server-m,server-users}
+
+2) Ensure Plex + you share the media group
+sudo groupadd -f media
+sudo usermod -aG media plex
+sudo usermod -aG media sidscri
+
+3) Replace fstab
+
+(Keep a backup first.)
+
+sudo cp /etc/fstab /etc/fstab.backup.$(date +%F-%H%M)
+sudo cp /mnt/data/fstab.cleaned /etc/fstab
+sudo systemctl daemon-reload
+
+4) Clear the “busy” old automount mounts (do this once)
+
+This cleanly stops the automount units and unmounts old CIFS mounts:
+
+# Stop all automount units under /mnt/lan and /mnt/plex
+systemctl list-units --type=automount | awk '/mnt-lan|mnt-plex/{print $1}' | sudo xargs -r systemctl stop
+
+# Unmount anything currently mounted under /mnt/lan or /mnt/plex
+mount | awk '$3 ~ "^/mnt/(lan|plex)/" {print $3}' | sort -r | sudo xargs -r umount -f
+
+5) Mount everything using the new fstab
+sudo mount -a
+
+6) Quick verification tests
+# Trigger mounts
+ls /mnt/lan/grab-media >/dev/null
+ls /mnt/lan/server-d >/dev/null
+
+# Check plex can read/write where it should
+sudo -u plex bash -lc "touch /mnt/plex/grab-media/.plex_rw && rm -f /mnt/plex/grab-media/.plex_rw && echo plex_OK"
+
+Plex setup (so the UI is not “confusing”)
+
+When Plex asks you to browse folders for libraries, only browse under:
+
+/mnt/plex/grab-media
+
+/mnt/plex/grab-m
+
+/mnt/plex/server-d (and the other server-* ones)
+
+That way Plex won’t show AppData/ProgramData/etc while you’re picking folders.
+
+One important callout about \040
+
+That is correct in fstab. It’s just how spaces are encoded in mount entries (so “ASA Servers” becomes ASA\040Servers). The bind-mount /mnt/plex/... paths avoid you having to deal with that inside Plex browsing.
+
+If you run sudo mount -a again and it still prints permission denied, paste just this (it’s short and tells us exactly which share is failing):
+
+sudo journalctl -b --no-pager | tail -n 80

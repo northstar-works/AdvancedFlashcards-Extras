@@ -1,0 +1,32 @@
+sudo nano /etc/fstab
+
+/mnt/lan/grab-downloads/NZB\040DL  /mnt/lan/grab-nzb-dl  none  bind,x-systemd.requires-mounts-for=/mnt/lan/grab-downloads  0  0
+
+sudo mkdir -p /mnt/lan/grab-nzb-dl
+
+sudo umount /mnt/lan/grab-nzb-dl
+sudo systemctl daemon-reload
+sudo mount -av
+
+findmnt /mnt/lan/grab-nzb-dl
+touch "/mnt/lan/grab-nzb-dl/.test" && rm "/mnt/lan/grab-nzb-dl/.test"
+
+-------------------sudo tee--------------------------
+
+sudo tee /etc/systemd/system/deluge-web.service.d/20-run.conf >/dev/null <<'EOF'
+[Service]
+User=debian-deluged
+Group=media
+UMask=0002
+
+# ensure there is exactly one ExecStart total (override any prior ones)
+ExecStart=
+ExecStart=/usr/bin/deluge-web -c /opt/appdata/deluge/config -i 0.0.0.0 -p 8112 -d
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl restart deluge-web.service
+sudo systemctl status deluge-web.service --no-pager -l
+sudo ss -ltnp | grep ':8112' || true
+
+

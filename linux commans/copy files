@@ -1,0 +1,8 @@
+
+sudo rsync -avh /opt/appdata/homeassistant/ /mnt/lan/downloads/opt/appdata/homeassistant/
+
+
+
+
+
+sudo chown -R sidscri:sidscri /opt/

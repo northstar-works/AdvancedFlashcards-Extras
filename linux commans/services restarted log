@@ -1,0 +1,340 @@
+sidscri@sidscripi:~ $ sudo systemctl daemon-reload
+
+sudo systemctl restart radarr-a radarr-b prowlarr-a prowlarr-b readarr-a readarr-b
+sudo systemctl restart sabnzbdplus
+sudo systemctl restart calibre-server kiwix advanced-flashcards
+sudo systemctl restart deluged deluge-web
+sudo systemctl restart sonarr  # and your sonarr-b unit if it exists
+sidscri@sidscripi:~ $ systemctl --failed --no-pager
+  UNIT                      LOAD      ACTIVE SUB    DESCRIPTION              
+● mnt-lan-server\x2dd.mount loaded    failed failed /mnt/lan/server-d
+● mnt-lan-server\x2de.mount loaded    failed failed /mnt/lan/server-e
+● mnt-lan-server\x2df.mount loaded    failed failed /mnt/lan/server-f
+● mnt-lan-server\x2dg.mount not-found failed failed mnt-lan-server\x2dg.mount
+● mnt-lan-server\x2dh.mount not-found failed failed mnt-lan-server\x2dh.mount
+● mnt-lan-server\x2di.mount loaded    failed failed /mnt/lan/server-i
+● mnt-lan-server\x2dk.mount not-found failed failed mnt-lan-server\x2dk.mount
+● mnt-lan-server\x2dl.mount not-found failed failed mnt-lan-server\x2dl.mount
+● mnt-lan-server\x2dm.mount loaded    failed failed /mnt/lan/server-m
+● mnt-lan-server\x2dn.mount not-found failed failed mnt-lan-server\x2dn.mount
+
+Legend: LOAD   → Reflects whether the unit definition was properly loaded.
+        ACTIVE → The high-level unit activation state, i.e. generalization of SUB.
+        SUB    → The low-level unit activation state, values depend on unit type.
+
+10 loaded units listed.
+sidscri@sidscripi:~ $ SERVICES=(
+  sonarr-a sonarr-b sonarr
+  radarr-a radarr-b
+  prowlarr-a prowlarr-b
+  readarr-a readarr-b
+  readarr-audiobooks-a readarr-audiobooks-b
+  sabnzbdplus
+  deluged deluge-web
+  calibre-server
+  kiwix
+  advanced-flashcards
+  plexmediaserver
+  xteve xteve-b
+)
+
+for s in "${SERVICES[@]}"; do
+  if systemctl list-unit-files | awk '{print $1}' | grep -qx "${s}.service"; then
+    echo "== restarting: $s =="
+    sudo systemctl restart "$s"
+    sudo systemctl --no-pager -l status "$s" | sed -n '1,14p'
+    echo
+  else
+    echo "== missing unit: $s =="
+done
+== restarting: sonarr-a ==
+● sonarr-a.service - Sonarr (A)
+     Loaded: loaded (/etc/systemd/system/sonarr-a.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-02-12 01:20:17 CST; 38ms ago
+ Invocation: 092ea69fa6144318937ad8cb05e7effe
+   Main PID: 1296592 (Sonarr)
+      Tasks: 1 (limit: 9570)
+        CPU: 12ms
+     CGroup: /system.slice/sonarr-a.service
+             └─1296592 /opt/Sonarr/Sonarr -nobrowser -data=/opt/appdata/sonarr-a/config
+
+Feb 12 01:20:17 sidscripi systemd[1]: Started sonarr-a.service - Sonarr (A).
+
+== restarting: sonarr-b ==
+● sonarr-b.service - Sonarr (B)
+     Loaded: loaded (/etc/systemd/system/sonarr-b.service; enabled; preset: enabled)
+    Drop-In: /etc/systemd/system/sonarr-b.service.d
+             └─override.conf
+     Active: active (running) since Thu 2026-02-12 01:20:18 CST; 33ms ago
+ Invocation: d5028aad31874de78aeb0c30d8a7ee90
+   Main PID: 1296628 ((Sonarr))
+      Tasks: 1 (limit: 9570)
+        CPU: 9ms
+     CGroup: /system.slice/sonarr-b.service
+             └─1296628 "(Sonarr)"
+
+Feb 12 01:20:18 sidscripi systemd[1]: Started sonarr-b.service - Sonarr (B).
+
+== restarting: sonarr ==
+● sonarr.service - Sonarr Daemon
+     Loaded: loaded (/etc/systemd/system/sonarr.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-02-12 01:20:18 CST; 61ms ago
+ Invocation: b5a62c5f02e7471b8beaf1efb3d4ef8f
+   Main PID: 1296662 (Sonarr)
+      Tasks: 2 (limit: 9570)
+        CPU: 15ms
+     CGroup: /system.slice/sonarr.service
+             └─1296662 /opt/Sonarr/Sonarr -nobrowser -data=/var/lib/sonarr/
+
+Feb 12 01:20:18 sidscripi systemd[1]: Started sonarr.service - Sonarr Daemon.
+
+== restarting: radarr-a ==
+● radarr-a.service - Radarr (A)
+     Loaded: loaded (/etc/systemd/system/radarr-a.service; enabled; preset: enabled)
+    Drop-In: /etc/systemd/system/radarr-a.service.d
+             └─override.conf
+     Active: active (running) since Thu 2026-02-12 01:20:19 CST; 44ms ago
+ Invocation: a4b11306fd28445681514b2a089cde61
+   Main PID: 1296709 (Radarr)
+      Tasks: 1 (limit: 9570)
+        CPU: 15ms
+     CGroup: /system.slice/radarr-a.service
+             └─1296709 /opt/Radarr/Radarr -nobrowser -data=/opt/appdata/radarr-a/config
+
+Feb 12 01:20:19 sidscripi systemd[1]: Started radarr-a.service - Radarr (A).
+
+== restarting: radarr-b ==
+● radarr-b.service - Radarr (B)
+     Loaded: loaded (/etc/systemd/system/radarr-b.service; enabled; preset: enabled)
+    Drop-In: /etc/systemd/system/radarr-b.service.d
+             └─override.conf
+     Active: active (running) since Thu 2026-02-12 01:20:20 CST; 75ms ago
+ Invocation: 70950d6f15d041eaa787e7909b5527f1
+   Main PID: 1296747 (Radarr)
+      Tasks: 2 (limit: 9570)
+        CPU: 18ms
+     CGroup: /system.slice/radarr-b.service
+             └─1296747 /opt/Radarr/Radarr -nobrowser -data=/opt/appdata/radarr-b/config
+
+Feb 12 01:20:20 sidscripi systemd[1]: Started radarr-b.service - Radarr (B).
+
+== restarting: prowlarr-a ==
+● prowlarr-a.service - Prowlarr (A)
+     Loaded: loaded (/etc/systemd/system/prowlarr-a.service; enabled; preset: enabled)
+    Drop-In: /etc/systemd/system/prowlarr-a.service.d
+             └─override.conf
+     Active: active (running) since Thu 2026-02-12 01:20:22 CST; 89ms ago
+ Invocation: 30d6abbfd9c84793a160908a5bbcac2c
+   Main PID: 1296784 (Prowlarr)
+      Tasks: 2 (limit: 9570)
+        CPU: 21ms
+     CGroup: /system.slice/prowlarr-a.service
+             └─1296784 /opt/Prowlarr/Prowlarr -nobrowser -data=/opt/appdata/prowlarr-a/config
+
+Feb 12 01:20:22 sidscripi systemd[1]: Started prowlarr-a.service - Prowlarr (A).
+
+== restarting: prowlarr-b ==
+● prowlarr-b.service - Prowlarr (B)
+     Loaded: loaded (/etc/systemd/system/prowlarr-b.service; enabled; preset: enabled)
+    Drop-In: /etc/systemd/system/prowlarr-b.service.d
+             └─override.conf
+     Active: active (running) since Thu 2026-02-12 01:20:23 CST; 47ms ago
+ Invocation: 0bcc1e5f2e4047b9aced9ce75e0812b6
+   Main PID: 1296821 ((Prowlarr))
+      Tasks: 1 (limit: 9570)
+        CPU: 11ms
+     CGroup: /system.slice/prowlarr-b.service
+             └─1296821 "(Prowlarr)"
+
+Feb 12 01:20:23 sidscripi systemd[1]: Started prowlarr-b.service - Prowlarr (B).
+
+== restarting: readarr-a ==
+● readarr-a.service - Readarr (A)
+     Loaded: loaded (/etc/systemd/system/readarr-a.service; enabled; preset: enabled)
+    Drop-In: /etc/systemd/system/readarr-a.service.d
+             └─override.conf
+     Active: active (running) since Thu 2026-02-12 01:20:24 CST; 44ms ago
+ Invocation: 65bc3d444c114163abd8004196a3010a
+   Main PID: 1296854 ((Readarr))
+      Tasks: 1 (limit: 9570)
+        CPU: 10ms
+     CGroup: /system.slice/readarr-a.service
+             └─1296854 "(Readarr)"
+
+Feb 12 01:20:24 sidscripi systemd[1]: Stopped readarr-a.service - Readarr (A).
+Feb 12 01:20:24 sidscripi systemd[1]: Started readarr-a.service - Readarr (A).
+
+== restarting: readarr-b ==
+● readarr-b.service - Readarr (B)
+     Loaded: loaded (/etc/systemd/system/readarr-b.service; enabled; preset: enabled)
+    Drop-In: /etc/systemd/system/readarr-b.service.d
+             └─override.conf
+     Active: activating (auto-restart) (Result: exit-code) since Thu 2026-02-12 01:20:25 CST; 13ms ago
+ Invocation: adc03848baef49019bbb55475b485a8d
+    Process: 1296888 ExecStart=/opt/Readarr/Readarr -nobrowser -data=/opt/appdata/readarr-b/config (code=exited, status=203/EXEC)
+   Main PID: 1296888 (code=exited, status=203/EXEC)
+        CPU: 10ms
+
+Feb 12 01:20:25 sidscripi systemd[1]: readarr-b.service: Failed with result 'exit-code'.
+
+== restarting: readarr-audiobooks-a ==
+● readarr-audiobooks-a.service - Readarr Audiobooks (A)
+     Loaded: loaded (/etc/systemd/system/readarr-audiobooks-a.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-02-12 01:20:26 CST; 54ms ago
+ Invocation: c4581055d2e34f57ae08c152345f5409
+   Main PID: 1296907 ((Readarr))
+      Tasks: 1 (limit: 9570)
+        CPU: 10ms
+     CGroup: /system.slice/readarr-audiobooks-a.service
+             └─1296907 "(Readarr)"
+
+Feb 12 01:20:26 sidscripi systemd[1]: Started readarr-audiobooks-a.service - Readarr Audiobooks (A).
+
+== restarting: readarr-audiobooks-b ==
+● readarr-audiobooks-b.service - Readarr Audiobooks (B)
+     Loaded: loaded (/etc/systemd/system/readarr-audiobooks-b.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-02-12 01:20:26 CST; 52ms ago
+ Invocation: d4e9b8151898462985172b366facbc24
+   Main PID: 1296932 ((Readarr))
+      Tasks: 1 (limit: 9570)
+        CPU: 10ms
+     CGroup: /system.slice/readarr-audiobooks-b.service
+             └─1296932 "(Readarr)"
+
+Feb 12 01:20:26 sidscripi systemd[1]: Started readarr-audiobooks-b.service - Readarr Audiobooks (B).
+
+== restarting: sabnzbdplus ==
+○ sabnzbdplus.service - SABnzbd+ binary newsreader
+     Loaded: loaded (/usr/lib/systemd/system/sabnzbdplus.service; enabled; preset: enabled)
+    Drop-In: /etc/systemd/system/sabnzbdplus.service.d
+             └─override.conf
+     Active: inactive (dead) (Result: exec-condition) since Thu 2026-02-12 01:20:27 CST; 64ms ago
+ Invocation: 59a623a567eb47ce8a9be61b6392ffc5
+  Condition: start condition unmet at Thu 2026-02-12 01:20:27 CST; 170ms ago
+       Docs: man:sabnzbdplus(1)
+             https://sabnzbd.org/wiki/
+    Process: 1296959 ExecCondition=/bin/sh -c test "${USER%:*}" || { echo "Service not configured, edit /etc/default/sabnzbdplus"; exit 42; } (code=exited, status=42)
+        CPU: 21ms
+
+Feb 12 01:20:27 sidscripi systemd[1]: Starting sabnzbdplus.service - SABnzbd+ binary newsreader...
+Feb 12 01:20:27 sidscripi sh[1296959]: Service not configured, edit /etc/default/sabnzbdplus
+
+== restarting: deluged ==
+● deluged.service - Deluge Daemon
+     Loaded: loaded (/etc/systemd/system/deluged.service; enabled; preset: enabled)
+    Drop-In: /etc/systemd/system/deluged.service.d
+             └─override.conf
+     Active: active (running) since Thu 2026-02-12 01:20:29 CST; 54ms ago
+ Invocation: fb2a76fa6f624f58be9421612a3347ee
+   Main PID: 1296981 (deluged)
+      Tasks: 1 (limit: 9570)
+        CPU: 11ms
+     CGroup: /system.slice/deluged.service
+             └─1296981 /usr/bin/python3 /usr/bin/deluged -d -c /opt/appdata/deluge/config
+
+Feb 12 01:20:29 sidscripi systemd[1]: Started deluged.service - Deluge Daemon.
+
+== restarting: deluge-web ==
+● deluge-web.service - Deluge Web UI
+     Loaded: loaded (/etc/systemd/system/deluge-web.service; enabled; preset: enabled)
+    Drop-In: /etc/systemd/system/deluge-web.service.d
+             └─override.conf
+     Active: active (running) since Thu 2026-02-12 01:20:30 CST; 54ms ago
+ Invocation: c4b27c77abf14a3f8c8579da70ebb98b
+   Main PID: 1297020 ((luge-web))
+      Tasks: 1 (limit: 9570)
+        CPU: 10ms
+     CGroup: /system.slice/deluge-web.service
+             └─1297020 "(luge-web)"
+
+Feb 12 01:20:30 sidscripi systemd[1]: Started deluge-web.service - Deluge Web UI.
+
+== restarting: calibre-server ==
+● calibre-server.service - Calibre Content Server
+     Loaded: loaded (/etc/systemd/system/calibre-server.service; enabled; preset: enabled)
+    Drop-In: /etc/systemd/system/calibre-server.service.d
+             └─override.conf
+     Active: active (running) since Thu 2026-02-12 01:20:30 CST; 54ms ago
+ Invocation: d09a3e1027314dca9fa27c62b6b85696
+   Main PID: 1297044 (calibre-server)
+      Tasks: 1 (limit: 9570)
+        CPU: 11ms
+     CGroup: /system.slice/calibre-server.service
+             └─1297044 /usr/bin/python3.13 /usr/bin/calibre-server --port 8083 --with-library /opt/appdata/calibre/data/CalibreLibrary
+
+Feb 12 01:20:30 sidscripi systemd[1]: Started calibre-server.service - Calibre Content Server.
+
+== restarting: kiwix ==
+● kiwix.service - Kiwix (kiwix-serve)
+     Loaded: loaded (/etc/systemd/system/kiwix.service; enabled; preset: enabled)
+    Drop-In: /etc/systemd/system/kiwix.service.d
+             └─override.conf
+     Active: active (running) since Thu 2026-02-12 01:20:31 CST; 65ms ago
+ Invocation: 4bafd239860a4cf5a725363e86e10d5a
+   Main PID: 1297087 (kiwix-serve)
+      Tasks: 1 (limit: 9570)
+        CPU: 27ms
+     CGroup: /system.slice/kiwix.service
+
+Feb 12 01:20:31 sidscripi systemd[1]: Started kiwix.service - Kiwix (kiwix-serve).
+Feb 12 01:20:31 sidscripi kiwix-serve[1297087]: Unable to add the ZIM file '/opt/appdata/kiwix/data/zims' to the internal library.
+Feb 12 01:20:31 sidscripi systemd[1]: kiwix.service: Main process exited, code=exited, status=1/FAILURE
+
+== restarting: advanced-flashcards ==
+● advanced-flashcards.service - Advanced Flashcards WebServer (RPi)
+     Loaded: loaded (/etc/systemd/system/advanced-flashcards.service; enabled; preset: enabled)
+    Drop-In: /etc/systemd/system/advanced-flashcards.service.d
+             └─override.conf
+     Active: activating (auto-restart) (Result: exit-code) since Thu 2026-02-12 01:20:32 CST; 8ms ago
+ Invocation: ff35709a65dc4f09ab842748df75ebb2
+       Docs: https://github.com/sidscri/sidscri-apps
+    Process: 1297109 ExecStart=/opt/advanced-flashcards/.venv/bin/python /opt/advanced-flashcards/app/app.py (code=exited, status=217/USER)
+   Main PID: 1297109 (code=exited, status=217/USER)
+        CPU: 11ms
+
+== restarting: plexmediaserver ==
+● plexmediaserver.service - Plex Media Server
+     Loaded: loaded (/usr/lib/systemd/system/plexmediaserver.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-02-12 01:20:53 CST; 53ms ago
+ Invocation: ee4a8c9b4a96422abb6909948dbc9966
+    Process: 1297308 ExecStartPre=/bin/sh -c /usr/bin/test -d "${PLEX_MEDIA_SERVER_APPLICATION_SUPPORT_DIR}" || /bin/mkdir -p "${PLEX_MEDIA_SERVER_APPLICATION_SUPPORT_DIR}" (code=exited, status=0/SUCCESS)
+   Main PID: 1297311 (Plex Media Serv)
+      Tasks: 1 (limit: 9570)
+        CPU: 37ms
+     CGroup: /system.slice/plexmediaserver.service
+             └─1297311 "/usr/lib/plexmediaserver/Plex Media Server"
+
+Feb 12 01:20:53 sidscripi systemd[1]: Starting plexmediaserver.service - Plex Media Server...
+Feb 12 01:20:53 sidscripi systemd[1]: Started plexmediaserver.service - Plex Media Server.
+
+== restarting: xteve ==
+● xteve.service - xTeVe
+     Loaded: loaded (/etc/systemd/system/xteve.service; disabled; preset: enabled)
+     Active: active (running) since Thu 2026-02-12 01:20:54 CST; 63ms ago
+ Invocation: f474d3cf17d94942a0d309ec7d5b9871
+   Main PID: 1297359 (xteve)
+      Tasks: 7 (limit: 9570)
+        CPU: 18ms
+     CGroup: /system.slice/xteve.service
+             └─1297359 /opt/xteve/xteve -config=/opt/appdata/xteve/config -port=34400
+
+Feb 12 01:20:54 sidscripi xteve[1297359]: 2026/02/12 01:20:54 [xTeVe] Version:                2.2.0 Build: 0200
+Feb 12 01:20:54 sidscripi xteve[1297359]: 2026/02/12 01:20:54 [xTeVe] Database Version:       2.1.0
+Feb 12 01:20:54 sidscripi xteve[1297359]: 2026/02/12 01:20:54 [xTeVe] System IP Addresses:    IPv4: 2 | IPv6: 3
+Feb 12 01:20:54 sidscripi xteve[1297359]: 2026/02/12 01:20:54 [xTeVe] Hostname:               sidscripi
+
+== restarting: xteve-b ==
+● xteve-b.service - xTeVe (B)
+     Loaded: loaded (/etc/systemd/system/xteve-b.service; enabled; preset: enabled)
+    Drop-In: /etc/systemd/system/xteve-b.service.d
+             └─override.conf
+     Active: active (running) since Thu 2026-02-12 01:20:55 CST; 36ms ago
+ Invocation: b3d479b2b14940d3ac037fd386ededd4
+    Process: 1297407 ExecStartPre=/bin/mkdir -p /var/tmp/xteve-b (code=exited, status=0/SUCCESS)
+    Process: 1297411 ExecStartPre=/bin/chown -R xteve:media /var/tmp/xteve-b (code=exited, status=0/SUCCESS)
+    Process: 1297414 ExecStartPre=/bin/chmod 0775 /var/tmp/xteve-b (code=exited, status=0/SUCCESS)
+    Process: 1297417 ExecStartPre=/bin/mkdir -p /var/tmp/xteve-b (code=exited, status=0/SUCCESS)
+    Process: 1297420 ExecStartPre=/bin/chown xteve:media /var/tmp/xteve-b (code=exited, status=0/SUCCESS)
+    Process: 1297423 ExecStartPre=/bin/chmod 0775 /var/tmp/xteve-b (code=exited, status=0/SUCCESS)
+   Main PID: 1297426 (xteve)
+      Tasks: 7 (limit: 9570)

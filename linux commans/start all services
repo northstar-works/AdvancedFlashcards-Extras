@@ -1,0 +1,28 @@
+
+SERVICES=(
+  sonarr-a sonarr-b sonarr
+  radarr-a radarr-b
+  prowlarr-a prowlarr-b
+  readarr-a readarr-b
+  readarr-audiobooks-a readarr-audiobooks-b
+  sabnzbdplus
+  deluged deluge-web
+  calibre-server
+  kiwix
+  advanced-flashcards
+  plexmediaserver
+  xteve xteve-b
+)
+
+for s in "${SERVICES[@]}"; do
+  if systemctl list-unit-files | awk '{print $1}' | grep -qx "${s}.service"; then
+    echo "== restarting: $s =="
+    sudo systemctl restart "$s"
+    sudo systemctl --no-pager -l status "$s" | sed -n '1,14p'
+    echo
+  else
+    echo "== missing unit: $s =="
+  fi
+done
+
+

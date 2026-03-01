@@ -1,0 +1,2 @@
+cd /opt/appdata/kiwix/data/zims
+aria2c -c -x 8 -s 8 "https://download.kiwix.org/zim/wikipedia/wikipedia_en_all_maxi_2025-08.zim"

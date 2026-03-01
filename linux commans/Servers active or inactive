@@ -1,0 +1,624 @@
+getent group media
+media:x:1001:sidscri,sonarr,plex,debian-deluged,radarr,prowlarr,readarr,sabnzbd,calibre,kiwix,advancedflashcards,xteve,readarr-audiobooks,advanced-flashcards,lidarr,mpd,navidrome
+
+sidscri@sidscripi:~ $ systemctl list-unit-files --type=service | egrep -i 'pi-dashboard|dashboard|prowlarr|sonarr|radarr|readarr|lidarr|deluge' | head -n 200
+deluge-web.service                           enabled         enabled
+deluged.service                              enabled         enabled
+lidarr-a.service                             disabled        enabled
+lidarr-b.service                             enabled         enabled
+lidarr.service                               masked          enabled
+pi-dashboard.service                         enabled         enabled
+prowlarr-a.service                           enabled         enabled
+prowlarr-b.service                           enabled         enabled
+radarr-a.service                             enabled         enabled
+radarr-b.service                             enabled         enabled
+readarr-a.service                            enabled         enabled
+readarr-audiobooks-a.service                 enabled         enabled
+readarr-audiobooks-b.service                 enabled         enabled
+readarr-b.service                            enabled         enabled
+sonarr-a.service                             enabled         enabled
+sonarr-b.service                             enabled         enabled
+sonarr.service                               disabled        enabled
+sidscri@sidscripi:~ $ systemctl list-units --type=service --all | egrep -i 'pi-dashboard|prowlarr|sonarr|radarr|readarr|lidarr|deluge' | head -n 200
+  deluge-web.service                                          loaded    active     running      Deluge Web UI
+  deluged.service                                             loaded    active     running      Deluge Daemon
+  lidarr-b.service                                            loaded    inactive   dead         Lidarr (B)
+  pi-dashboard.service                                        loaded    active     running      SidscriPi Dashboard
+  prowlarr-a.service                                          loaded    active     running      Prowlarr (A)
+  prowlarr-b.service                                          loaded    inactive   dead         Prowlarr (B)
+  radarr-a.service                                            loaded    inactive   dead         Radarr (A)
+  radarr-b.service                                            loaded    active     running      Radarr (B)
+  readarr-a.service                                           loaded    active     running      Readarr (A)
+  readarr-audiobooks-a.service                                loaded    active     running      Readarr Audiobooks (A)
+  readarr-audiobooks-b.service                                loaded    inactive   dead         Readarr Audiobooks (B)
+  readarr-b.service                                           loaded    inactive   dead         Readarr (B)
+  sonarr-a.service                                            loaded    inactive   dead         Sonarr (A)
+  sonarr-b.service                                            loaded    active     running      Sonarr (B)
+sidscri@sidscripi:~ $ systemctl list-unit-files --type=service | egrep -i 'prowlarr[-_](a|b)\.service|sonarr[-_](a|b)\.service|radarr[-_](a|b)\.service|readarr[-_](a|b)\.service|lidarr[-_](a|b)\.service'
+lidarr-a.service                             disabled        enabled
+lidarr-b.service                             enabled         enabled
+prowlarr-a.service                           enabled         enabled
+prowlarr-b.service                           enabled         enabled
+radarr-a.service                             enabled         enabled
+radarr-b.service                             enabled         enabled
+readarr-a.service                            enabled         enabled
+readarr-b.service                            enabled         enabled
+sonarr-a.service                             enabled         enabled
+sonarr-b.service                             enabled         enabled
+sidscri@sidscripi:~ $ cat /opt/pi-dashboard/settings.json
+{
+  "schema_version": 2,
+  "dashboard": {
+    "viewer_host": "auto",
+    "viewer_scheme": "http"
+  },
+  "services": {
+    "plexmediaserver": {
+      "display_name": "Plex",
+      "unit": "plexmediaserver",
+      "port": 32400,
+      "web_path": "/web",
+      "config_files": [
+        "/etc/RTIMULib.ini",
+        "/etc/adduser.conf",
+        "/etc/ca-certificates.conf",
+        "/etc/debconf.conf",
+        "/etc/deluser.conf",
+        "/etc/dhcpcd.conf",
+        "/etc/e2scrub.conf",
+        "/etc/fuse.conf"
+      ],
+      "data_paths": [
+        "/opt/appdata/plexmediaserver",
+        "/usr/lib/systemd/system",
+        "/bin",
+        "/etc",
+        "/usr/lib/plexmediaserver",
+        "/"
+      ]
+    },
+    "navidrome": {
+      "display_name": "Navidrome",
+      "unit": "navidrome",
+      "port": 4533,
+      "web_path": "",
+      "config_files": [
+        "/opt/appdata/navidrome/navidrome.toml"
+      ],
+      "data_paths": [
+        "/opt/appdata/navidrome"
+      ]
+    },
+    "kiwix": {
+      "display_name": "Kiwix",
+      "unit": "kiwix",
+      "port": 8090,
+      "web_path": "",
+      "config_files": [
+        "/etc/RTIMULib.ini",
+        "/etc/adduser.conf",
+        "/etc/ca-certificates.conf",
+        "/etc/debconf.conf",
+        "/etc/deluser.conf",
+        "/etc/dhcpcd.conf",
+        "/etc/e2scrub.conf",
+        "/etc/fuse.conf"
+      ],
+      "data_paths": [
+        "/opt/appdata/kiwix",
+        "/etc/systemd/system",
+        "/usr/bin",
+        "/opt/appdata/kiwix/data/zims",
+        "/"
+      ],
+      "kiwix_zim_dir": "/opt/appdata/kiwix/data/zims",
+      "kiwix_library_xml": "/opt/appdata/kiwix/data/library.xml"
+    },
+    "mpd": {
+      "display_name": "MPD Local",
+      "unit": "mpd",
+      "port": 6600,
+      "web_path": null,
+      "config_files": [
+        "/etc/mpd.conf"
+      ],
+      "data_paths": [
+        "/opt/appdata/mpd",
+        "/etc"
+      ]
+    },
+    "mpd-stream": {
+      "display_name": "MPD Stream",
+      "unit": "mpd-stream",
+      "port": 6601,
+      "web_path": null,
+      "config_files": [
+        "/etc/mpd-stream.conf"
+      ],
+      "data_paths": [
+        "/opt/appdata/mpd-stream",
+        "/etc"
+      ]
+    },
+    "ympd-local": {
+      "display_name": "ympd Local",
+      "unit": "ympd-local",
+      "port": 8586,
+      "web_path": "",
+      "config_files": [
+        "/etc/RTIMULib.ini",
+        "/etc/adduser.conf",
+        "/etc/ca-certificates.conf",
+        "/etc/debconf.conf",
+        "/etc/deluser.conf",
+        "/etc/dhcpcd.conf",
+        "/etc/e2scrub.conf",
+        "/etc/fuse.conf"
+      ],
+      "data_paths": [
+        "/opt/appdata/ympd-local",
+        "/etc/systemd/system",
+        "/usr/bin",
+        "/"
+      ]
+    },
+    "ympd-stream": {
+      "display_name": "ympd Stream",
+      "unit": "ympd-stream",
+      "port": 8587,
+      "web_path": "",
+      "config_files": [
+        "/etc/RTIMULib.ini",
+        "/etc/adduser.conf",
+        "/etc/ca-certificates.conf",
+        "/etc/debconf.conf",
+        "/etc/deluser.conf",
+        "/etc/dhcpcd.conf",
+        "/etc/e2scrub.conf",
+        "/etc/fuse.conf"
+      ],
+      "data_paths": [
+        "/opt/appdata/ympd-stream",
+        "/etc/systemd/system",
+        "/usr/bin",
+        "/"
+      ]
+    },
+    "sonarr-a": {
+      "display_name": "Sonarr A",
+      "unit": "sonarr-a",
+      "port": 8989,
+      "web_path": "",
+      "config_files": [
+        "/opt/appdata/sonarr-a/config/config.xml"
+      ],
+      "data_paths": [
+        "/opt/appdata/sonarr-a",
+        "/opt/appdata/sonarr-a/config"
+      ]
+    },
+    "sonarr-b": {
+      "display_name": "Sonarr B",
+      "unit": "sonarr-b",
+      "port": 8990,
+      "web_path": "",
+      "config_files": [
+        "/opt/appdata/sonarr-b/config/config.xml"
+      ],
+      "data_paths": [
+        "/opt/appdata/sonarr-b",
+        "/opt/appdata/sonarr-b/config"
+      ]
+    },
+    "radarr-a": {
+      "display_name": "Radarr A",
+      "unit": "radarr-a",
+      "port": 7878,
+      "web_path": "",
+      "config_files": [
+        "/opt/appdata/radarr-a/config/config.xml"
+      ],
+      "data_paths": [
+        "/opt/appdata/radarr-a",
+        "/opt/appdata/radarr-a/config"
+      ]
+    },
+    "radarr-b": {
+      "display_name": "Radarr B",
+      "unit": "radarr-b",
+      "port": 7878,
+      "web_path": "",
+      "config_files": [
+        "/opt/appdata/radarr-b/config/config.xml"
+      ],
+      "data_paths": [
+        "/opt/appdata/radarr-b",
+        "/opt/appdata/radarr-b/config"
+      ]
+    },
+    "lidarr-b": {
+      "display_name": "Lidarr B",
+      "unit": "lidarr-b",
+      "port": 8687,
+      "web_path": "",
+      "config_files": [
+        "/opt/appdata/lidarr-b/config/config.xml"
+      ],
+      "data_paths": [
+        "/opt/appdata/lidarr-b",
+        "/opt/appdata/lidarr-b/config"
+      ]
+    },
+    "readarr-a": {
+      "display_name": "Readarr A",
+      "unit": "readarr-a",
+      "port": 8787,
+      "web_path": "",
+      "config_files": [
+        "/opt/appdata/readarr-a/config/config.xml"
+      ],
+      "data_paths": [
+        "/opt/appdata/readarr-a",
+        "/opt/appdata/readarr-a/config"
+      ]
+    },
+    "readarr-b": {
+      "display_name": "Readarr B",
+      "unit": "readarr-b",
+      "port": 8788,
+      "web_path": "",
+      "config_files": [
+        "/opt/appdata/readarr-b/config/config.xml"
+      ],
+      "data_paths": [
+        "/opt/appdata/readarr-b",
+        "/opt/appdata/readarr-b/config"
+      ]
+    },
+    "readarr-audiobooks-a": {
+      "display_name": "Readarr Audiobooks A",
+      "unit": "readarr-audiobooks-a",
+      "port": 8789,
+      "web_path": "",
+      "config_files": [
+        "/opt/appdata/readarr-audiobooks-a/config/config.xml"
+      ],
+      "data_paths": [
+        "/opt/appdata/readarr-audiobooks-a",
+        "/opt/appdata/readarr-audiobooks-a/config"
+      ]
+    },
+    "readarr-audiobooks-b": {
+      "display_name": "Readarr Audiobooks B",
+      "unit": "readarr-audiobooks-b",
+      "port": 8790,
+      "web_path": "",
+      "config_files": [
+        "/opt/appdata/readarr-audiobooks-b/config/config.xml"
+      ],
+      "data_paths": [
+        "/opt/appdata/readarr-audiobooks-b",
+        "/opt/appdata/readarr-audiobooks-b/config"
+      ]
+    },
+    "prowlarr-a": {
+      "display_name": "Prowlarr A",
+      "unit": "prowlarr-a",
+      "port": 9696,
+      "web_path": "",
+      "config_files": [
+        "/opt/appdata/prowlarr-a/config/config.xml"
+      ],
+      "data_paths": [
+        "/opt/appdata/prowlarr-a",
+        "/opt/appdata/prowlarr-a/config"
+      ]
+    },
+    "prowlarr-b": {
+      "display_name": "Prowlarr B",
+      "unit": "prowlarr-b",
+      "port": 9697,
+      "web_path": "",
+      "config_files": [
+        "/opt/appdata/prowlarr-b/config/config.xml"
+      ],
+      "data_paths": [
+        "/opt/appdata/prowlarr-b",
+        "/opt/appdata/prowlarr-b/config"
+      ]
+    },
+    "deluged": {
+      "display_name": "Deluge Daemon",
+      "unit": "deluged",
+      "port": 58846,
+      "web_path": null,
+      "config_files": [
+        "/etc/RTIMULib.ini",
+        "/etc/adduser.conf",
+        "/etc/ca-certificates.conf",
+        "/etc/debconf.conf",
+        "/etc/deluser.conf",
+        "/etc/dhcpcd.conf",
+        "/etc/e2scrub.conf",
+        "/etc/fuse.conf"
+      ],
+      "data_paths": [
+        "/opt/appdata/deluged",
+        "/etc/systemd/system",
+        "/usr/bin",
+        "/opt/appdata/deluge/config",
+        "/"
+      ]
+    },
+    "deluge-web": {
+      "display_name": "Deluge Web",
+      "unit": "deluge-web",
+      "port": 8112,
+      "web_path": "",
+      "config_files": [
+        "/etc/RTIMULib.ini",
+        "/etc/adduser.conf",
+        "/etc/ca-certificates.conf",
+        "/etc/debconf.conf",
+        "/etc/deluser.conf",
+        "/etc/dhcpcd.conf",
+        "/etc/e2scrub.conf",
+        "/etc/fuse.conf"
+      ],
+      "data_paths": [
+        "/opt/appdata/deluge-web",
+        "/etc/systemd/system",
+        "/usr/bin",
+        "/opt/appdata/deluge/config",
+        "/"
+      ]
+    },
+    "sabnzbd": {
+      "display_name": "SABnzbd",
+      "unit": "sabnzbd",
+      "port": 8095,
+      "web_path": "",
+      "config_files": [
+        "/etc/RTIMULib.ini",
+        "/etc/adduser.conf",
+        "/etc/ca-certificates.conf",
+        "/etc/debconf.conf",
+        "/etc/deluser.conf",
+        "/etc/dhcpcd.conf",
+        "/etc/e2scrub.conf",
+        "/etc/fuse.conf"
+      ],
+      "data_paths": [
+        "/opt/appdata/sabnzbd",
+        "/etc/systemd/system",
+        "/usr/bin",
+        "/opt/appdata/sabnzbd/config",
+        "/"
+      ]
+    },
+    "xteve-a": {
+      "display_name": "xTeVe A",
+      "unit": "xteve-a",
+      "port": 34400,
+      "web_path": "/web",
+      "config_files": [
+        "/etc/RTIMULib.ini",
+        "/etc/adduser.conf",
+        "/etc/ca-certificates.conf",
+        "/etc/debconf.conf",
+        "/etc/deluser.conf",
+        "/etc/dhcpcd.conf",
+        "/etc/e2scrub.conf",
+        "/etc/fuse.conf"
+      ],
+      "data_paths": [
+        "/opt/appdata/xteve-a",
+        "/etc/systemd/system",
+        "/opt/xteve",
+        "/opt/appdata/xteve-a/config",
+        "/"
+      ]
+    },
+    "xteve-b": {
+      "display_name": "xTeVe B",
+      "unit": "xteve-b",
+      "port": 34401,
+      "web_path": "/web",
+      "config_files": [
+        "/etc/RTIMULib.ini",
+        "/etc/adduser.conf",
+        "/etc/ca-certificates.conf",
+        "/etc/debconf.conf",
+        "/etc/deluser.conf",
+        "/etc/dhcpcd.conf",
+        "/etc/e2scrub.conf",
+        "/etc/fuse.conf"
+      ],
+      "data_paths": [
+        "/opt/appdata/xteve-b",
+        "/etc/systemd/system",
+        "/opt/xteve",
+        "/opt/appdata/xteve-b/config",
+        "/"
+      ]
+    },
+    "homeassistant": {
+      "display_name": "Home Assistant",
+      "unit": "homeassistant",
+      "port": 8123,
+      "web_path": "",
+      "config_files": [
+        "/opt/appdata/homeassistant/config/configuration.yaml"
+      ],
+      "data_paths": [
+        "/opt/appdata/homeassistant",
+        "/opt/appdata/homeassistant/config"
+      ]
+    },
+    "advanced-flashcards": {
+      "display_name": "Adv. Flashcards",
+      "unit": "advanced-flashcards",
+      "port": 8009,
+      "web_path": "",
+      "config_files": [
+        "/etc/RTIMULib.ini",
+        "/etc/adduser.conf",
+        "/etc/ca-certificates.conf",
+        "/etc/debconf.conf",
+        "/etc/deluser.conf",
+        "/etc/dhcpcd.conf",
+        "/etc/e2scrub.conf",
+        "/etc/fuse.conf"
+      ],
+      "data_paths": [
+        "/opt/appdata/advanced-flashcards",
+        "/etc/systemd/system",
+        "/opt/advanced-flashcards/app",
+        "/opt/advanced-flashcards/.venv/bin",
+        "/"
+      ]
+    },
+    "ssh": {
+      "display_name": "SSH",
+      "unit": "ssh",
+      "port": 22,
+      "web_path": null,
+      "config_files": [
+        "/etc/ssh/sshd_config"
+      ],
+      "data_paths": [
+        "/opt/appdata/ssh",
+        "/etc/ssh"
+      ]
+    },
+    "smbd": {
+      "display_name": "Samba",
+      "unit": "smbd",
+      "port": 445,
+      "web_path": null,
+      "config_files": [
+        "/etc/samba/smb.conf"
+      ],
+      "data_paths": [
+        "/opt/appdata/smbd",
+        "/etc/samba"
+      ]
+    },
+    "xrdp": {
+      "display_name": "xRDP",
+      "unit": "xrdp",
+      "port": 3389,
+      "web_path": null,
+      "config_files": [
+        "/etc/xrdp/xrdp.ini"
+      ],
+      "data_paths": [
+        "/opt/appdata/xrdp",
+        "/etc/xrdp"
+      ]
+    },
+    "cups": {
+      "display_name": "CUPS",
+      "unit": "cups",
+      "port": 631,
+      "web_path": "",
+      "config_files": [
+        "/etc/RTIMULib.ini",
+        "/etc/adduser.conf",
+        "/etc/ca-certificates.conf",
+        "/etc/cups/cups-browsed.conf",
+        "/etc/cups/cups-files.conf",
+        "/etc/cups/cupsd.conf",
+        "/etc/cups/printers.conf",
+        "/etc/cups/snmp.conf"
+      ],
+      "data_paths": [
+        "/opt/appdata/cups",
+        "/usr/lib/systemd/system",
+        "/usr/sbin",
+        "/"
+      ]
+    },
+    "bluetooth": {
+      "display_name": "Bluetooth",
+      "unit": "bluetooth",
+      "port": null,
+      "web_path": null,
+      "config_files": [
+        "/etc/bluetooth/main.conf"
+      ],
+      "data_paths": [
+        "/opt/appdata/bluetooth",
+        "/etc/bluetooth"
+      ]
+    },
+    "pi-dashboard": {
+      "display_name": "Pi Dashboard",
+      "unit": "pi-dashboard",
+      "port": 8029,
+      "web_path": "",
+      "config_files": [
+        "/opt/pi-dashboard/server.py"
+      ],
+      "data_paths": [
+        "/opt/appdata/pi-dashboard",
+        "/opt/pi-dashboard"
+      ]
+    }
+  },
+  "auto_detect": {
+    "enabled": true,
+    "write_back_missing": true
+  }
+}sidscri@sidscripi:~ $sudo cp -a /opt/pi-dashboard/settings.json /opt/pi-dashboard/settings.json.bak.$(date +%F_%H%M%S))
+
+sudo python3 - <<'PY'
+import json
+p="/opt/pi-dashboard/settings.json"
+d=json.load(open(p))
+dash=d.setdefault("dashboard",{})
+dash["hide_stopped_services"]=False
+dash["hidden_units"]=[]
+json.dump(d, open(p,"w"), indent=2)
+print("OK: hide_stopped_services=False and hidden_units cleared")
+PY
+
+sudo systemctl restart pi-dashboard
+OK: hide_stopped_services=False and hidden_units cleared
+sidscri@sidscripi:~ $ systemctl status pi-dashboard --no-pager -l
+● pi-dashboard.service - SidscriPi Dashboard
+     Loaded: loaded (/etc/systemd/system/pi-dashboard.service; enabled; preset: enabled)
+     Active: active (running) since Wed 2026-02-18 19:02:39 CST; 19s ago
+ Invocation: fc18488a9b52402b92f1d52df58882bc
+   Main PID: 2224677 (python3)
+      Tasks: 1 (limit: 9570)
+        CPU: 1.948s
+     CGroup: /system.slice/pi-dashboard.service
+             └─2224677 /usr/bin/python3 /opt/pi-dashboard/server.py
+
+Feb 18 19:02:39 sidscripi systemd[1]: Started pi-dashboard.service - SidscriPi Dashboard.
+sidscri@sidscripi:~ $ python3 - <<'PY'
+import subprocess
+print(subprocess.check_output(["systemctl","list-units","--type=service","--all","--no-legend"], text=True).splitlines()[:20])
+PY
+['  accounts-daemon.service                                     loaded    active     running      Accounts Service', '  advanced-flashcards.service                                 loaded    active     running      Advanced Flashcards WebServer (RPi)', '  alsa-restore.service                                        loaded    active     exited       Save/Restore Sound Card State', '  alsa-state.service                                          loaded    inactive   dead         Manage Sound Card State (restore and store)', '  apparmor.service                                            loaded    inactive   dead         Load AppArmor profiles', '  apt-daily-upgrade.service                                   loaded    inactive   dead         Daily apt upgrade and clean activities', '  apt-daily.service                                           loaded    inactive   dead         Daily apt download activities', '● auditd.service                                              not-found inactive   dead         auditd.service', '  auth-rpcgss-module.service                                  loaded    inactive   dead         Kernel Module supporting RPCSEC_GSS', '  avahi-daemon.service                                        loaded    active     running      Avahi mDNS/DNS-SD Stack', '  bluetooth.service                                           loaded    active     running      Bluetooth service', '● calibre-server.service                                      loaded    activating auto-restart Calibre Content Server', '● chronyd.service                                             not-found inactive   dead         chronyd.service', '  cloud-config.service                                        loaded    active     exited       Cloud-init: Config Stage', '  cloud-final.service                                         loaded    active     exited       Cloud-init: Final Stage', '  cloud-init-hotplugd.service                                 loaded    inactive   dead         Cloud-init: Hotplug Hook', '  cloud-init-local.service                                    loaded    active     exited       Cloud-init: Local Stage (pre-network)', '  cloud-init-main.service                                     loaded    inactive   dead         Cloud-init: Single Process', '  cloud-init-network.service                                  loaded    active     exited       Cloud-init: Network Stage', '  colord.service                                              loaded    active     running      Manage, Install and Generate Color Profiles']
+sidscri@sidscripi:~ $ systemctl list-unit-files --type=service | egrep -i 'pi-dashboard|prowlarr|sonarr|radarr|readarr|lidarr|deluge'
+deluge-web.service                           enabled         enabled
+deluged.service                              enabled         enabled
+lidarr-a.service                             disabled        enabled
+lidarr-b.service                             enabled         enabled
+lidarr.service                               masked          enabled
+pi-dashboard.service                         enabled         enabled
+prowlarr-a.service                           enabled         enabled
+prowlarr-b.service                           enabled         enabled
+radarr-a.service                             enabled         enabled
+radarr-b.service                             enabled         enabled
+readarr-a.service                            enabled         enabled
+readarr-audiobooks-a.service                 enabled         enabled
+readarr-audiobooks-b.service                 enabled         enabled
+readarr-b.service                            enabled         enabled
+sonarr-a.service                             enabled         enabled
+sonarr-b.service                             enabled         enabled
+sonarr.service                               disabled        enabled
+sidscri@sidscripi:~ $ 
+

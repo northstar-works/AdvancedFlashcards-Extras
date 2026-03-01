@@ -1,0 +1,316 @@
+sidscri@sidscripi:~ $ sudo mkdir -p /opt/appdata/_OLD
+sudo chmod 2775 /opt/appdata/_OLD
+sidscri@sidscripi:~ $ systemctl list-unit-files --type=service | egrep -i 'lidarr|radarr|sonarr|prowlarr|readarr|bazarr|sab' || true
+
+for s in lidarr lidarr-a lidarr-b radarr radarr-a radarr-b sonarr sonarr-a sonarr-b prowlarr readarr readarr-a readarr-b bazarr sabnzbd sabnzbdplus; do
+  if systemctl cat "$s" >/dev/null 2>&1; then
+    echo "===== $s ====="
+    systemctl cat "$s" | sed -n '1,160p' | egrep -i 'ExecStart=|User=|Group=|WorkingDirectory=|Environment=|ReadWritePaths=|ReadOnlyPaths=' || true
+    echo
+  fi
+done
+console-getty.service                        disabled        disabled
+debug-shell.service                          disabled        disabled
+fio.service                                  disabled        enabled
+lidarr-a.service                             enabled         enabled
+lidarr-b.service                             enabled         enabled
+lidarr.service                               alias           -
+nftables.service                             disabled        enabled
+ppp@.service                                 disabled        enabled
+prowlarr-a.service                           enabled         enabled
+prowlarr-b.service                           enabled         enabled
+radarr-a.service                             enabled         enabled
+radarr-b.service                             enabled         enabled
+readarr-a.service                            enabled         enabled
+readarr-audiobooks-a.service                 enabled         enabled
+readarr-audiobooks-b.service                 enabled         enabled
+readarr-b.service                            enabled         enabled
+rpi-resize.service                           disabled        enabled
+rpi-usb-gadget-ics.service                   disabled        enabled
+rsync.service                                disabled        enabled
+sabnzbd.service                              enabled         enabled
+sabnzbdplus.service                          enabled         enabled
+sabnzbdplus@.service                         static          -
+sonarr-a.service                             enabled         enabled
+sonarr-b.service                             enabled         enabled
+sonarr.service                               enabled         enabled
+systemd-boot-check-no-failures.service       disabled        disabled
+systemd-confext.service                      disabled        enabled
+systemd-network-generator.service            disabled        enabled
+systemd-networkd-wait-online.service         disabled        enabled
+systemd-networkd-wait-online@.service        disabled        enabled
+systemd-networkd.service                     disabled        enabled
+systemd-pcrlock-file-system.service          disabled        enabled
+systemd-pcrlock-firmware-code.service        disabled        enabled
+systemd-pcrlock-firmware-config.service      disabled        enabled
+systemd-pcrlock-machine-id.service           disabled        enabled
+systemd-pcrlock-make-policy.service          disabled        enabled
+systemd-pcrlock-secureboot-authority.service disabled        enabled
+systemd-pcrlock-secureboot-policy.service    disabled        enabled
+systemd-sysext.service                       disabled        enabled
+systemd-time-wait-sync.service               disabled        disabled
+systemd-udev-load-credentials.service        disabled        enabled
+upower.service                               disabled        enabled
+vncserver-virtuald.service                   disabled        enabled
+vncserver-x11-serviced.service               disabled        enabled
+wayvnc.service                               disabled        enabled
+wpa_supplicant-nl80211@.service              disabled        enabled
+wpa_supplicant-wired@.service                disabled        enabled
+wpa_supplicant@.service                      disabled        enabled
+xteve.service                                disabled        enabled
+===== lidarr =====
+User=lidarr
+Group=media
+ExecStart=/opt/Lidarr/Lidarr -nobrowser -data=/opt/appdata/lidarr-a
+User=lidarr
+Group=media
+
+===== lidarr-a =====
+User=lidarr
+Group=media
+ExecStart=/opt/Lidarr/Lidarr -nobrowser -data=/opt/appdata/lidarr-a
+User=lidarr
+Group=media
+
+===== lidarr-b =====
+User=lidarr
+Group=media
+ExecStart=/opt/Lidarr/Lidarr -nobrowser -data=/opt/appdata/lidarr-b/config
+
+===== radarr-a =====
+User=sidscri
+Group=media
+ExecStart=/opt/Radarr/Radarr -nobrowser -data=/opt/appdata/radarr-a/config
+User=radarr
+Group=media
+
+===== radarr-b =====
+User=sidscri
+Group=media
+ExecStart=/opt/Radarr/Radarr -nobrowser -data=/opt/appdata/radarr-b/config
+User=radarr
+Group=media
+
+===== sonarr =====
+User=sonarr
+Group=media
+ExecStart=/opt/Sonarr/Sonarr -nobrowser -data=/var/lib/sonarr/
+
+===== sonarr-a =====
+User=sidscri
+Group=media
+ExecStart=/opt/Sonarr/Sonarr -nobrowser -data=/opt/appdata/sonarr-a/config
+
+===== sonarr-b =====
+User=sidscri
+Group=media
+ExecStart=/opt/Sonarr/Sonarr -nobrowser -data=/opt/appdata/sonarr-b/config
+User=sonarr
+Group=media
+
+===== readarr-a =====
+User=readarr
+Group=media
+ExecStart=/opt/Readarr/Readarr/Readarr -nobrowser -port=8787 -data=/opt/appdata/readarr-a/config
+WorkingDirectory=/opt/Readarr/Readarr
+ExecStart=
+ExecStart=/opt/Readarr/Readarr/Readarr -nobrowser -port=8787 -data=/opt/appdata/readarr-a/config
+WorkingDirectory=/opt/Readarr/Readarr
+
+===== readarr-b =====
+User=readarr
+Group=media
+ExecStart=/opt/Readarr/Readarr/Readarr -nobrowser -port=8788 -data=/opt/appdata/readarr-b/config
+WorkingDirectory=/opt/Readarr/Readarr
+ExecStart=
+ExecStart=/opt/Readarr/Readarr/Readarr -nobrowser -port=8788 -data=/opt/appdata/readarr-b/config
+WorkingDirectory=/opt/Readarr/Readarr
+
+===== sabnzbd =====
+User=sabnzbd
+Group=media
+ExecStart=/usr/bin/sabnzbdplus -f /opt/appdata/sabnzbd/config/sabnzbd.ini -s 0.0.0.0:8080 -b 0
+ExecStart=
+ExecStart=/usr/bin/sabnzbdplus -f /opt/appdata/sabnzbd/config/sabnzbd.ini -s 0.0.0.0:8095 -b 0
+
+===== sabnzbdplus =====
+Environment=USER= CONFIG= HOST= PORT= EXTRAOPTS=
+ExecStart=/bin/sh -c 'echo "Starting SABnzbd+ for user ${USER%:*}"; systemctl start sabnzbdplus@${USER%:*}.service'
+User=sabnzbd
+Group=media
+
+sidscri@sidscripi:~ $ ps -ef | egrep -i 'Lidarr|Radarr|Sonarr|Prowlarr|Readarr|Bazarr|SABnzbd' | grep -v egrep || true
+sonarr      1242       1  0 Feb12 ?        00:00:20 /opt/Sonarr/Sonarr -nobrowser -data=/var/lib/sonarr/
+prowlarr    1334       1  0 Feb12 ?        00:00:30 /opt/Prowlarr/Prowlarr -nobrowser -data=/opt/appdata/prowlarr-a/config
+prowlarr    1335       1  0 Feb12 ?        00:00:21 /opt/Prowlarr/Prowlarr -nobrowser -data=/opt/appdata/prowlarr-b/config
+radarr      1336       1  0 Feb12 ?        00:00:26 /opt/Radarr/Radarr -nobrowser -data=/opt/appdata/radarr-a/config
+radarr      1339       1  0 Feb12 ?        00:00:24 /opt/Radarr/Radarr -nobrowser -data=/opt/appdata/radarr-b/config
+readarr     1341       1  0 Feb12 ?        00:00:18 /opt/Readarr/Readarr/Readarr -nobrowser -port=8787 -data=/opt/appdata/readarr-a/config
+readarr+    1342       1  0 Feb12 ?        00:00:18 /opt/Readarr/Readarr/Readarr -nobrowser -port=8789 -data=/opt/appdata/readarr-audiobooks-a/config
+readarr+    1343       1  0 Feb12 ?        00:00:20 /opt/Readarr/Readarr/Readarr -nobrowser -port=8790 -data=/opt/appdata/readarr-audiobooks-b/config
+readarr     1344       1  0 Feb12 ?        00:00:18 /opt/Readarr/Readarr/Readarr -nobrowser -port=8788 -data=/opt/appdata/readarr-b/config
+sabnzbd     1348       1  0 Feb12 ?        00:00:24 /usr/bin/python3 -OO /usr/bin/sabnzbdplus -f /opt/appdata/sabnzbd/config/sabnzbd.ini -s 0.0.0.0:8095 -b 0
+sonarr      1361       1  0 Feb12 ?        00:00:44 /opt/Sonarr/Sonarr -nobrowser -data=/opt/appdata/sonarr-b/config
+lidarr    102019       1  3 00:05 ?        00:00:12 /opt/Lidarr/Lidarr -nobrowser -data=/opt/appdata/lidarr-b/config
+sidscri   103636  101589  0 00:11 pts/0    00:00:00 grep -E --color=auto -i Lidarr|Radarr|Sonarr|Prowlarr|Readarr|Bazarr|SABnzbd
+sidscri@sidscripi:~ $ 
+
+sidscri@sidscripi:~ $ sudo find /opt/appdata -mindepth 1 -maxdepth 2 -type d -printf '%p\n' | sort
+/opt/appdata/calibre
+/opt/appdata/calibre/config
+/opt/appdata/calibre/data
+/opt/appdata/deluge
+/opt/appdata/deluge/archive
+/opt/appdata/deluge/config
+/opt/appdata/deluge/gtk3ui_state
+/opt/appdata/deluge/icons
+/opt/appdata/deluge/ipc
+/opt/appdata/delugenew
+/opt/appdata/delugenew/config
+/opt/appdata/delugenew/data
+/opt/appdata/deluge/plugins
+/opt/appdata/deluge/state
+/opt/appdata/kiwix
+/opt/appdata/kiwix/config
+/opt/appdata/kiwix/data
+/opt/appdata/lidarr-a
+/opt/appdata/lidarr-a/asp
+/opt/appdata/lidarr-a/config
+/opt/appdata/lidarr-a/data
+/opt/appdata/lidarr-a/logs
+/opt/appdata/lidarr-a/Sentry
+/opt/appdata/lidarr-b
+/opt/appdata/lidarr-b/config
+/opt/appdata/lidarr-b/data
+/opt/appdata/lidarr-b/logs
+/opt/appdata/lidarr-b/Sentry
+/opt/appdata/_OLD
+/opt/appdata/prowlarr-a
+/opt/appdata/prowlarr-a/config
+/opt/appdata/prowlarr-a/data
+/opt/appdata/prowlarr-b
+/opt/appdata/prowlarr-b/config
+/opt/appdata/prowlarr-b/data
+/opt/appdata/radarr-a
+/opt/appdata/radarr-a/config
+/opt/appdata/radarr-a/data
+/opt/appdata/radarr-b
+/opt/appdata/radarr-b/config
+/opt/appdata/radarr-b/data
+/opt/appdata/readarr-a
+/opt/appdata/readarr-a/config
+/opt/appdata/readarr-a/data
+/opt/appdata/readarr-audiobooks-a
+/opt/appdata/readarr-audiobooks-a/config
+/opt/appdata/readarr-audiobooks-b
+/opt/appdata/readarr-audiobooks-b/config
+/opt/appdata/readarr-b
+/opt/appdata/readarr-b/config
+/opt/appdata/readarr-b/data
+/opt/appdata/sabnzbd
+/opt/appdata/sabnzbd/config
+/opt/appdata/sabnzbd/data
+/opt/appdata/sonarr-a
+/opt/appdata/sonarr-a/config
+/opt/appdata/sonarr-a/data
+/opt/appdata/sonarr-b
+/opt/appdata/sonarr-b/config
+/opt/appdata/sonarr-b/data
+/opt/appdata/xteve
+/opt/appdata/xteve-a
+/opt/appdata/xteve-a/config
+/opt/appdata/xteve-b
+/opt/appdata/xteve-b/config
+/opt/appdata/xteve/config
+/opt/appdata/xteve/data
+sidscri@sidscripi:~ $ 
+
+
+
+sidscri@sidscripi:~ $ ps -ef | egrep -i 'calibre|deluge|kiwix|xteve' | grep -v egrep || true
+debian-+    1323       1  0 Feb12 ?        00:00:25 /usr/bin/python3 /usr/bin/deluged -d -c /opt/appdata/deluge/config
+debian-+    1325       1  0 Feb12 ?        00:00:03 deluge-web
+kiwix       1326       1  0 Feb12 ?        00:00:00 /usr/bin/kiwix-serve -v -p 8090 /opt/appdata/kiwix/data/zims/freecodecamp_en_coding-interview-prep_2025-11.zim
+xteve       1464       1  0 Feb12 ?        00:00:01 /opt/xteve/xteve -config=/opt/appdata/xteve-b/config -port=34401
+xteve       1465       1  0 Feb12 ?        00:00:01 /opt/xteve/xteve -config=/opt/appdata/xteve-a/config -port=34400
+sidscri   105096  104387  0 00:17 pts/0    00:00:00 grep -E --color=auto -i calibre|deluge|kiwix|xteve
+sidscri@sidscripi:~ $ ts=$(date +%F_%H%M)
+
+for d in calibre deluge delugenew kiwix xteve xteve-a xteve-b; do
+  if [ -d "/opt/appdata/$d" ]; then
+    echo "Moving /opt/appdata/$d -> /opt/appdata/_OLD/${d}.${ts}"
+    sudo mv "/opt/appdata/$d" "/opt/appdata/_OLD/${d}.${ts}"
+  fi
+done
+Moving /opt/appdata/calibre -> /opt/appdata/_OLD/calibre.2026-02-13_0017
+Moving /opt/appdata/deluge -> /opt/appdata/_OLD/deluge.2026-02-13_0017
+Moving /opt/appdata/delugenew -> /opt/appdata/_OLD/delugenew.2026-02-13_0017
+Moving /opt/appdata/kiwix -> /opt/appdata/_OLD/kiwix.2026-02-13_0017
+Moving /opt/appdata/xteve -> /opt/appdata/_OLD/xteve.2026-02-13_0017
+Moving /opt/appdata/xteve-a -> /opt/appdata/_OLD/xteve-a.2026-02-13_0017
+Moving /opt/appdata/xteve-b -> /opt/appdata/_OLD/xteve-b.2026-02-13_0017
+sidscri@sidscripi:~ $ sudo systemctl restart lidarr-b prowlarr-a prowlarr-b radarr-a radarr-b readarr-a readarr-b readarr-audiobooks-a readarr-audiobooks-b sabnzbd sonarr-b 2>/dev/null || true
+sudo systemctl restart sonarr 2>/dev/null || true
+sidscri@sidscripi:~ $ systemctl status sonarr sonarr-a sonarr-b --no-pager
+sudo ss -ltnp | egrep ':8989|:18989|:18686|:8686|:8787|:8788|:8789|:8790|:9696|:8095' || true
+● sonarr.service - Sonarr Daemon
+     Loaded: loaded (/etc/systemd/system/sonarr.service; enabled; preset: enabled)
+     Active: active (running) since Fri 2026-02-13 00:18:14 CST; 39s ago
+ Invocation: dc034c77f1b347898d93243c3021e260
+   Main PID: 105452 (Sonarr)
+      Tasks: 20 (limit: 9570)
+        CPU: 9.135s
+     CGroup: /system.slice/sonarr.service
+             └─105452 /opt/Sonarr/Sonarr -nobrowser -data=/var/lib/sonarr/
+
+Feb 13 00:18:26 sidscripi Sonarr[105452]: [Info] DatabaseEngineVersionCheck…46.1
+Feb 13 00:18:26 sidscripi Sonarr[105452]: [Info] FluentMigrator.Runner.Migr…981s
+Feb 13 00:18:26 sidscripi Sonarr[105452]: SQLite notice (283): recovered 6 …-wal
+Feb 13 00:18:26 sidscripi Sonarr[105452]: [Info] FluentMigrator.Runner.Migr…ated
+Feb 13 00:18:26 sidscripi Sonarr[105452]: [Info] FluentMigrator.Runner.Migr…168s
+Feb 13 00:18:29 sidscripi Sonarr[105452]: [Info] Microsoft.Hosting.Lifetime…8989
+Feb 13 00:18:32 sidscripi Sonarr[105452]: [Info] Microsoft.Hosting.Lifetime…own.
+Feb 13 00:18:32 sidscripi Sonarr[105452]: [Info] Microsoft.Hosting.Lifetime…tion
+Feb 13 00:18:32 sidscripi Sonarr[105452]: [Info] Microsoft.Hosting.Lifetime…h: /
+Feb 13 00:18:32 sidscripi Sonarr[105452]: [Info] ManagedHttpDispatcher: IPv…bled
+
+● sonarr-a.service - Sonarr (A)
+     Loaded: loaded (/etc/systemd/system/sonarr-a.service; enabled; preset: enabled)
+     Active: activating (auto-restart) (Result: exit-code) since Fri 2026-02-13 00:18:52 CST; 1s ago
+ Invocation: 0782992b09a14563a324827b44610d26
+    Process: 105763 ExecStart=/opt/Sonarr/Sonarr -nobrowser -data=/opt/appdata/sonarr-a/config (code=exited, status=2)
+   Main PID: 105763 (code=exited, status=2)
+        CPU: 2.196s
+
+● sonarr-b.service - Sonarr (B)
+     Loaded: loaded (/etc/systemd/system/sonarr-b.service; enabled; preset: enabled)
+    Drop-In: /etc/systemd/system/sonarr-b.service.d
+             └─override.conf
+     Active: active (running) since Fri 2026-02-13 00:18:12 CST; 40s ago
+ Invocation: ea4d37d1ca144b40973506a06c240e93
+   Main PID: 105327 (Sonarr)
+      Tasks: 22 (limit: 9570)
+        CPU: 10.071s
+     CGroup: /system.slice/sonarr-b.service
+             └─105327 /opt/Sonarr/Sonarr -nobrowser -data=/opt/appdata/sonarr-b…
+
+Feb 13 00:18:22 sidscripi Sonarr[105327]: SQLite notice (283): recovered 6 …-wal
+Feb 13 00:18:22 sidscripi Sonarr[105327]: [Info] DatabaseEngineVersionCheck…46.1
+Feb 13 00:18:22 sidscripi Sonarr[105327]: [Info] FluentMigrator.Runner.Migr…025s
+Feb 13 00:18:22 sidscripi Sonarr[105327]: [Info] FluentMigrator.Runner.Migr…ated
+Feb 13 00:18:22 sidscripi Sonarr[105327]: [Info] FluentMigrator.Runner.Migr…144s
+Feb 13 00:18:27 sidscripi Sonarr[105327]: [Info] Microsoft.Hosting.Lifetime…8990
+Feb 13 00:18:31 sidscripi Sonarr[105327]: [Info] Microsoft.Hosting.Lifetime…own.
+Feb 13 00:18:31 sidscripi Sonarr[105327]: [Info] Microsoft.Hosting.Lifetime…tion
+Feb 13 00:18:31 sidscripi Sonarr[105327]: [Info] Microsoft.Hosting.Lifetime…h: /
+Feb 13 00:18:31 sidscripi Sonarr[105327]: [Info] ManagedHttpDispatcher: IPv…bled
+Hint: Some lines were ellipsized, use -l to show in full.
+LISTEN 0      5                 0.0.0.0:8095       0.0.0.0:*    users:(("sabnzbdplus",pid=105359,fd=7))                  
+LISTEN 0      512                     *:18686            *:*    users:(("Lidarr",pid=105320,fd=351))                     
+LISTEN 0      512                     *:8989             *:*    users:(("Sonarr",pid=105452,fd=246))                     
+LISTEN 0      512                     *:8787             *:*    users:(("Readarr",pid=105338,fd=233))                    
+LISTEN 0      512                     *:8789             *:*    users:(("Readarr",pid=105339,fd=225))                    
+LISTEN 0      512                     *:8788             *:*    users:(("Readarr",pid=105326,fd=219))                    
+LISTEN 0      512                     *:8790             *:*    users:(("Readarr",pid=105324,fd=236))                    
+LISTEN 0      512                     *:9696             *:*    users:(("Prowlarr",pid=105300,fd=338))                   
+sidscri@sidscripi:~ 

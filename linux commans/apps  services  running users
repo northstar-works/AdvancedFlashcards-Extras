@@ -1,0 +1,175 @@
+sidscri@sidscripi:~ $ getent group media                                        # example output: media:x:1000:plex,sidscri
+# then use gid=1000
+media:x:1001:sidscri,sonarr,plex
+sidscri@sidscripi:~ $ ^C
+sidscri@sidscripi:~ $ for u in sonarr_a sonarr_b radarr_a radarr_b lidarr_a lidarr_b readarr_a readarr_b readarr-audiobooks_a readarr-audiobooks_b xteve_a xteve_b prowlarr tautulli deluge sabnzbd calibre kiwix-server advanced-flashcards; do 
+  if id "$u" >/dev/null 2>&1; then
+    echo "OK user exists: $u"
+  else
+    echo "MISSING user:  $u"
+  fi
+done
+MISSING user:  sonarr_a
+MISSING user:  sonarr_b
+MISSING user:  radarr_a
+MISSING user:  radarr_b
+MISSING user:  lidarr_a
+MISSING user:  lidarr_b
+MISSING user:  readarr_a
+MISSING user:  readarr_b
+MISSING user:  readarr-audiobooks_a
+MISSING user:  readarr-audiobooks_b
+MISSING user:  xteve_a
+MISSING user:  xteve_b
+MISSING user:  prowlarr
+MISSING user:  tautulli
+MISSING user:  deluge
+MISSING user:  sabnzbd
+MISSING user:  calibre
+MISSING user:  kiwix-server
+MISSING user:  advanced-flashcards
+sidscri@sidscripi:~ $ systemctl list-unit-files --type=service | egrep -i 'sonarr|radarr|lidarr|readarr|prowlarr|tautulli|deluge|sabnzbd|calibre|kiwix|plex|flash'
+advanced-flashcards.service                  enabled         enabled
+calibre-server.service                       enabled         enabled
+deluge-web.service                           enabled         enabled
+deluged.service                              enabled         enabled
+kiwix.service                                enabled         enabled
+plexmediaserver.service                      enabled         enabled
+prowlarr-a.service                           enabled         enabled
+prowlarr-b.service                           enabled         enabled
+radarr-a.service                             enabled         enabled
+radarr-b.service                             enabled         enabled
+readarr-a.service                            enabled         enabled
+readarr-b.service                            enabled         enabled
+sabnzbd.service                              enabled         enabled
+sabnzbdplus.service                          enabled         enabled
+sabnzbdplus@.service                         static          -
+snap.sonarr.sonarr.service                   enabled         enabled
+sonarr-a.service                             enabled         enabled
+sonarr-b.service                             enabled         enabled
+sonarr.service                               enabled         enabled
+sidscri@sidscripi:~ $ ps -eo user:20,group:20,cmd --sort=user | egrep -i 'sonarr|radarr|lidarr|readarr|prowlarr|tautulli|deluge|sabnzbd|calibre|kiwix|plex|flash' | head -n 80
+debian-deluged       debian-deluged       /usr/bin/python3 /usr/bin/deluged -d -c /var/lib/deluged/config -l /var/log/deluged/daemon.log -L info
+debian-deluged       debian-deluged       deluge-web
+plex                 plex                 /usr/lib/plexmediaserver/Plex Media Server
+plex                 plex                 Plex Plug-in [com.plexapp.system] /usr/lib/plexmediaserver/Resources/Plug-ins-121068a07/Framework.bundle/Contents/Resources/Versions/2/Python/bootstrap.py --server-version 1.43.0.10492-121068a07 /usr/lib/plexmediaserver/Resources/Plug-ins-121068a07/System.bundle
+plex                 plex                 /usr/lib/plexmediaserver/Plex Tuner Service /usr/lib/plexmediaserver/Resources/Tuner/Private /usr/lib/plexmediaserver/Resources/Tuner/Shared 1.43.0.10492-121068a07 32600
+plex                 plex                 /usr/lib/plexmediaserver/Plex Relay -p 443 -N -R 0:127.0.0.1:32401 -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Cache/relayHostKey.txt -o LogLevel=VERBOSE -o PreferredAuthentications=password -o PubkeyAuthentication=no -l sidscri -F /dev/null 45.56.124.90
+root                 root                 /usr/bin/snap run sonarr
+sidscri              sidscri              /opt/advanced-flashcards/.venv/bin/python /opt/advanced-flashcards/app/app.py
+sidscri              media                /opt/Sonarr/Sonarr -nobrowser -data=/opt/appdata/sonarr-b/config
+sidscri              media                /opt/Radarr/Radarr -nobrowser -data=/opt/appdata/radarr-a/config
+sidscri              media                /opt/Radarr/Radarr -nobrowser -data=/opt/appdata/radarr-b/config
+sidscri              media                /opt/Prowlarr/Prowlarr -nobrowser -data=/opt/appdata/prowlarr-a/config
+sidscri              media                /opt/Prowlarr/Prowlarr -nobrowser -data=/opt/appdata/prowlarr-b/config
+sidscri              media                /usr/bin/python3 -OO /usr/bin/sabnzbdplus -f /opt/appdata/sabnzbd/config/sabnzbd.ini -s 0.0.0.0:8080 -b 0
+sidscri              sidscri              grep -E --color=auto -i sonarr|radarr|lidarr|readarr|prowlarr|tautulli|deluge|sabnzbd|calibre|kiwix|plex|flash
+sonarr               media                /opt/Sonarr/Sonarr -nobrowser -data=/var/lib/sonarr/
+sidscri@sidscripi:~ $ dpkg -l | egrep -i 'sonarr|radarr|lidarr|readarr|prowlarr|tautulli|deluge|sabnzbd|calibre|kiwix|plex' || true
+ii  calibre                              8.5.0+ds-1+deb13u1                   all          powerful and easy to use e-book manager
+ii  calibre-bin                          8.5.0+ds-1+deb13u1                   arm64        powerful and easy to use e-book manager (binary plugins)
+ii  deluge-common                        2.2.0-1                              all          multi-interface BitTorrent client (common)
+ii  deluge-console                       2.2.0-1                              all          multi-interface BitTorrent client (text UI)
+ii  deluge-web                           2.2.0-1                              all          multi-interface BitTorrent client (web frontend)
+ii  deluged                              2.2.0-1                              all          multi-interface BitTorrent client (server)
+ii  kiwix-tools                          3.7.0-1.1                            arm64        collection of Kiwix tools
+ii  libcamera-ipa:arm64                  0.7.0+rpt20260205-1                  arm64        complex camera support library (IPA modules)
+ii  libcamera-tools                      0.7.0+rpt20260205-1                  arm64        complex camera support library (tools)
+ii  libcamera-v4l2:arm64                 0.7.0+rpt20260205-1                  arm64        complex camera support library (V4L2 module)
+ii  libcamera0.7:arm64                   0.7.0+rpt20260205-1                  arm64        complex camera support library
+ii  libgraphite2-3:arm64                 1.3.14-2+b1                          arm64        Font rendering engine for Complex Scripts -- library
+ii  libkiwix14:arm64                     14.0.0-1.1+b1                        arm64        library of common code for Kiwix
+ii  liblc3-1:arm64                       1.1.3+dfsg-1                         arm64        Low Complexity Communication Codec (shared library)
+ii  libmpc3:arm64                        1.3.1-1+b3                           arm64        multiple precision complex floating-point library
+ii  libmplex2-2.1-0t64:arm64             1:2.1.0+debian-8.1+b1                arm64        MJPEG capture/editing/replay and MPEG encoding toolset (library)
+ii  libraqm0:arm64                       0.10.2-1                             arm64        Library for complex text layout
+ii  plexmediaserver                      1.43.0.10492-121068a07               arm64        Plex organizes all of your personal media so you can easily access and enjoy it.
+ii  plymouth                             24.004.60-5                          arm64        boot animation, logger and I/O multiplexer
+ii  plymouth-label                       24.004.60-5                          arm64        boot animation, logger and I/O multiplexer - label control
+ii  plymouth-themes                      24.004.60-5                          arm64        boot animation, logger and I/O multiplexer - themes
+ii  python3-libcamera                    0.7.0+rpt20260205-1                  arm64        complex camera support library (Python bindings)
+ii  python3-mccabe                       0.7.0-1                              all          Python code complexity checker (Python 3)
+ii  python3-sabctools                    8.2.3-2+b4                           arm64        C implementations of functions for use within SABnzbd
+ii  sabnzbdplus                          4.5.0+dfsg-1                         all          web-based binary newsreader with nzb support
+
+
+
+sidscri@sidscripi:~ $ id debian-deluged
+uid=999(debian-deluged) gid=981(debian-deluged) groups=981(debian-deluged),1001(media)
+sidscri@sidscripi:~ $ ps -eo user,group,cmd | grep -i sonarr | grep -v grep
+sonarr   media    /opt/Sonarr/Sonarr -nobrowser -data=/var/lib/sonarr/
+sidscri  media    /opt/Sonarr/Sonarr -nobrowser -data=/opt/appdata/sonarr-b/config
+sidscri@sidscripi:~ $ # show User/Group for your A/B arr services
+for s in prowlarr-a prowlarr-b radarr-a radarr-b readarr-a readarr-b sabnzbdplus advanced-flashcards calibre-server kiwix plexmediaserver deluged deluge-web; do 
+  echo "==== $s ===="
+  systemctl show -p User -p Group -p SupplementaryGroups "$s".service 2>/dev/null || echo "no unit"
+done
+==== prowlarr-a ====
+User=sidscri
+Group=media
+SupplementaryGroups=
+==== prowlarr-b ====
+User=sidscri
+Group=media
+SupplementaryGroups=
+==== radarr-a ====
+User=sidscri
+Group=media
+SupplementaryGroups=
+==== radarr-b ====
+User=sidscri
+Group=media
+SupplementaryGroups=
+==== readarr-a ====
+User=sidscri
+Group=media
+SupplementaryGroups=
+==== readarr-b ====
+User=sidscri
+Group=media
+SupplementaryGroups=
+==== sabnzbdplus ====
+User=
+Group=
+SupplementaryGroups=
+==== advanced-flashcards ====
+User=sidscri
+Group=sidscri
+SupplementaryGroups=
+==== calibre-server ====
+User=sidscri
+Group=media
+SupplementaryGroups=
+==== kiwix ====
+User=sidscri
+Group=media
+SupplementaryGroups=
+==== plexmediaserver ====
+User=plex
+Group=plex
+SupplementaryGroups=
+==== deluged ====
+User=sidscri
+Group=media
+SupplementaryGroups=
+==== deluge-web ====
+User=sidscri
+Group=media
+SupplementaryGroups=
+sidscri@sidscripi:~ $ ps -eo user:20,group:20,cmd | egrep -i 'sonarr|radarr|readarr|prowlarr|sabnzbd|deluge|plex|kiwix|calibre|advanced' | head -n 120
+sonarr               media                /opt/Sonarr/Sonarr -nobrowser -data=/var/lib/sonarr/
+sidscri              sidscri              /opt/advanced-flashcards/.venv/bin/python /opt/advanced-flashcards/app/app.py
+sidscri              media                /opt/Sonarr/Sonarr -nobrowser -data=/opt/appdata/sonarr-b/config
+sidscri              media                /opt/Radarr/Radarr -nobrowser -data=/opt/appdata/radarr-a/config
+sidscri              media                /opt/Radarr/Radarr -nobrowser -data=/opt/appdata/radarr-b/config
+sidscri              media                /opt/Prowlarr/Prowlarr -nobrowser -data=/opt/appdata/prowlarr-a/config
+sidscri              media                /opt/Prowlarr/Prowlarr -nobrowser -data=/opt/appdata/prowlarr-b/config
+sidscri              media                /usr/bin/python3 -OO /usr/bin/sabnzbdplus -f /opt/appdata/sabnzbd/config/sabnzbd.ini -s 0.0.0.0:8080 -b 0
+plex                 plex                 /usr/lib/plexmediaserver/Plex Media Server
+plex                 plex                 Plex Plug-in [com.plexapp.system] /usr/lib/plexmediaserver/Resources/Plug-ins-121068a07/Framework.bundle/Contents/Resources/Versions/2/Python/bootstrap.py --server-version 1.43.0.10492-121068a07 /usr/lib/plexmediaserver/Resources/Plug-ins-121068a07/System.bundle
+plex                 plex                 /usr/lib/plexmediaserver/Plex Tuner Service /usr/lib/plexmediaserver/Resources/Tuner/Private /usr/lib/plexmediaserver/Resources/Tuner/Shared 1.43.0.10492-121068a07 32600
+plex                 plex                 /usr/lib/plexmediaserver/Plex Relay -p 443 -N -R 0:127.0.0.1:32401 -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Cache/relayHostKey.txt -o LogLevel=VERBOSE -o PreferredAuthentications=password -o PubkeyAuthentication=no -l sidscri -F /dev/null 45.56.124.90
+sidscri              media                /usr/bin/python3 /usr/bin/deluged -d -c /opt/appdata/deluge/config
+sidscri              sidscri              grep -E --color=auto -i sonarr|radarr|readarr|prowlarr|sabnzbd|deluge|plex|kiwix|calibre|advanced
+
+

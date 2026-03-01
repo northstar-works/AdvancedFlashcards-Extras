@@ -1,0 +1,102 @@
+calibre
+deluge
+kiwix
+lidarr-a
+lidarr-b
+prowlerr-a
+prowlerr-b
+radarr-a
+radarr-b
+readarr-a
+readarr-b
+sabnzbd
+sonarr-a
+sonarr-b
+xteve
+
+
+
+
+rename xteve to xteve-a
+missing xteve-b, readarr-audiobooks-a, readarr-audiobooks-b  if these arent installed they should be.
+
+Log: sidscri@sidscripi:~ $ systemctl list-unit-files | grep -i sonarr
+sonarr-a.service                                    enabled         enabled
+sonarr-b.service                                    enabled         enabled
+sonarr.service                                      enabled         enabled
+sidscri@sidscripi:~ $ systemctl edit sonarr-b.service
+Failed to create parent directories for '/etc/systemd/system/sonarr-b.service.d/override.conf': Permission denied
+
+sidscri@sidscripi:~ $ for s in prowlarr-a prowlarr-b radarr-a radarr-b readarr-a readarr-b sabnzbdplus advanced-flashcards calibre-server kiwix plexmediaserver deluged deluge-web; do
+  echo "==== $s ===="
+  systemctl show -p User -p Group "$s".service
+done
+==== prowlarr-a ====
+User=prowlarr
+Group=media
+==== prowlarr-b ====
+User=prowlarr
+Group=media
+==== radarr-a ====
+User=radarr
+Group=media
+==== radarr-b ====
+User=radarr
+Group=media
+==== readarr-a ====
+User=readarr
+Group=media
+==== readarr-b ====
+User=readarr
+Group=media
+==== sabnzbdplus ====
+User=sabnzbd
+Group=media
+==== advanced-flashcards ====
+User=advanced-flashcards
+Group=media
+==== calibre-server ====
+User=calibre
+Group=media
+==== kiwix ====
+User=kiwix
+Group=media
+==== plexmediaserver ====
+User=plex
+Group=plex
+==== deluged ====
+User=debian-deluged
+Group=media
+==== deluge-web ====
+User=debian-deluged
+Group=media
+
+sidscri@sidscripi:~ $ ps -eo user:20,group:20,cmd | egrep -i 'sonarr|radarr|readarr|prowlarr|sabnzbd|deluge|plex|kiwix|calibre|advanced' | head -n 120
+sidscri              media                /opt/Sonarr/Sonarr -nobrowser -data=/opt/appdata/sonarr-b/config
+sidscri              media                /usr/bin/python3 -OO /usr/bin/sabnzbdplus -f /opt/appdata/sabnzbd/config/sabnzbd.ini -s 0.0.0.0:8080 -b 0
+plex                 plex                 /usr/lib/plexmediaserver/Plex Media Server
+plex                 plex                 Plex Plug-in [com.plexapp.system] /usr/lib/plexmediaserver/Resources/Plug-ins-121068a07/Framework.bundle/Contents/Resources/Versions/2/Python/bootstrap.py --server-version 1.43.0.10492-121068a07 /usr/lib/plexmediaserver/Resources/Plug-ins-121068a07/System.bundle
+plex                 plex                 /usr/lib/plexmediaserver/Plex Tuner Service /usr/lib/plexmediaserver/Resources/Tuner/Private /usr/lib/plexmediaserver/Resources/Tuner/Shared 1.43.0.10492-121068a07 32600
+plex                 plex                 /usr/lib/plexmediaserver/Plex Relay -p 443 -N -R 0:127.0.0.1:32401 -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Cache/relayHostKey.txt -o LogLevel=VERBOSE -o PreferredAuthentications=password -o PubkeyAuthentication=no -l sidscri -F /dev/null 45.56.124.90
+sidscri              media                /opt/Sonarr/Sonarr -nobrowser -data=/opt/appdata/sonarr-a/config
+prowlarr             media                /opt/Prowlarr/Prowlarr -nobrowser -data=/opt/appdata/prowlarr-a/config
+radarr               media                /opt/Radarr/Radarr -nobrowser -data=/opt/appdata/radarr-a/config
+prowlarr             media                /opt/Prowlarr/Prowlarr -nobrowser -data=/opt/appdata/prowlarr-b/config
+radarr               media                /opt/Radarr/Radarr -nobrowser -data=/opt/appdata/radarr-b/config
+debian-deluged       media                /usr/bin/python3 /usr/bin/deluged -d -c /opt/appdata/deluge/config
+sonarr               media                /opt/Sonarr/Sonarr -nobrowser -data=/var/lib/sonarr/
+calibre              media                /usr/bin/python3.13 /usr/bin/calibre-server --port 8083 --with-library /opt/appdata/calibre/data/CalibreLibrary
+sidscri              sidscri              grep -E --color=auto -i sonarr|radarr|readarr|prowlarr|sabnzbd|deluge|plex|kiwix|calibre|advanced
+
+sidscri@sidscripi:~ $ sudo -u radarr   bash -lc "touch /mnt/plex/grab-media/.radarr_rw && rm -f /mnt/plex/grab-media/.radarr_rw && echo radarr_OK"
+sudo -u sonarr   bash -lc "touch /mnt/plex/grab-media/.sonarr_rw && rm -f /mnt/plex/grab-media/.sonarr_rw && echo sonarr_OK"
+sudo -u sabnzbd  bash -lc "touch /mnt/plex/grab-media/.sab_rw && rm -f /mnt/plex/grab-media/.sab_rw && echo sabnzbd_OK"
+sudo -u debian-deluged bash -lc "touch /mnt/plex/grab-media/.deluge_rw && rm -f /mnt/plex/grab-media/.deluge_rw && echo deluge_OK"
+touch: cannot touch '/mnt/plex/grab-media/.radarr_rw': Permission denied
+touch: cannot touch '/mnt/plex/grab-media/.sonarr_rw': Permission denied
+touch: cannot touch '/mnt/plex/grab-media/.sab_rw': Permission denied
+touch: cannot touch '/mnt/plex/grab-media/.deluge_rw': Permission denied
+
+
+
+
