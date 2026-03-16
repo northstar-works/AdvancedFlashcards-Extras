@@ -307,5 +307,23 @@
     "notes": "",
     "updated_at": 1768920081,
     "updated_by": "1cc70e61cd9e"
+  },
+  "14d51c1c9ca017e5": {
+    "id": "14d51c1c9ca017e5",
+    "term": "Kyudo",
+    "parts": [
+      {
+        "part": "Kyu",
+        "meaning": "Bow"
+      },
+      {
+        "part": "Do",
+        "meaning": "Way"
+      }
+    ],
+    "literal": "Way of the Bow",
+    "notes": "",
+    "updated_at": 1770452051,
+    "updated_by": null
   }
 }

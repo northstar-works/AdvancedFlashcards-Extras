@@ -488,11 +488,10 @@
           <div style="display:flex;flex-direction:column;gap:16px;max-width:520px;">
             <div class="form-group">
               <label class="form-label">Server Type</label>
-              <select class="form-select" id="rcServerType" onchange="onRcServerTypeChange()">
+              <select class="form-select" id="rcServerType">
                 <option value="standalone">Standalone (WebServer – Python/dev)</option>
                 <option value="packaged">Packaged (Windows EXE installer)</option>
                 <option value="rpi">Raspberry Pi (RPi deployment)</option>
-                <option value="docker">Docker Container</option>
               </select>
             </div>
             <div class="form-group">
@@ -522,8 +521,7 @@
             <strong>Server Types:</strong><br>
             &bull; <em>Standalone</em> – Python Flask server running directly (dev or manual deploy)<br>
             &bull; <em>Packaged</em> – Windows EXE installer version<br>
-            &bull; <em>Raspberry Pi</em> – RPi-specific deployment package<br>
-            &bull; <em>Docker Container</em> – Running in a Docker container (auto-fills 192.168.0.172:8009)<br><br>
+            &bull; <em>Raspberry Pi</em> – RPi-specific deployment package<br><br>
             <strong>No push notifications required</strong> – the app polls this endpoint on each login/startup.
           </div>
         </div>
@@ -1488,47 +1486,13 @@ if(!userId || !deckId){
     }
 
     // ── Remote Config (Android tab) ──────────────────────────────
-
-    // Default host/port per server type (used to auto-fill on type change)
-    const RC_TYPE_DEFAULTS = {
-      standalone: { host: 'sidscri.tplinkdns.com', port: 8009 },
-      packaged:   { host: 'sidscri.tplinkdns.com', port: 8009 },
-      rpi:        { host: 'sidscri.tplinkdns.com', port: 8009 },
-      docker:     { host: '192.168.0.172',          port: 8009 },
-    };
-
-    function onRcServerTypeChange() {
-      const typeEl = document.getElementById('rcServerType');
-      const hostEl = document.getElementById('rcHost');
-      const portEl = document.getElementById('rcPort');
-      if (!typeEl || !hostEl || !portEl) return;
-      const defaults = RC_TYPE_DEFAULTS[typeEl.value];
-      if (!defaults) return;
-      // Only auto-fill if the user hasn't manually edited the fields
-      // (we compare against the last-saved values stored on the elements)
-      const savedHost = hostEl.dataset.savedHost || '';
-      const savedPort = hostEl.dataset.savedPort || '';
-      const currentHost = hostEl.value.trim();
-      const currentPort = String(portEl.value).trim();
-      const isDefaultHost = !currentHost || currentHost === savedHost;
-      const isDefaultPort = !currentPort || currentPort === savedPort;
-      if (isDefaultHost) hostEl.value = defaults.host;
-      if (isDefaultPort) portEl.value = defaults.port;
-    }
-
     async function loadRemoteConfig() {
       const resultEl = document.getElementById('rcResult');
       try {
         const data = await jget('/api/admin/remote-config');
-        const rcTypeEl = document.getElementById('rcServerType');
-        const rcHostEl = document.getElementById('rcHost');
-        const rcPortEl = document.getElementById('rcPort');
-        rcTypeEl.value = data.server_type || 'standalone';
-        rcHostEl.value = data.host || 'sidscri.tplinkdns.com';
-        rcPortEl.value = data.port || 8009;
-        // Remember saved values so onRcServerTypeChange can detect manual edits
-        rcHostEl.dataset.savedHost = rcHostEl.value;
-        rcHostEl.dataset.savedPort = String(rcPortEl.value);
+        document.getElementById('rcServerType').value = data.server_type || 'standalone';
+        document.getElementById('rcHost').value = data.host || 'sidscri.tplinkdns.com';
+        document.getElementById('rcPort').value = data.port || 8009;
         if (data.updated_at) {
           resultEl.style.display = 'block';
           resultEl.style.color = '#9ca3af';
@@ -1558,7 +1522,7 @@ if(!userId || !deckId){
         const data = await jpost('/api/admin/remote-config', payload);
         if (data.success) {
           resultEl.style.color = '#4ade80';
-          const typeLabel = {'standalone':'Standalone','packaged':'Packaged (Windows)','rpi':'Raspberry Pi','docker':'Docker Container'}[payload.server_type] || payload.server_type;
+          const typeLabel = {'standalone':'Standalone','packaged':'Packaged (Windows)','rpi':'Raspberry Pi'}[payload.server_type] || payload.server_type;
           resultEl.innerHTML = `✅ Config saved! Android apps will connect to <strong>${escHtml(payload.host)}:${payload.port}</strong> (${typeLabel}) on next startup.`;
         } else {
           resultEl.style.color = '#f87171';

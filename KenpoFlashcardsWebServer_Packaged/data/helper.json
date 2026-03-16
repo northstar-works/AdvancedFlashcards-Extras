@@ -1,7 +1,7 @@
 {
-  "version": "7a8427a8e98d",
-  "kenpo_mtime": 1769971964.9423096,
-  "generated_at": 1770185560,
+  "version": "fdaaa692967a",
+  "kenpo_mtime": 1771359776.184,
+  "generated_at": 1771954985,
   "term_to_id": {
     "itchi": "88419a9e69042c12",
     "ni": "935027a8797ce67e",
@@ -84,7 +84,7 @@
     "kendo": "0ba2ba8716bdb0f0",
     "kyudo": "14d51c1c9ca017e5",
     "ryu": "4d5d058d8836facb",
-    "kiai": "c9044ca5e03d9766",
+    "kiai": "e894992ac5a891e9",
     "escrima": "1a123cb6e31d01f1",
     "arigato": "524eac384d3bb313",
     "ukime": "65d2d928917024ba",
@@ -174,7 +174,7 @@
     "0ba2ba8716bdb0f0": "kendo",
     "14d51c1c9ca017e5": "kyudo",
     "4d5d058d8836facb": "ryu",
-    "c9044ca5e03d9766": "kiai",
+    "e894992ac5a891e9": "kiai",
     "1a123cb6e31d01f1": "escrima",
     "524eac384d3bb313": "arigato",
     "65d2d928917024ba": "ukime",
@@ -896,12 +896,12 @@
       "pron": "ree-yoo",
       "status": "active"
     },
-    "c9044ca5e03d9766": {
-      "id": "c9044ca5e03d9766",
+    "e894992ac5a891e9": {
+      "id": "e894992ac5a891e9",
       "group": "Words",
       "subgroup": "Concepts",
       "term": "Kiai",
-      "meaning": "Loud Shoot Focusing Power",
+      "meaning": "Loud Shout Focusing Power",
       "pron": "kee-ah-ee",
       "status": "active"
     },

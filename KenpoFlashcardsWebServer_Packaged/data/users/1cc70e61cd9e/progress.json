@@ -26,16 +26,103 @@
       "speech_rate": 1,
       "speech_voice": "",
       "show_breakdown_on_definition": false,
-      "auto_speak_on_card_change": true,
-      "speak_definition_on_flip": true,
-      "activeDeckId": "deck_7bb3a7af",
-      "randomize_custom_set": false,
-      "reflect_status_in_main": false
+      "auto_speak_on_card_change": false,
+      "speak_definition_on_flip": false,
+      "activeDeckId": "kenpo",
+      "randomize_custom_set": true,
+      "reflect_status_in_main": false,
+      "custom_sets": {
+        "deck_22e1482a": [
+          "58de16ba89164650",
+          "9355733ab12549cd",
+          "c3e7f5355d924674",
+          "ba8e41184dba4e71",
+          "1c31d7a14a184609",
+          "a23897b375914c8b",
+          "b9ba8fddb2844bc8",
+          "dbf9145dff5c4d2d",
+          "d1561c1337bb4b45",
+          "be04575b9c4647c4"
+        ],
+        "kenpo": [
+          "fdde3ac4d15c4e2a",
+          "7560dd1bd1799718",
+          "ab0def62f1807bcd",
+          "10022d13ea8d72bb",
+          "db327b3b177e7a70",
+          "214cae0d7725160a",
+          "5ec0d2a43188c690",
+          "4d5d058d8836facb",
+          "c9044ca5e03d9766",
+          "a2eaa61beda7618e",
+          "83df698c061852c1"
+        ],
+        "deck_7bb3a7af": [
+          "b47d70c8fc894d2e",
+          "00991126f2044a4e",
+          "f47e8593c0be407e"
+        ]
+      },
+      "custom_set_statuses": {
+        "deck_22e1482a": {
+          "58de16ba89164650": "unsure",
+          "9355733ab12549cd": "active",
+          "c3e7f5355d924674": "active",
+          "ba8e41184dba4e71": "active",
+          "1c31d7a14a184609": "active",
+          "a23897b375914c8b": "active",
+          "b9ba8fddb2844bc8": "active",
+          "dbf9145dff5c4d2d": "active",
+          "d1561c1337bb4b45": "active",
+          "be04575b9c4647c4": "active"
+        },
+        "kenpo": {
+          "fdde3ac4d15c4e2a": "learned",
+          "7560dd1bd1799718": "unsure",
+          "ab0def62f1807bcd": "active",
+          "10022d13ea8d72bb": "unsure",
+          "db327b3b177e7a70": "active",
+          "214cae0d7725160a": "active",
+          "5ec0d2a43188c690": "unsure",
+          "4d5d058d8836facb": "unsure",
+          "c9044ca5e03d9766": "unsure",
+          "a2eaa61beda7618e": "unsure",
+          "83df698c061852c1": "unsure"
+        },
+        "deck_7bb3a7af": {
+          "b47d70c8fc894d2e": "active",
+          "00991126f2044a4e": "active",
+          "f47e8593c0be407e": "active"
+        }
+      },
+      "show_ui_error_log": false,
+      "speak_pronunciation_only": true
     },
     "groups": {},
-    "custom_set": [],
-    "custom_set_status": {},
-    "activeDeckId": "deck_7bb3a7af"
+    "custom_set": [
+      "60b0c9bc5c064055",
+      "5304286fe3324f42",
+      "fab7617725c04127",
+      "825dd4c77699406c",
+      "7fac2afee0e2433f",
+      "f93dbee5af93440d",
+      "50659b0c93e9489f",
+      "84c56ed7a1444e0a",
+      "211ee2b88b41416a",
+      "1496c786a719495b",
+      "d66e3b40b3bf44d2",
+      "e0cad5b03ade4e2f",
+      "a009709d682b4678",
+      "cff717d0b6d14acf",
+      "a23897b375914c8b",
+      "b745c1310f8b4d57",
+      "0ec934eee27c4ccf",
+      "ab00cd415aa5456a",
+      "d5228e5abd98413d",
+      "796f77882ce842c1",
+      "dbf9145dff5c4d2d"
+    ],
+    "custom_set_status": {}
   },
   "88419a9e69042c12": {
     "status": "learned",
@@ -816,5 +903,1128 @@
   "2d0f726460fa4009": {
     "status": "learned",
     "updated_at": "2026-01-24 15:37:39"
+  },
+  "__edit_history__": [
+    {
+      "ts": 1770230789,
+      "card_id": "d66e3b40b3bf44d2",
+      "deck_id": "deck_22e1482a",
+      "action": "edit",
+      "term_before": "Montgomery",
+      "meaning_before": "Capital of Alabama",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Montgomery",
+      "meaning_after": "Alabama",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261435,
+      "card_id": "a009709d682b4678",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Juneau",
+      "meaning_before": "Capital of Alaska",
+      "pron_before": "joo-noh",
+      "group_before": "USA State Capitals",
+      "term_after": "Juneau",
+      "meaning_after": "Alaska",
+      "pron_after": "joo-noh",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261435,
+      "card_id": "916c0ae17f8b400c",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Phoenix",
+      "meaning_before": "Capital of Arizona",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Phoenix",
+      "meaning_after": "Arizona",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261435,
+      "card_id": "dbf9145dff5c4d2d",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Little Rock",
+      "meaning_before": "Capital of Arkansas",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Little Rock",
+      "meaning_after": "Arkansas",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261435,
+      "card_id": "58de16ba89164650",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Sacramento",
+      "meaning_before": "Capital of California",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Sacramento",
+      "meaning_after": "California",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261435,
+      "card_id": "a4cb2dca060f43c7",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Denver",
+      "meaning_before": "Capital of Colorado",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Denver",
+      "meaning_after": "Colorado",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261435,
+      "card_id": "a218bb8324394d22",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Hartford",
+      "meaning_before": "Capital of Connecticut",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Hartford",
+      "meaning_after": "Connecticut",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261435,
+      "card_id": "ab00cd415aa5456a",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Dover",
+      "meaning_before": "Capital of Delaware",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Dover",
+      "meaning_after": "Delaware",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261435,
+      "card_id": "d5228e5abd98413d",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Tallahassee",
+      "meaning_before": "Capital of Florida",
+      "pron_before": "tal-uh-has-ee",
+      "group_before": "USA State Capitals",
+      "term_after": "Tallahassee",
+      "meaning_after": "Florida",
+      "pron_after": "tal-uh-has-ee",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261435,
+      "card_id": "07ec2eb512274c19",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Atlanta",
+      "meaning_before": "Capital of Georgia",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Atlanta",
+      "meaning_after": "Georgia",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261435,
+      "card_id": "ba8e41184dba4e71",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Honolulu",
+      "meaning_before": "Capital of Hawaii",
+      "pron_before": "hoh-noh-loo-loo",
+      "group_before": "USA State Capitals",
+      "term_after": "Honolulu",
+      "meaning_after": "Hawaii",
+      "pron_after": "hoh-noh-loo-loo",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261436,
+      "card_id": "9293824cb5264f86",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Boise",
+      "meaning_before": "Capital of Idaho",
+      "pron_before": "boy-see",
+      "group_before": "USA State Capitals",
+      "term_after": "Boise",
+      "meaning_after": "Idaho",
+      "pron_after": "boy-see",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261436,
+      "card_id": "796f77882ce842c1",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Springfield",
+      "meaning_before": "Capital of Illinois",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Springfield",
+      "meaning_after": "Illinois",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261436,
+      "card_id": "c70f1ad6563c4984",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Indianapolis",
+      "meaning_before": "Capital of Indiana",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Indianapolis",
+      "meaning_after": "Indiana",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261436,
+      "card_id": "dd84fc4989844735",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Des Moines",
+      "meaning_before": "Capital of Iowa",
+      "pron_before": "duh moin",
+      "group_before": "USA State Capitals",
+      "term_after": "Des Moines",
+      "meaning_after": "Iowa",
+      "pron_after": "duh moin",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261436,
+      "card_id": "c3287202713046b0",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Topeka",
+      "meaning_before": "Capital of Kansas",
+      "pron_before": "toh-pee-kuh",
+      "group_before": "USA State Capitals",
+      "term_after": "Topeka",
+      "meaning_after": "Kansas",
+      "pron_after": "toh-pee-kuh",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261436,
+      "card_id": "25226dd28fdf42ef",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Frankfort",
+      "meaning_before": "Capital of Kentucky",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Frankfort",
+      "meaning_after": "Kentucky",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261436,
+      "card_id": "fe49df76cc2f4dac",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Baton Rouge",
+      "meaning_before": "Capital of Louisiana",
+      "pron_before": "bat-uhn roozh",
+      "group_before": "USA State Capitals",
+      "term_after": "Baton Rouge",
+      "meaning_after": "Louisiana",
+      "pron_after": "bat-uhn roozh",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261436,
+      "card_id": "11bf06e17e0c4f16",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Augusta",
+      "meaning_before": "Capital of Maine",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Augusta",
+      "meaning_after": "Maine",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261436,
+      "card_id": "a05e6e392a804dc0",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Annapolis",
+      "meaning_before": "Capital of Maryland",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Annapolis",
+      "meaning_after": "Maryland",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261436,
+      "card_id": "cff717d0b6d14acf",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Boston",
+      "meaning_before": "Capital of Massachusetts",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Boston",
+      "meaning_after": "Massachusetts",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261436,
+      "card_id": "3e89e6d0df944d97",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Lansing",
+      "meaning_before": "Capital of Michigan",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Lansing",
+      "meaning_after": "Michigan",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261436,
+      "card_id": "409b1f9d6ba444dc",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "St. Paul",
+      "meaning_before": "Capital of Minnesota",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "St. Paul",
+      "meaning_after": "Minnesota",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261436,
+      "card_id": "1c31d7a14a184609",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Jackson",
+      "meaning_before": "Capital of Mississippi",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Jackson",
+      "meaning_after": "Mississippi",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261436,
+      "card_id": "67bece79748944ec",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Jefferson City",
+      "meaning_before": "Capital of Missouri",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Jefferson City",
+      "meaning_after": "Missouri",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "e4e6866b3c984afb",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Helena",
+      "meaning_before": "Capital of Montana",
+      "pron_before": "hel-uh-nuh",
+      "group_before": "USA State Capitals",
+      "term_after": "Helena",
+      "meaning_after": "Montana",
+      "pron_after": "hel-uh-nuh",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "1496c786a719495b",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Lincoln",
+      "meaning_before": "Capital of Nebraska",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Lincoln",
+      "meaning_after": "Nebraska",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "c3e7f5355d924674",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Carson City",
+      "meaning_before": "Capital of Nevada",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Carson City",
+      "meaning_after": "Nevada",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "7f7ee176313f49a9",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Concord",
+      "meaning_before": "Capital of New Hampshire",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Concord",
+      "meaning_after": "New Hampshire",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "f955cdbad574414b",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Trenton",
+      "meaning_before": "Capital of New Jersey",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Trenton",
+      "meaning_after": "New Jersey",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "d1561c1337bb4b45",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Santa Fe",
+      "meaning_before": "Capital of New Mexico",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Santa Fe",
+      "meaning_after": "New Mexico",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "9355733ab12549cd",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Albany",
+      "meaning_before": "Capital of New York",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Albany",
+      "meaning_after": "New York",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "b9ba8fddb2844bc8",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Raleigh",
+      "meaning_before": "Capital of North Carolina",
+      "pron_before": "rah-lee",
+      "group_before": "USA State Capitals",
+      "term_after": "Raleigh",
+      "meaning_after": "North Carolina",
+      "pron_after": "rah-lee",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "06a6cc1a75b2435a",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Bismarck",
+      "meaning_before": "Capital of North Dakota",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Bismarck",
+      "meaning_after": "North Dakota",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "be04575b9c4647c4",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Columbus",
+      "meaning_before": "Capital of Ohio",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Columbus",
+      "meaning_after": "Ohio",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "87672f10f54b45fd",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Oklahoma City",
+      "meaning_before": "Capital of Oklahoma",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Oklahoma City",
+      "meaning_after": "Oklahoma",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "0be510bfd26f470b",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Salem",
+      "meaning_before": "Capital of Oregon",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Salem",
+      "meaning_after": "Oregon",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "f10f971bd5384417",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Harrisburg",
+      "meaning_before": "Capital of Pennsylvania",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Harrisburg",
+      "meaning_after": "Pennsylvania",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "feeda11e5f88467d",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Providence",
+      "meaning_before": "Capital of Rhode Island",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Providence",
+      "meaning_after": "Rhode Island",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "ad5ce1e5b33c4286",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Columbia",
+      "meaning_before": "Capital of South Carolina",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Columbia",
+      "meaning_after": "South Carolina",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "416cbf05f7ee4974",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Pierre",
+      "meaning_before": "Capital of South Dakota",
+      "pron_before": "peer",
+      "group_before": "USA State Capitals",
+      "term_after": "Pierre",
+      "meaning_after": "South Dakota",
+      "pron_after": "peer",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "a944a47ff1b64dcb",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Nashville",
+      "meaning_before": "Capital of Tennessee",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Nashville",
+      "meaning_after": "Tennessee",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "e0cad5b03ade4e2f",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Salt Lake City",
+      "meaning_before": "Capital of Utah",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Salt Lake City",
+      "meaning_after": "Utah",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "cf82579698ba473f",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Montpelier",
+      "meaning_before": "Capital of Vermont",
+      "pron_before": "mont-pee-lee-er",
+      "group_before": "USA State Capitals",
+      "term_after": "Montpelier",
+      "meaning_after": "Vermont",
+      "pron_after": "mont-pee-lee-er",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "0ec934eee27c4ccf",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Richmond",
+      "meaning_before": "Capital of Virginia",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Richmond",
+      "meaning_after": "Virginia",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "a0e3241f4ad94779",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Olympia",
+      "meaning_before": "Capital of Washington",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Olympia",
+      "meaning_after": "Washington",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "ab25b6c0ff6b4ea1",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Charleston",
+      "meaning_before": "Capital of West Virginia",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Charleston",
+      "meaning_after": "West Virginia",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "a23897b375914c8b",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Madison",
+      "meaning_before": "Capital of Wisconsin",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Madison",
+      "meaning_after": "Wisconsin",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261441,
+      "card_id": "b745c1310f8b4d57",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Cheyenne",
+      "meaning_before": "Capital of Wyoming",
+      "pron_before": "shy-an",
+      "group_before": "USA State Capitals",
+      "term_after": "Cheyenne",
+      "meaning_after": "Wyoming",
+      "pron_after": "shy-an",
+      "group_after": "USA State Capitals"
+    },
+    {
+      "ts": 1770261488,
+      "card_id": "4775fa73fa55414a",
+      "deck_id": "deck_22e1482a",
+      "action": "ai_template",
+      "term_before": "Austin",
+      "meaning_before": "Capital of Texas",
+      "pron_before": "",
+      "group_before": "USA State Capitals",
+      "term_after": "Austin",
+      "meaning_after": "Texas",
+      "pron_after": "",
+      "group_after": "USA State Capitals"
+    }
+  ],
+  "4775fa73fa55414a": {
+    "status": "active",
+    "updated_at": "2026-02-04 21:17:37"
+  },
+  "b745c1310f8b4d57": {
+    "status": "active",
+    "updated_at": "2026-02-04 22:48:07"
+  },
+  "d66e3b40b3bf44d2": {
+    "status": "active",
+    "updated_at": "2026-02-04 23:16:54"
+  },
+  "a009709d682b4678": {
+    "status": "active",
+    "updated_at": "2026-02-04 23:16:55"
+  },
+  "1af27c6b05fe426c": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:09:48"
+  },
+  "f7c31488474348f6": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:09:48"
+  },
+  "1e8cb84fc3b54a02": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:09:48"
+  },
+  "fd1926ef73664f6e": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:09:48"
+  },
+  "1563c5e7cb864d60": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:06"
+  },
+  "f2394aa07ab94055": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:07"
+  },
+  "b8630a0e44ea4b88": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:07"
+  },
+  "38da4d5b65ae4994": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:07"
+  },
+  "ae5151b047694c39": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:07"
+  },
+  "d3ec1becaab44204": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:07"
+  },
+  "c5e679076ee0425c": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:07"
+  },
+  "4ddb1d6292ce4c3c": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:07"
+  },
+  "1ea4511d892540b4": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:07"
+  },
+  "9eebecca26694a75": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:07"
+  },
+  "dc659fb8d1d64253": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:08"
+  },
+  "ef57e01e29b84ca1": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:08"
+  },
+  "47cc1697efd24fd8": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:08"
+  },
+  "a169ef3e0b1a4ea4": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:08"
+  },
+  "a2ff00fad9734b3a": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:08"
+  },
+  "2c85168d0c074a42": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:08"
+  },
+  "f0019291d59b45c4": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:24"
+  },
+  "5a2f4bffa6b24d97": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:24"
+  },
+  "1b0267551feb4b3c": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:24"
+  },
+  "91769c71a6fc4c1c": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:25"
+  },
+  "261572d7ef604890": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:25"
+  },
+  "0938600a79fb4039": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:25"
+  },
+  "4d841113ace242f5": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:47"
+  },
+  "59e9419300cb42b7": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:47"
+  },
+  "83066a3c1f4c4fa8": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:10:47"
+  },
+  "d8af888fde2f409b": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:11:07"
+  },
+  "96577dd188b243f4": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:11:07"
+  },
+  "e4af3af7f5f648d8": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:11:07"
+  },
+  "471bec05a6ad4b10": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:11:07"
+  },
+  "4c401c03981c4d58": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:11:07"
+  },
+  "c21fbf74c04c497a": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:11:08"
+  },
+  "38c6fb8515ff4e6b": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:11:08"
+  },
+  "1d59237b8cae418f": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:11:08"
+  },
+  "0a87c0efdb644898": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:11:22"
+  },
+  "cfe531986785487d": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:11:22"
+  },
+  "2fb49a5cfdfb4ff0": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:11:22"
+  },
+  "76db53c064444e44": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:11:23"
+  },
+  "7d58de2a3bf942ac": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:11:23"
+  },
+  "6ee7f80e0c96493e": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:11:23"
+  },
+  "512bb09e6426448d": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:11:23"
+  },
+  "3c6514201f9247fc": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:11:23"
+  },
+  "ed344d4e598a477b": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:11:23"
+  },
+  "a1072ea699974731": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:11:23"
+  },
+  "d9ab14c6d15e4bb8": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:11:23"
+  },
+  "e775bfcb0a5e4d47": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 02:11:23"
+  },
+  "cdd71ef9c5cd4d32": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "55253cb3044a436e": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "9b9557a61aca49cd": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "9f1c69efa16248fb": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "42471f11d4ee469b": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "b5930b7f3f0d4f85": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "2a56701b3ad845d3": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "30cfbc72b020491f": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "e14b0b7f043a4f8a": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "7c3118dbac744aa9": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "ec35b56138344b1b": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "6927cfe0ecb54333": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "433c50938527412b": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "4676ce45bd9b479c": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "3e56af06997b4591": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "95601d1263e141cd": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "512ff8cf7ad4468d": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "c220a15bb48e4116": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "c93ae40c9bb6438c": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "85a7c2e1f20a4552": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "077cb2b47c0940b8": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "f5809f4e5baf4651": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "d6ec256fa0c04cb1": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "72650eaa1a0b4a0e": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "8720408dfc4a46f0": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "89784339b6bc4308": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:32"
+  },
+  "34f5cf3893344ffa": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "d0eb3c38d5224d0b": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "3099ba31ca724b0c": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "f7ac674cf82d4305": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "672bc80825494ee3": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "532707d1781b4380": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "c31a16304aa34f96": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "4b3bf33a4e194855": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "057d48c893e04f19": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "988d79fc906b440b": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "124caa3ce1334408": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "c4718df3e41948e9": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "8edc68a476664634": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "b40f7a8f067846b0": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "5d19a7e412324ddb": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "f45bd94495a14431": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "b0890af2f78947be": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "7a7b8cf1ba754504": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "f3cc0942a3b24e31": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "76473b32e7994e0a": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "7881c8b835194246": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "e8353df8e7484d67": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "097b21484f0b41c8": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "567cb63ffd5b41b4": {
+    "status": "deleted",
+    "updated_at": "2026-02-07 11:10:33"
+  },
+  "842d4de5fa1168f8": {
+    "status": "unsure",
+    "updated_at": "2026-02-10 12:44:29"
+  },
+  "__last_sync__": 1770964832,
+  "7560dd1bd1799718": {
+    "status": "unsure",
+    "updated_at": 1771359412
   }
 }

@@ -1,30 +1,6 @@
-START Tue 02/17/2026 11:26:01.46
-BASE=C:\Users\Sidscri\Documents\GitHub\sidscri-apps
-SRC=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer
-VERJSON=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer\version.json
-SEVENZIP=C:\Program Files\7-Zip\7z.exe
-RAW_VER=8.9.0
-RAW_BUILD=63
-ZIPPATH=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer-v8.9.0 v63.zip
-STAGE=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\_zip_stage
-
-ROBOCOPY_EXIT_CODE=1
-Could Not Find C:\Users\Sidscri\Documents\GitHub\sidscri-apps\_zip_stage\KenpoFlashcardsWebServer\*.pyc
-Running 7z (from stage)...
-
-7-Zip 25.01 (x64) : Copyright (c) 1999-2025 Igor Pavlov : 2025-08-03
-
-Scanning the drive:
-25 folders, 66 files, 3073603 bytes (3002 KiB)
-
-Creating archive: C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer-v8.9.0 v63.zip
-
-Add new data to archive: 25 folders, 66 files, 3073603 bytes (3002 KiB)
-
-
-Files read from disk: 66
-Archive size: 2187324 bytes (2137 KiB)
-Everything is Ok
-7Z_EXIT_CODE=0
-Verified: no .venv paths detected
-SUCCESS
+START Sun 03/15/2026 20:31:40.46
+BASE=\\SIDSCRI-grab\sidscri-apps
+SRC=\\SIDSCRI-grab\sidscri-apps\KenpoFlashcardsWebServer
+VERJSON=\\SIDSCRI-grab\sidscri-apps\KenpoFlashcardsWebServer\version.json
+SEVENZIP=C:\Program Files (x86)\7-Zip\7z.exe
+ERROR: 7z.exe not found. Install 7-Zip.

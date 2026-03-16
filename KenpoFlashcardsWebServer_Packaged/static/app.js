@@ -16,7 +16,7 @@ let breakdownIds = new Set();
 let learnedViewMode = "list"; // list | study
 
 // Custom Set view filter
-let customViewMode = "all"; // all | unsure | learned
+let customViewMode = "unlearned"; // unlearned | unsure | learned | all
 
 function updateFilterHighlight(){
   const btn = $("allCardsBtn");
@@ -44,12 +44,14 @@ function updateCustomViewHighlight(){
   if(!wrap) return;
   const show = (activeTab === "custom");
   wrap.classList.toggle("hidden", !show);
-  const bAll = $("customViewAllBtn");
+  const bUnlearned = $("customViewUnlearnedBtn");
   const bUnsure = $("customViewUnsureBtn");
   const bLearned = $("customViewLearnedBtn");
-  if(bAll) bAll.classList.toggle("active", customViewMode === "all");
+  const bAll = $("customViewAllBtn");
+  if(bUnlearned) bUnlearned.classList.toggle("active", customViewMode === "unlearned");
   if(bUnsure) bUnsure.classList.toggle("active", customViewMode === "unsure");
   if(bLearned) bLearned.classList.toggle("active", customViewMode === "learned");
+  if(bAll) bAll.classList.toggle("active", customViewMode === "all");
 }
 
 let deck = [];
@@ -1309,13 +1311,15 @@ async function loadCustomSetForStudy(){
     let cards = res.cards || [];
     
     // Filter by custom view mode
-    if(customViewMode === "unsure"){
+    if(customViewMode === "unlearned"){
+      cards = cards.filter(c => c.custom_status === "active");
+    } else if(customViewMode === "unsure"){
       cards = cards.filter(c => c.custom_status === "unsure");
     } else if(customViewMode === "learned"){
       cards = cards.filter(c => c.custom_status === "learned");
     } else {
-      // "all" - show active and unsure only (exclude custom-learned)
-      cards = cards.filter(c => c.custom_status !== "learned");
+      // "all" - include all custom-set statuses
+      // (no status filter)
     }
     
     // Apply search filter
@@ -1679,8 +1683,10 @@ async function refresh(){
       updateHeaderCardCount(Array.isArray(deck) ? deck.length : 0);
 
       // Ensure the status line reflects Custom Set mode
-      const cvmLabel = customViewMode === "unsure" ? "Unsure"
-                    : (customViewMode === "learned" ? "Learned" : "Unlearned");
+      const cvmLabel = (customViewMode === "unlearned") ? "Unlearned"
+                    : (customViewMode === "unsure") ? "Unsure"
+                    : (customViewMode === "learned") ? "Learned"
+                    : "All";
       const prefix = (customRandomLimit > 0) ? "🎲 " : "";
       setStatus(`${prefix}Custom Set • Studying: ${cvmLabel}`);
       return;
@@ -2249,8 +2255,8 @@ async function main(){
   });
 
   // Custom Set view toggle
-  bind("customViewAllBtn","click", async ()=>{
-    customViewMode = "all";
+  bind("customViewUnlearnedBtn","click", async ()=>{
+    customViewMode = "unlearned";
     customRandomLimit = 0;
     updateCustomViewHighlight();
     await refresh();
@@ -2263,6 +2269,12 @@ async function main(){
   });
   bind("customViewLearnedBtn","click", async ()=>{
     customViewMode = "learned";
+    customRandomLimit = 0;
+    updateCustomViewHighlight();
+    await refresh();
+  });
+  bind("customViewAllBtn","click", async ()=>{
+    customViewMode = "all";
     customRandomLimit = 0;
     updateCustomViewHighlight();
     await refresh();
@@ -5012,7 +5024,7 @@ function bulkHandleDocFile(file){
   reader.onload = (e) => {
     bulkAiDocData = {
       name: file.name,
-      type: file.type || (ext === ".pdf" ? "application/pdf" : "text/plain"),
+      type: file.type || (ext === ".pdf" ? "application/pdf" : (ext === ".json" ? "application/json" : "text/plain")),
       content: e.target.result
     };
     showEditDecksStatus("Document loaded. Ready to generate.", "success");
@@ -5394,7 +5406,7 @@ function editBulkHandleDocFile(file){
   reader.onload = (e) => {
     editBulkAiDocData = {
       name: file.name,
-      type: file.type || (ext === ".pdf" ? "application/pdf" : "text/plain"),
+      type: file.type || (ext === ".pdf" ? "application/pdf" : (ext === ".json" ? "application/json" : "text/plain")),
       content: e.target.result
     };
     showEditDecksStatus("Document loaded. Ready to generate.", "success");
@@ -5777,12 +5789,12 @@ function clearPhotoUpload(){
 }
 
 function handleDocFile(file){
-  const validTypes = ["application/pdf", "text/plain", "text/markdown"];
-  const validExts = [".pdf", ".txt", ".md", ".text"];
+  const validTypes = ["application/pdf", "text/plain", "text/markdown", "application/json", "text/json"];
+  const validExts = [".json", ".pdf", ".txt", ".md", ".text"];
   const ext = file.name.toLowerCase().slice(file.name.lastIndexOf("."));
   
   if(!validTypes.includes(file.type) && !validExts.includes(ext)){
-    showEditDecksStatus("Please select a PDF or text file", "error");
+    showEditDecksStatus("Please select a JSON, PDF, or text file", "error");
     return;
   }
   
@@ -5790,7 +5802,7 @@ function handleDocFile(file){
   reader.onload = (e) => {
     aiDocData = {
       name: file.name,
-      type: file.type || (ext === ".pdf" ? "application/pdf" : "text/plain"),
+      type: file.type || (ext === ".pdf" ? "application/pdf" : (ext === ".json" ? "application/json" : "text/plain")),
       content: e.target.result
     };
     $("docFileName").textContent = file.name;

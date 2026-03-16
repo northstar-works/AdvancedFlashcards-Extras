@@ -2,19 +2,19 @@
   {
     "id": "d66e3b40b3bf44d2",
     "term": "Montgomery",
-    "meaning": "Capital of Alabama",
+    "meaning": "Alabama",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
     "deckId": "deck_22e1482a",
     "isUserCreated": true,
     "createdAt": 1769754589,
-    "updatedAt": 1769754589
+    "updatedAt": 1770230789
   },
   {
     "id": "a009709d682b4678",
     "term": "Juneau",
-    "meaning": "Capital of Alaska",
+    "meaning": "Alaska",
     "pron": "joo-noh",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -26,7 +26,7 @@
   {
     "id": "916c0ae17f8b400c",
     "term": "Phoenix",
-    "meaning": "Capital of Arizona",
+    "meaning": "Arizona",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -38,7 +38,7 @@
   {
     "id": "dbf9145dff5c4d2d",
     "term": "Little Rock",
-    "meaning": "Capital of Arkansas",
+    "meaning": "Arkansas",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -50,7 +50,7 @@
   {
     "id": "58de16ba89164650",
     "term": "Sacramento",
-    "meaning": "Capital of California",
+    "meaning": "California",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -62,7 +62,7 @@
   {
     "id": "a4cb2dca060f43c7",
     "term": "Denver",
-    "meaning": "Capital of Colorado",
+    "meaning": "Colorado",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -74,7 +74,7 @@
   {
     "id": "a218bb8324394d22",
     "term": "Hartford",
-    "meaning": "Capital of Connecticut",
+    "meaning": "Connecticut",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -86,7 +86,7 @@
   {
     "id": "ab00cd415aa5456a",
     "term": "Dover",
-    "meaning": "Capital of Delaware",
+    "meaning": "Delaware",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -98,7 +98,7 @@
   {
     "id": "d5228e5abd98413d",
     "term": "Tallahassee",
-    "meaning": "Capital of Florida",
+    "meaning": "Florida",
     "pron": "tal-uh-has-ee",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -110,7 +110,7 @@
   {
     "id": "07ec2eb512274c19",
     "term": "Atlanta",
-    "meaning": "Capital of Georgia",
+    "meaning": "Georgia",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -122,7 +122,7 @@
   {
     "id": "ba8e41184dba4e71",
     "term": "Honolulu",
-    "meaning": "Capital of Hawaii",
+    "meaning": "Hawaii",
     "pron": "hoh-noh-loo-loo",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -134,7 +134,7 @@
   {
     "id": "9293824cb5264f86",
     "term": "Boise",
-    "meaning": "Capital of Idaho",
+    "meaning": "Idaho",
     "pron": "boy-see",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -146,7 +146,7 @@
   {
     "id": "796f77882ce842c1",
     "term": "Springfield",
-    "meaning": "Capital of Illinois",
+    "meaning": "Illinois",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -158,7 +158,7 @@
   {
     "id": "c70f1ad6563c4984",
     "term": "Indianapolis",
-    "meaning": "Capital of Indiana",
+    "meaning": "Indiana",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -170,7 +170,7 @@
   {
     "id": "dd84fc4989844735",
     "term": "Des Moines",
-    "meaning": "Capital of Iowa",
+    "meaning": "Iowa",
     "pron": "duh moin",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -182,7 +182,7 @@
   {
     "id": "c3287202713046b0",
     "term": "Topeka",
-    "meaning": "Capital of Kansas",
+    "meaning": "Kansas",
     "pron": "toh-pee-kuh",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -194,7 +194,7 @@
   {
     "id": "25226dd28fdf42ef",
     "term": "Frankfort",
-    "meaning": "Capital of Kentucky",
+    "meaning": "Kentucky",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -206,7 +206,7 @@
   {
     "id": "fe49df76cc2f4dac",
     "term": "Baton Rouge",
-    "meaning": "Capital of Louisiana",
+    "meaning": "Louisiana",
     "pron": "bat-uhn roozh",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -218,7 +218,7 @@
   {
     "id": "11bf06e17e0c4f16",
     "term": "Augusta",
-    "meaning": "Capital of Maine",
+    "meaning": "Maine",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -230,7 +230,7 @@
   {
     "id": "a05e6e392a804dc0",
     "term": "Annapolis",
-    "meaning": "Capital of Maryland",
+    "meaning": "Maryland",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -242,7 +242,7 @@
   {
     "id": "cff717d0b6d14acf",
     "term": "Boston",
-    "meaning": "Capital of Massachusetts",
+    "meaning": "Massachusetts",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -254,7 +254,7 @@
   {
     "id": "3e89e6d0df944d97",
     "term": "Lansing",
-    "meaning": "Capital of Michigan",
+    "meaning": "Michigan",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -266,7 +266,7 @@
   {
     "id": "409b1f9d6ba444dc",
     "term": "St. Paul",
-    "meaning": "Capital of Minnesota",
+    "meaning": "Minnesota",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -278,7 +278,7 @@
   {
     "id": "1c31d7a14a184609",
     "term": "Jackson",
-    "meaning": "Capital of Mississippi",
+    "meaning": "Mississippi",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -290,7 +290,7 @@
   {
     "id": "67bece79748944ec",
     "term": "Jefferson City",
-    "meaning": "Capital of Missouri",
+    "meaning": "Missouri",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -302,7 +302,7 @@
   {
     "id": "e4e6866b3c984afb",
     "term": "Helena",
-    "meaning": "Capital of Montana",
+    "meaning": "Montana",
     "pron": "hel-uh-nuh",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -314,7 +314,7 @@
   {
     "id": "1496c786a719495b",
     "term": "Lincoln",
-    "meaning": "Capital of Nebraska",
+    "meaning": "Nebraska",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -326,7 +326,7 @@
   {
     "id": "c3e7f5355d924674",
     "term": "Carson City",
-    "meaning": "Capital of Nevada",
+    "meaning": "Nevada",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -338,7 +338,7 @@
   {
     "id": "7f7ee176313f49a9",
     "term": "Concord",
-    "meaning": "Capital of New Hampshire",
+    "meaning": "New Hampshire",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -350,7 +350,7 @@
   {
     "id": "f955cdbad574414b",
     "term": "Trenton",
-    "meaning": "Capital of New Jersey",
+    "meaning": "New Jersey",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -362,7 +362,7 @@
   {
     "id": "d1561c1337bb4b45",
     "term": "Santa Fe",
-    "meaning": "Capital of New Mexico",
+    "meaning": "New Mexico",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -374,7 +374,7 @@
   {
     "id": "9355733ab12549cd",
     "term": "Albany",
-    "meaning": "Capital of New York",
+    "meaning": "New York",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -386,7 +386,7 @@
   {
     "id": "b9ba8fddb2844bc8",
     "term": "Raleigh",
-    "meaning": "Capital of North Carolina",
+    "meaning": "North Carolina",
     "pron": "rah-lee",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -398,7 +398,7 @@
   {
     "id": "06a6cc1a75b2435a",
     "term": "Bismarck",
-    "meaning": "Capital of North Dakota",
+    "meaning": "North Dakota",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -410,7 +410,7 @@
   {
     "id": "be04575b9c4647c4",
     "term": "Columbus",
-    "meaning": "Capital of Ohio",
+    "meaning": "Ohio",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -422,7 +422,7 @@
   {
     "id": "87672f10f54b45fd",
     "term": "Oklahoma City",
-    "meaning": "Capital of Oklahoma",
+    "meaning": "Oklahoma",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -434,7 +434,7 @@
   {
     "id": "0be510bfd26f470b",
     "term": "Salem",
-    "meaning": "Capital of Oregon",
+    "meaning": "Oregon",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -446,7 +446,7 @@
   {
     "id": "f10f971bd5384417",
     "term": "Harrisburg",
-    "meaning": "Capital of Pennsylvania",
+    "meaning": "Pennsylvania",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -458,7 +458,7 @@
   {
     "id": "feeda11e5f88467d",
     "term": "Providence",
-    "meaning": "Capital of Rhode Island",
+    "meaning": "Rhode Island",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -470,7 +470,7 @@
   {
     "id": "ad5ce1e5b33c4286",
     "term": "Columbia",
-    "meaning": "Capital of South Carolina",
+    "meaning": "South Carolina",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -482,7 +482,7 @@
   {
     "id": "416cbf05f7ee4974",
     "term": "Pierre",
-    "meaning": "Capital of South Dakota",
+    "meaning": "South Dakota",
     "pron": "peer",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -494,7 +494,7 @@
   {
     "id": "a944a47ff1b64dcb",
     "term": "Nashville",
-    "meaning": "Capital of Tennessee",
+    "meaning": "Tennessee",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -506,7 +506,7 @@
   {
     "id": "4775fa73fa55414a",
     "term": "Austin",
-    "meaning": "Capital of Texas",
+    "meaning": "Texas",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -518,7 +518,7 @@
   {
     "id": "e0cad5b03ade4e2f",
     "term": "Salt Lake City",
-    "meaning": "Capital of Utah",
+    "meaning": "Utah",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -530,7 +530,7 @@
   {
     "id": "cf82579698ba473f",
     "term": "Montpelier",
-    "meaning": "Capital of Vermont",
+    "meaning": "Vermont",
     "pron": "mont-pee-lee-er",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -542,7 +542,7 @@
   {
     "id": "0ec934eee27c4ccf",
     "term": "Richmond",
-    "meaning": "Capital of Virginia",
+    "meaning": "Virginia",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -554,7 +554,7 @@
   {
     "id": "a0e3241f4ad94779",
     "term": "Olympia",
-    "meaning": "Capital of Washington",
+    "meaning": "Washington",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -566,7 +566,7 @@
   {
     "id": "ab25b6c0ff6b4ea1",
     "term": "Charleston",
-    "meaning": "Capital of West Virginia",
+    "meaning": "West Virginia",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -578,7 +578,7 @@
   {
     "id": "a23897b375914c8b",
     "term": "Madison",
-    "meaning": "Capital of Wisconsin",
+    "meaning": "Wisconsin",
     "pron": "",
     "group": "USA State Capitals",
     "subgroup": "",
@@ -590,7 +590,7 @@
   {
     "id": "b745c1310f8b4d57",
     "term": "Cheyenne",
-    "meaning": "Capital of Wyoming",
+    "meaning": "Wyoming",
     "pron": "shy-an",
     "group": "USA State Capitals",
     "subgroup": "",
