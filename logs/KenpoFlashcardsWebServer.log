@@ -1,6 +1,13 @@
+<<<<<<< Updated upstream
 START Sun 03/15/2026 20:31:40.46
 BASE=\\SIDSCRI-grab\sidscri-apps
 SRC=\\SIDSCRI-grab\sidscri-apps\KenpoFlashcardsWebServer
 VERJSON=\\SIDSCRI-grab\sidscri-apps\KenpoFlashcardsWebServer\version.json
+=======
+START Sun 03/15/2026 20:26:12.52
+BASE=C:\Users\Sidsc\OneDrive\github repositories\sidscri-apps
+SRC=C:\Users\Sidsc\OneDrive\github repositories\sidscri-apps\KenpoFlashcardsWebServer
+VERJSON=C:\Users\Sidsc\OneDrive\github repositories\sidscri-apps\KenpoFlashcardsWebServer\version.json
+>>>>>>> Stashed changes
 SEVENZIP=C:\Program Files (x86)\7-Zip\7z.exe
 ERROR: 7z.exe not found. Install 7-Zip.
