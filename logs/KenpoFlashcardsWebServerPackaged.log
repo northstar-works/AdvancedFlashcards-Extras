@@ -1,17 +1,17 @@
-START Sun 03/15/2026 20:39:55.07
+START Sun 03/15/2026 22:45:09.77
 BASE=C:\Users\Sidscri\Documents\GitHub\sidscri-apps
 SRC=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged
 VERJSON=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged\version.json
 SEVENZIP=C:\Program Files\7-Zip\7z.exe
-RAW_VER=5.5.0
-RAW_BUILD=25
+RAW_VER=5.6.0
+RAW_BUILD=26
 SYNCLOGDIR=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\logs\Sync
-SYNCLOGPAT=v5.5.0*.log
+SYNCLOGPAT=v5.6.0*.log
 No matching Sync log found (will not append ws suffix
 WSVER_FROM_LOG=
 WSBUILD_FROM_LOG=
 WSSUFFIX=
-ZIPPATH=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged-v5.5.0 v25.zip
+ZIPPATH=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged-v5.6.0 v26.zip
 STAGE=C:\Users\Sidscri\Documents\GitHub\sidscri-apps\_zip_stage
 
 ROBOCOPY_EXIT_CODE=1
@@ -21,15 +21,15 @@ Running 7z (from stage)...
 7-Zip 25.01 (x64) : Copyright (c) 1999-2025 Igor Pavlov : 2025-08-03
 
 Scanning the drive:
-44 folders, 117 files, 3576001 bytes (3493 KiB)
+44 folders, 116 files, 3586201 bytes (3503 KiB)
 
-Creating archive: C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged-v5.5.0 v25.zip
+Creating archive: C:\Users\Sidscri\Documents\GitHub\sidscri-apps\KenpoFlashcardsWebServer_Packaged-v5.6.0 v26.zip
 
-Add new data to archive: 44 folders, 117 files, 3576001 bytes (3493 KiB)
+Add new data to archive: 44 folders, 116 files, 3586201 bytes (3503 KiB)
 
 
-Files read from disk: 117
-Archive size: 2555740 bytes (2496 KiB)
+Files read from disk: 116
+Archive size: 2556151 bytes (2497 KiB)
 Everything is Ok
 7Z_EXIT_CODE=0
 SUCCESS
