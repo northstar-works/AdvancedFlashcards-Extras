@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Accent bar (left edge) -->
+    <path
+        android:fillColor="#C4B5FF"
+        android:pathData="M33,28L38,28L38,80L33,80Z" />
+    <!-- Main play triangle — bold, centered in safe zone (72dp inner) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M41,28L41,80L78,54Z" />
+</vector>

@@ -1,0 +1,38 @@
+StreamVault is a universal streaming media player that lets you organize and play all your video sources in one place — live channels, Plex libraries, IP cameras, local files, network shares, and more.
+
+Built for Fire TV and Android devices with full D-pad remote navigation. No accounts, no tracking, no ads — your library stays on your device.
+
+FEATURES
+
+ITV — Live Channels
+Browse and play live streams from M3U/M3U8 playlists or JSON repositories. Set locality priorities to put your regional channels first. Automatic failover switches to an alternative stream when one goes down. Import from URL or load locally.
+
+EPG Guide
+Full electronic program guide with a scrollable timeline grid, now/next info, and per-channel program details. Supports XMLTV sources. EPG data is parsed in the background so you can start watching immediately.
+
+Live Sports
+Live scoreboard integration powered by ESPN data. Game cards show real-time scores, status, and start times. Filter by your favourite leagues and teams with a My Teams mode. Supports NFL, NBA, MLB, NHL, MLS, soccer, college sports, and more.
+
+PlexStr — Plex Integration
+Connect to your Plex Media Server and browse libraries directly inside StreamVault. Resume where you left off. No separate Plex app needed.
+
+iCam — IP Cameras
+View RTSP, ONVIF, RTMP, and SRT IP camera streams. Scan your local network to discover cameras automatically. Add cameras manually or from scan results.
+
+DVR & Timeshift
+Schedule recordings and route them to a remote device over FTP. Timeshift lets you pause and rewind live streams for up to 30 minutes without stopping playback.
+
+Local Media
+Browse and play video files stored on your device. Add multiple folders and scan your device for video files automatically. Supports MP4, MKV, AVI, MOV, and TS.
+
+Network Media
+Stream from Samba/SMB shares and FTP servers on your local network. Add multiple sources and manage credentials securely.
+
+HDHomeRun
+Discover and stream from HDHomeRun network tuners. Full guide data pulled directly from your device.
+
+Repository Browser
+Browse stream repositories with region and category filters. Add your own repo URLs. Streams are cached locally for offline access.
+
+PRIVACY
+StreamVault stores all configuration locally on your device. No telemetry, no cloud sync, no accounts required.

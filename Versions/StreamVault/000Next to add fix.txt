@@ -1,0 +1,123 @@
+I need a sanity check:  The 216 build got reverted, its missing previously added features and fixes, so 217 also was missing the same:  Lets start with this version "StreamVault-v6_0_5-b214"(I renamed the zip and changed to match my current version and build):  
+
+1---The settings icon on top right of VOD page should open its own settings page, in that settings page I want you to move the whole "VOD/Movies" section out of main settings>integrations and into this new VOD page settings window/page, here i can also configure what rows to show or hide, key words in movies to filter out, and other VOD page specific configs to adjust per user desires. 
+
+2---In New setting page within VOD page using the top right settings button>"vod Group management" section>"Manage Groups" window>I want it to auto default just the VOD groups not any US Movies or any other groups that contain movie or shows, those need to be treated as live. The "Scan for Groups button is unnessesay now since app scans automatically, it should be removed.  
+
+3---Navigating the "vod Group management" window is tricky. From "Select All Movies" button dpad down does select the toggle, but from "Select All series" button it selects the whole tile, not allowing me to toggle on or off; also from a highlighted toggle, I want dpad left to jumps to Select All Movies button, from a highlighted toggle, I want dpad right and remote return to jump to "Apply & Refresh button". from a highlighted "Apply & Refresh" button, I want remote return press to apply then exit back to "standalone VOD Repo" section in new VOD settings page. from new VOD settings page, I want remote return press or dpad to close or exit button to apply then exit the setting page and have selector on "Movies" tab in VOD page.
+
+4---Like the other pages do, when using return on remote, inside the VOD page using return on remote needs to goes back to the main bottom page bar.
+
+5---In VOD>selecting a movie/show> opens the movie detail window to highlight the "Play" button or Resume button(when has progress), right now it highlights the Watch List button when video windows is opened.  In that window, return on remote or exit button goes back to highlight that movie in that row. Right now it incorrectly closes then jumps to the search button on top of VOD page. All changes also apply to TV Shows page.
+
+6---In VOD>Movies or TV Shows pages>All, Watch List, Genre tabs, if the genre page is empty, I want them hidden.  With that said, app needs to do a better job sorting the movies by Genre, audience rating(R, PG-13, PG, G).  Most of the genre pages are empty. Doing this will also fix the movies being listed in the incorrect row.  Still have rated R, and horror movies in the Kids movie row.  If you need to search the internet for this and for more detailed movie details, do so. All changes also apply to TV Shows page.
+
+---I want a "remove from continue watching" option as well, when present. 
+
+---Make sure all new VOD setting page, windows, and forms navigation works.
+
+7---Move "Repositories" sub-section from "integrations" section of main setting into "General" section of main settings.  
+
+8---Redo this request previously implemented in your b217 player seek version.  "Is it possible to use the same player that plex uses. I like to be able to open popup overlay window while playing a video to be able to rewind, fast fw, check progress, time elapsed, time remaining, movie name, etc. like plex does on firetv with dpad navigation in popup overlay window while playing a video. I know, VOD content might not be able to rewind or fast forward, but still want that option available for plexstr videos, and other videos that does support ff and rw"  
+---With that said, on firetv When playing a plexstr or a VOD, I see the rw 30sec 10 sec and ff 30sec 10 sec durations buttons, with the large rw and ff button. but, the dpad movement never selected them.  Only on the remote rw and ff press does it do anything, but right now tries to find another failback stream like it is suppose to do for the ITV and Sports streams.  I want remote press to rw or ff if allowed for plexstr and vod plays. Remove the large rw and ff non functional button all together, since those two have zero use but being an eye sore.  
+
+9---On ITV and Sports pages, I do not want the ff and rw on dpad to change the next/previous stream alt failback function for those pages.  You may update the player like the other pages, but dont change what the rw or ff does. 
+
+
+
+-----------------------------------------------------------------------------
+---I want to manually sort the VOD rows, using arrow up and down to sort.  
+
+---Why isnt there a highly rated row of movies showing in VOD, is there not enough data for the VOD repo to show that row under the continue watching row and the Recently added row.  
+
+---I want posters showing the movies in VOD>Plex Movies, and want the movies to fill the page without having one scroll-able row, but now having all the movies poster filling the page, on phone that 3-4 posters per row, PlexStr page doesn't have a need for multiple rows like the Movie and Tv Show pages has.   When selecting a movie from plex in VOD>PlexStr>it doesnt open. But the movies in VOD>Movies>From Plex row does play.  Speaking of, remove that From Plex row in VOD>Movies>, since plexstr movies are now in their own page.  By adding the plexStr to VOD, there is no more need to have the PlexStr tab and page in Home.  
+
+---I want the new PlexStr to have its content to show/load immedialty like the current, to be removed, Home>PlexStr> list of movies are just there when page open.  Currently, the new VOD>PlexStr> take a few seconds to load, why is that. I am hoping by moving the code and everthing to it new location, this fix will make the new location show as fast as the orininal page. Move the Home>PlexStr>search and open Plexstr section on page to the VOD>Settings>new PlexStr tab and page with that moved to there, while still keeping the Main Settings>Intergrated>PlexStr section there.  
+
+---On VOD>Movies and TV Show> Genre tabs, remove them all, only keep "All", "Watch List", "History" tabs there.
+
+
+
+----------------------------------------------------------------------------
+You didn't fix a few things. For example: In VOD>PlexStr>There is no dpad movement, dpad down from VOD>PlexStr tab, nothing happens, so selecting a movie in PlexStr page isn't happening.  Make sure, that these title are playable as they were when in its original place in Home>PlexStr.  Also, in VOD>PlexStr>settings>I want the PlexStr section moved to its own PlexStr tab and page at VOD>settings>PlexStr, so there will be in VOD Settings>Movies, TV Shows, PlexStr, in PlexStr settings page, it will only have the PlexStr section, not the other VOD Movie or TV Show related settings. 
+
+---When selecting main VOD tab, i want it to open defaulted highlight on the movies tab.
+
+---VOD Settings>same TMDB API Key is used for all types. setting one, sets them all. Same goes with ITV Movie Detection and Auto-scan repo
+
+---In VOD>settings>I want the Movies, TV Shows, PlexStr bar to always show ontop. Right now when I select VOD>Settings> if i was previously in settings it opens to somewhere in the middle of the setting page.  When I dpad to the top the Movie, TV Shows, PlexStr bar does not show, so I cant ever choose a type's settings to change to, and Im not sure which type's setting I am currently in.  Everytime VOD>settings is selected, I want it to default and open to the same types setting tab that I was in on VOD>Movies, TV Shows, PlexStr.  
+
+---In each Type's Settings I want an accordioned "General" Section (default open, but when closed it will default closed going forward, showing a brief description of what is of importance in the general section), in this section is where universal settings are shown for all three, i.e. TMDB>..., PLAYBACK>ITV Movie Detection, etc.  In Movies, TV Shows "General" Section will include repo VOD specific universal settings i.e PLAYBACK>Auto-scan repos, Display>...>, VOD Group Management>...>, Standalone VOD Repo>...>, etc.
+
+---In VOD>Settings>PlexStr>delete "titles per row", since PlexStr has isn't suppose to have separate rows. Remove text "sort by row", replace with "Sort" (movies) by (use existing sort options).  With that said, make sure the PlexStr page has all titles in posters that show the image, all on the same page without horizontal scrolling rows.  Just scroll down if there are more title than what can fit on page as usual.  The images are not showing in PlexStr while they are in the other VOD pages.  Is it possible to get the image from plex, or do i need to rely on TMDB.  Would prefer the images also being added when adding a movies using PlexStr.
+
+---In VOD>Settings>PlexStr>Browse & Add to library section> with "All libraries" field highlighted, dpad right will move highlight to the "Search Plex Library..." field, right now when i dpad right it cycles through the "All libraries" field options, which makes the "Search Plex Library..." field unreachable.  From VOD>Settings>PlexStr>"Browse & Add to library" section>with "Open Library" button pressed, when dpading down through the Add and Added buttons of the movies in that library, when dpad left it moves back to the "All libraries" field and closes the Open Library Adds list.  In contrast From VOD>Settings>PlexStr>"Browse & Add to library" section>with "Open Library" button pressed, when dpading down through the Add and Added buttons of the movies in that library, when dpad right skips to next section of settings, and closes the "Open Library" Adds list.    
+
+---In Watch History section of settings, make each tile smaller, one tile takes up a lot of screen space.  I also want the lists Movies or TV Show or (new) PlexStr to be in separate accordions, default closes, only showing if there is history.  When closed or open The watch history section will still show "# title (# movies, # episodes, # plexstr)", Remove the Clear Watch List button not needed. Add "Clear" to each opened accordion to clear just the one type, Movies, TV Shows, PlexStr.
+
+---In VOD>Settings>Movie and TV Show>Visable Row and sort section>That whole section is way to long, and take a long time to navigate past it, I want that to be an accordion that opens the list in a separate dropdown window, similar to other drop downs used in this app, with an exit button on top, Cancel and Save/Apply button on bottom, return on remote press applies and exits window back to that section in settings. The list itself needs to be more compact, not so high per row tile, and needs to be faster, right now each tile with its sort row up or down arrow and toggle on or off, is way to un necessarily large, where it could be more compact to utilize the space otherwise wasted. I want dpad movement to stay on sorting side, so dpad down moves from toggle to toggle.  
+
+ https://northstar-works.github.io/fdroid/repo 
+
+cd C:\Users\Sidscri\Documents\GitHub\fdroid
+git pull
+
+---------------part 1 sent  varified present
+When starting selecting VOD page, its does correctly highlight the Movie tab, but it jumps back down when dpading from the movie to the right, when tending to choose either tv shows or plexStr tab.  Make sure the selector goes to Movies, I am able to dpad to the right, up, or down if I was tending to stay in the movie tab.  Dpading further left on the page will jump to the All tab on the old genre bar.  
+
+---Speaking of the "All" tab, I want it renamed to Main, I want another tab that will have the whole repo called All with a genre dropdown selector next to it, defaulted to All, showing the full collection listed in alphabetical order based on the genre if selected i.e A Game, The Almighty Joe, Braveheart, Candyman, etc.  I wont them listed like they are in plexStr, but more than half the poster size, which will have more than  twice as many movies listed on the screen as users scroll, if no image is available, I want a nice streamvault default image in its place, with a faintly visable "No Poster Available".  As a user scrolls, I want to see the Letter the page is currently on located on the right side of screen. Add a setting that I can set to have more or less movies per page in poster mode, or list mode with maybe 4 columns of movies with narrow rows, with small 1/8 the size poster thumbnails, Title, Year, (R, PG-13, etc).  When movie is selected will do the same; Play, Add to Watch List, Adding a Ignore flag.  Closing that window will stay at location in list. Add a coorisponding spot somehwere in VOD>settings to list ignored titles to unignore if desired.
+
+
+-------------------------------------------------------------------------------part2  sent  varified present
+1---In last update, I wanted the VOD>All tab to be moved within the VOD>Movie>page as a tab to the Right of History.  The same goes for the tv shows.  In the All page, at the end of the page( pre-configured "Titles per page #"), there needs to be a next/previous page button. The max posters per page can be increased to 1000. defaulted to 500, range 100-1000.  Remove PlexStr videos from the Repo VOD Movie pages, including the new "ALL" sub tab.  PlexStr Videos are to only show in PlexStr Page.
+
+2---In tv app version, The first row title(Recently Released) is not showing in movies and tv shows.  I see that tv shows meta info has been added, why aren't the movies having their star Rating, audience rating(R, PG, etc), genre, synopsis. Genre and ratings are important, because I don't want to see rated or horrors, or sexual content being added to kids rows. ---At the end of all rows, the way it is now, I want the "see all" to load all movies that are in that genre, Right now not all rows show "see all" on tv, but when they do dpad cant reach on tv and the page doesn't load when selected on mobile. 
+
+3---The visible row in TV Shows Columns don't work in filtering out genres not wanting in my TV Show list. On TV Shows only, in Visible Rows setting, I want two toggles instead of one, one that universally hides genre from the main page of rows, keeping in All Shows Tab, and another when the first is left on, will only hide them from recently aired,  or this add new row called "highly rated" row, make sure all genres that have actually been added to either VOD pages, are actually showing in Rows visibility settings.  I don't want to be missing videos , just because their genre isnt showing as an option to be allowed to be visible. In tv mode, The first row title(Recently Released) is not showing in movies and tv shows.
+
+4---I am also, missing a remove from continue watching row button in selected videos when present in continue watching row, make sure the movie auto removes when 2 minute are remaining in movies and i minute in tv shows, need non general VOD>setting to adjust that.  On all pages dpading to the top or bottom of page stops there does not cycle back to the top or down to the bottom.  I want to implement the menu button on the remote to open the settings of that page if present.
+
+
+-------------------------------------------------------------------------part3 sent  varified present
+---A rw or ff press on remote changes pages, or scrolling down or up scrolls as usual, phone there will be a overlay arrows on top and bottom of movie list of pages to go page per page or can scroll as usual.  
+
+---Dont want plex videos showimg in movie or tv show page, keep them seperate in PlexStr page.  
+
+A rw or ff press on remote changes pages, or scrolling down or up scrolls as usual, phone there will be a overlay arrows on top and bottom of movie list of pages to go page per page or can scroll as usual.  
+
+-----------------------------------------------------------------------------part4  sent
+I want the Previous/next and page 1/2 on VOD>...>"All" page to also be at the bottom of page so I may keep scrolling.  ---A rw or ff press on remote changes pages, or scrolling down or up scrolls as usual, phone there will be a overlay arrows on top and bottom of movie list of pages to go page per page or can scroll as usual.  
+---Dont want plex videos showing in movie or tv show page, keep them separate in PlexStr page.  
+A rw or ff press on remote changes pages, or scrolling down or up scrolls as usual, phone there will be a overlay arrows on top and bottom of movie list of pages to go page per page or can scroll as usual.   Why is it that TV Shows has Rating R, PG-13, Stars rating 4.5, synopsis, etc, but the Movies do  not, that needs to be fixed in this new version.  ---The "See all" on right of rows still do not have show all of the movies in that genre.  Clicking on link should open a page showing all of them. return on remote exits ans so does dpad to close on far left dpad.
+
+
+------------------------------------------------------------------------part5 sent
+Remove the left and right of page arrow and X next page overlay that you just added.  The feature that scans the ITV movies epg title when watching it, to see if its also available in VOD or Plex library to be watch On demand now instead or to add to watch list to be watch on demand later does not work.  Barbie was playing on HBO, and Barbie is available in repo VOD, but nothing happened when I was watching in the middle of the barbie movie on HBO. I was expecting when I touched screen or dpad a overlay like in plex and other services, but this would have movies is available On Demand from VOD or Plex, etc.  Make that happen and please fix the meta tags not being shown when clicked on a movie.  It does well on a tv show.
+
+
+
+----------------------------------------------------------------------------part6 follow up sent
+1---Check the live sports, my teams and leagues aren't showing on any tab page. I did a refresh using the button on the Sports page, but nothing showed back up. After sometime, the games appeared.  I need this back to almost instantly appearing after loading sports page for the first time in the day.  It should not take so long to show my games, or any games for that matter, especially after forcing a manual refresh.   
+
+2---I watched a live hbo repo channe,l the movie was Dune 2: I noticed after last update, the player had changed back to the original without the progress bar.  When I stopped viewing that stream, a window in screenshot popped up showing a movie available that I was watching live being available in VOD.  A few things wrong here.  1.) A similar small notice, should be showing on the overlayed screen while playing the movie, when VOD is available.  There is no action required, just a message. Dpading while overlay is active, to the play On Demand button will open that viewed window in screenshot.  If multiple VOD locations exist, then have them open in a drop box on Watch Now button press, to choose which location VOD, Plex, etc.  Also when going back to that live channel to watch, I want that "Available on Demand" popup to show first if, there is a demand version available   2.) The movie that was found in VOD, that was suppose to match the movie played from ITV, isnt the same movie, in fact it wasnt even close to a real match.  3.) The "Also available on demand" windows keeps popping up all over the app, as pictured, that needs to stop, making it worst that that was the wrong movie to start with.  
+
+3--- Since, we have good movie data including genre, ratings (r, pg, etc), star ratings 4.5, year etc, I want that info to replace what was already added/cached in the VOD page.  Movies are still being sorted as if, that data isnt present.  Being put in wrong genres, rated r and horrors in the kids genre and row, where it clearly has R, Horror, with that said, priorities meta data over the file name scan way of adding the year, etc. Right now, the movie titled "blade runner 2049" shows 2049 as the year the movie came out, since it is still prioritizing existing or whats found in the file name, which is a great fallback if no meta data is added to the movie from tmdb.  --228--
+
+-------------------------------------------------------------------------part 7 followup sent 
+The app still loads sorted in correctly.  please check this last version and make sure it was actually implemented if it was, then check what is keeping it from updating.  I do select the vod>setting>"VOD Group Management" refresh button, but that still doesn't do a fresh refresh, unless I need another refresh button added for that purpose.  --229--
+
+-----------------------------------------------------------------------Part 8 Chain of Fixes
+
+
+
+This broke app
+------------------------------------------------------------ 
+
+
+
+
+235
+
+not attempted to fix
+----------------------------------------------------------------------------
+------When openning VOD page, I Need a dpad lock for 5 second or  when the page safely loads whichever comes first. The app crashed on my last time I tried to move right after opening VOD page.

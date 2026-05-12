@@ -1,0 +1,3 @@
+5.10.7-b187
+- Fix: HDHR relay jitter — switched from raw MPEG-TS pipe (ProgressiveMediaSource) to HLS (HlsMediaSource); hdhr-xmltv now outputs 2-second HLS segments with 5-segment window; PlayerActivity detects /proxy/ URLs and uses HlsMediaSource which handles live chunked streams with proper buffering and rebuffering; raw TS pipe caused jitter because ProgressiveMediaSource has no live-stream awareness
+- server.js: ffmpeg outputs HLS to /tmp/hls/<channel>/, idle sessions killed after 30s of no requests; /proxy/ redirects to /hls/<channel>/stream.m3u8

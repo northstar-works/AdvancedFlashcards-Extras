@@ -1,0 +1,2 @@
+5.10.6-b186
+- Fix: HDHR relay stream jitter on phone — ExoPlayer buffer was set to 30s minimum for all streams; for relay streams (ffmpeg real-time transcode at 3Mbps) this caused the player to try staying 30s ahead of live, draining unevenly when encoder output varied; relay URLs (/proxy/) now use 4s min / 15s max / 1.5s playback start / 2.5s rebuffer; all other streams keep existing 30s buffer for timeshift and VOD compatibility

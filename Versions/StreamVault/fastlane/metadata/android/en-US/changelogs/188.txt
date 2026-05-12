@@ -1,0 +1,4 @@
+5.10.8-b188
+- Revert: HLS approach removed — 2s segments added too much latency and made all streams jittery; back to raw MPEG-TS pipe with ProgressiveMediaSource
+- Keep: 4s relay buffer from b186 (isRelayStream detection on /proxy/ URLs)
+- server.js: yadif=1 (mode=1) instead of yadif=0 — mode=0 doubled interlaced framerate (29.97i→59.94p) before fps=30 dropped it, creating irregular timestamps that caused ExoPlayer jitter; mode=1 outputs one frame per field pair at original framerate with clean timestamps
